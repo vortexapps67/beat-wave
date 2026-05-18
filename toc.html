@@ -1,0 +1,379 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms & Conditions | BeatWave</title>
+    
+    <link rel="icon" type="image/png" href="https://i.ibb.co/VpTq12z5/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #030305;
+            --bg-panel: rgba(10, 10, 15, 0.5);
+            --accent-blue: #00d2ff;
+            --accent-red: #ff3b3b;
+            --accent-purple: #b300ff;
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg-dark); 
+            color: rgba(255, 255, 255, 0.75); 
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* --- INTERACTIVE SCROLL INDICATOR --- */
+        #scroll-tracker {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-red));
+            z-index: 9999; width: 0%; transition: width 0.1s linear;
+            box-shadow: 0 0 15px var(--accent-purple);
+        }
+
+        /* --- AMBIENT RGB LIGHTING ENGINE --- */
+        .ambient-glow {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(to bottom, #030305, #07070a);
+            z-index: -3; pointer-events: none; overflow: hidden;
+        }
+        .ambient-glow::before, .ambient-glow::after {
+            content: ''; position: absolute; border-radius: 50%;
+            filter: blur(150px); opacity: 0.35;
+            animation: breathe 14s infinite alternate ease-in-out;
+            mix-blend-mode: screen;
+        }
+        .ambient-glow::before {
+            width: 50vw; height: 50vh; top: -10%; left: -10%;
+            background: radial-gradient(circle, rgba(0, 210, 255, 0.25), rgba(179, 0, 255, 0.15));
+            animation-delay: 0s;
+        }
+        .ambient-glow::after {
+            width: 60vw; height: 60vh; bottom: -10%; right: -10%;
+            background: radial-gradient(circle, rgba(255, 59, 59, 0.15), rgba(179, 0, 255, 0.2));
+            animation-delay: -7s;
+        }
+
+        #cursor-glow {
+            position: fixed; top: 0; left: 0; width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(179, 0, 255, 0.12) 0%, rgba(0, 210, 255, 0.04) 40%, transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: -2;
+            transform: translate(-50%, -50%); transition: transform 0.1s ease-out;
+            mix-blend-mode: screen; filter: blur(30px);
+        }
+
+        @keyframes breathe {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.3; }
+            50% { transform: scale(1.1) translate(3%, 5%); opacity: 0.5; }
+            100% { transform: scale(0.95) translate(-2%, -3%); opacity: 0.3; }
+        }
+
+        /* --- MAIN CONTAINER & ANIMATIONS --- */
+        .container {
+            max-width: 850px;
+            margin: 80px auto;
+            padding: 0 5%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUpFade 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.3s; }
+        .delay-3 { animation-delay: 0.5s; }
+
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HEADER --- */
+        .header { text-align: center; margin-bottom: 50px; }
+        .logo { width: 65px; margin-bottom: 25px; filter: drop-shadow(0 0 20px rgba(0,210,255,0.4)); transition: var(--transition); }
+        .logo:hover { transform: scale(1.1) rotate(5deg); filter: drop-shadow(0 0 30px rgba(179,0,255,0.6)); }
+        
+        h1 {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            margin-bottom: 15px;
+            background: linear-gradient(180deg, #ffffff 30%, rgba(255,255,255,0.3) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: rgbTextGlow 8s linear infinite alternate;
+        }
+
+        @keyframes rgbTextGlow {
+            0% { filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.2)); }
+            50% { filter: drop-shadow(0 0 25px rgba(179, 0, 255, 0.3)); }
+            100% { filter: drop-shadow(0 0 15px rgba(255, 59, 59, 0.2)); }
+        }
+
+        .last-updated {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent-blue);
+            font-weight: 700;
+            opacity: 0.8;
+        }
+
+        /* --- HAPPINESS BANNER --- */
+        .happiness-banner {
+            width: 100%;
+            height: 280px;
+            border-radius: 35px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 40px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            background: #000;
+        }
+        
+        .happiness-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.65;
+            transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+            mix-blend-mode: luminosity; /* Gives it a premium, slightly desaturated vibe */
+        }
+        
+        .happiness-banner:hover img {
+            transform: scale(1.08);
+            opacity: 0.8;
+            mix-blend-mode: normal;
+        }
+
+        .happiness-banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(3,3,5,1) 0%, rgba(3,3,5,0) 60%);
+            pointer-events: none;
+        }
+
+        .banner-text {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            z-index: 2;
+        }
+        
+        .banner-text h3 {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 5px;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.8);
+        }
+        
+        .banner-text p {
+            color: var(--accent-blue);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin: 0;
+            opacity: 1;
+        }
+
+        /* --- CONTENT BOX WITH CHROMA BORDER --- */
+        .content-box {
+            background: var(--bg-panel);
+            border: 1px solid var(--glass-border);
+            padding: 60px;
+            border-radius: 35px;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            position: relative;
+            transition: box-shadow 0.4s ease;
+        }
+
+        .content-box::before {
+            content: ""; position: absolute; inset: 0;
+            border-radius: 35px; padding: 2px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-red), var(--accent-blue));
+            background-size: 300% 300%;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+            opacity: 0; transition: opacity 0.6s ease;
+            animation: chromaStream 4s linear infinite;
+            z-index: 0;
+        }
+
+        .content-box:hover::before { opacity: 0.6; }
+        .content-box:hover { box-shadow: 0 25px 60px rgba(179, 0, 255, 0.1); }
+        .content-box > * { position: relative; z-index: 1; }
+
+        @keyframes chromaStream {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        section { margin-bottom: 45px; }
+        section:last-child { margin-bottom: 0; }
+        
+        h2 {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            letter-spacing: -0.5px;
+        }
+        
+        h2::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple));
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.6);
+        }
+        
+        p { 
+            margin-bottom: 15px; 
+            font-size: 1rem; 
+            font-weight: 400;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 800;
+            margin-bottom: 40px;
+            font-size: 0.8rem;
+            font-family: 'Space Mono', monospace;
+            transition: var(--transition);
+            opacity: 0.5;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .back-btn:hover { 
+            opacity: 1; 
+            transform: translateX(-8px); 
+            color: var(--accent-blue);
+            text-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 80px;
+            padding-bottom: 60px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            opacity: 0.3;
+            letter-spacing: 2px;
+        }
+        
+        @media (max-width: 600px) {
+            .content-box { padding: 35px; }
+            .happiness-banner { height: 200px; }
+            .banner-text h3 { font-size: 1.4rem; }
+            .banner-text { left: 20px; bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="scroll-tracker"></div>
+    <div class="ambient-glow"></div>
+    <div id="cursor-glow"></div>
+
+    <div class="container">
+        <a href="index.html" class="back-btn fade-up"><i class="fas fa-arrow-left"></i> Return Home</a>
+        
+        <div class="header fade-up delay-1">
+            <img src="https://i.ibb.co/VpTq12z5/logo.png" alt="Logo" class="logo">
+            <h1>Privacy & Terms</h1>
+            <p class="last-updated">Last Updated: April 2026</p>
+        </div>
+
+        <!-- Premium Happiness Banner -->
+        <div class="happiness-banner fade-up delay-2">
+            <!-- Using a high-quality Unsplash image representing joy and music -->
+            <img src="https://i.ibb.co/mVS2qJ0H/IMG-20260312-WA0069.jpg" alt="Joy of Music">
+            <div class="banner-text">
+                <h3>Logic & Soul.</h3>
+                <p>Fueling your everyday happiness.</p>
+            </div>
+        </div>
+        
+        <div class="content-box fade-up delay-3">
+            <section>
+                <h2>1. Data Collection</h2>
+                <p>BeatWave is built with privacy in mind. We do not collect, store, or sell your personal music files. All audio processing happens locally on your device, ensuring your listening habits remain yours alone.</p>
+            </section>
+            <section>
+                <h2>2. Permissions</h2>
+                <p>The application requires minimal access to your device's storage strictly to scan and play your local audio files. These permissions are siloed and used exclusively for playback functionality.</p>
+            </section>
+            <section>
+                <h2>3. Open Source Foundation</h2>
+                <p>As an open-source project, our logic is entirely transparent. You are free to inspect the source code on our official GitHub repository to verify our security standards and community-driven updates.</p>
+            </section>
+            <section>
+                <h2>4. Liability</h2>
+                <p>BeatWave is provided "as is" without warranty of any kind. The development team is not responsible for any data loss or device issues resulting from the use of the software.</p>
+            </section>
+            <section>
+                <h2>5. Contact Infrastructure</h2>
+                <p>For any legal inquiries or support regarding your data, please reach out to the Support Squad via the official Discord or Instagram channels found on our core system homepage.</p>
+            </section>
+        </div>
+        
+        <footer class="fade-up delay-3">
+            <p>&copy; 2026 BEATLABS INFRASTRUCTURE.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Smooth Cursor Spotlight Logic
+        const cursorGlow = document.getElementById('cursor-glow');
+        
+        window.addEventListener('mousemove', (e) => { 
+            // Added requestAnimationFrame for smoother rendering
+            requestAnimationFrame(() => {
+                cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+            });
+        });
+        
+        window.addEventListener('mouseout', () => { 
+            cursorGlow.style.transform = `translate(-1000px, -1000px)`; 
+        });
+
+        // Scroll Tracker Logic
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("scroll-tracker").style.width = scrolled + "%";
+        });
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"e3c1c9af36de41759418005494a48906","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
