@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,6 +21,30 @@
             --accent-purple: #b300ff;
             --glass-border: rgba(255, 255, 255, 0.06);
             --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body.light-theme {
+            --bg-dark: #f5f6fa;
+            --bg-panel: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            color: #1d212a;
+        }
+        body.light-theme h1 {
+            background: linear-gradient(135deg, #1d212a 40%, #5c5d61 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        body.light-theme h2 {
+            color: #1d212a;
+        }
+        body.light-theme .back-btn {
+            color: #1d212a;
+        }
+        body.light-theme .banner-text h3 {
+            color: #fff;
+        }
+        body.light-theme .content-box {
+            box-shadow: 0 15px 35px rgba(0,0,0,0.04);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -308,7 +333,7 @@
         <a href="index.html" class="back-btn fade-up"><i class="fas fa-arrow-left"></i> Return Home</a>
         
         <div class="header fade-up delay-1">
-            <img src="https://i.ibb.co/VpTq12z5/logo.png" alt="Logo" class="logo">
+            <img src="https://i.ibb.co/v6mXhHWN/image.png" alt="Logo" class="logo">
             <h1>Privacy & Terms</h1>
             <p class="last-updated">Last Updated: April 2026</p>
         </div>
@@ -316,7 +341,7 @@
         <!-- Premium Happiness Banner -->
         <div class="happiness-banner fade-up delay-2">
             <!-- Using a high-quality Unsplash image representing joy and music -->
-            <img src="https://i.ibb.co/mVS2qJ0H/IMG-20260312-WA0069.jpg" alt="Joy of Music">
+            <img src="https://i.ibb.co/v6mXhHWN/image.png" alt="Joy of Music">
             <div class="banner-text">
                 <h3>Logic & Soul.</h3>
                 <p>Fueling your everyday happiness.</p>
@@ -346,12 +371,21 @@
             </section>
         </div>
         
-        <footer class="fade-up delay-3">
+        <footer class="fade-up delay-3" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
             <p>&copy; 2026 BEATLABS INFRASTRUCTURE.</p>
+            <div style="display: flex; align-items: center; gap: 8px; opacity: 0.4;">
+                <span style="font-size: 0.7rem; font-family: 'Space Mono', monospace; font-weight: 700;">SECURED BY</span>
+                <img src="upi logo.png" alt="UPI" style="height: 16px; object-fit: contain; filter: grayscale(1) brightness(1.5);">
+            </div>
         </footer>
     </div>
 
     <script>
+        // Theme Sync
+        if (localStorage.getItem('beatwave-theme') === 'light') {
+            document.body.classList.add('light-theme');
+        }
+
         // Smooth Cursor Spotlight Logic
         const cursorGlow = document.getElementById('cursor-glow');
         
@@ -374,6 +408,6 @@
             document.getElementById("scroll-tracker").style.width = scrolled + "%";
         });
     </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"e3c1c9af36de41759418005494a48906","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+    <script src="ai-assistant.js"></script>
 </body>
 </html>
