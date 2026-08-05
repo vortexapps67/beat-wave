@@ -2,21 +2,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3391001876342429"
-     crossorigin="anonymous"></script>
-    <meta name="google-site-verification" content="_VcsB-p9ObAD2xWVJylitzjf-Zum0-8YcISZxGO5CX4" />
-    <meta name="description" content="BeatWave is a premium ad free music player and FOSS music app. Experience the best open source music app locally on your device with beautiful Apple-style aesthetics and zero tracking.">
-    <meta name="keywords" content="ad free music player, foss music app, best open source music app, music player, android music player, open source audio player, beatwave, beatlabs">
-    <meta charset="UTF-8">        
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">        
-    <title>BeatWave | A BeatLabs App</title>        
-    <link rel="icon" type="image/png" href="https://i.ibb.co/PZHk4cjT/image.png">    
-    <link rel="preconnect" href="https://fonts.googleapis.com">        
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">        
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">        
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>        
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>        
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary SEO -->
+    <title>BeatWave — Best Ad-Free Music App | Free Music Streaming, No Ads</title>
+    <meta name="description" content="BeatWave is the best ad-free music app. Stream millions of songs for free with zero ads, zero tracking. Beautiful web player + Android app by BeatLabs.">
+    <meta name="keywords" content="BeatWave music, best ad free music app, free music app no ads, ad free music streaming, FOSS music player, open source music app, BeatLabs, free music web app, Android music player no ads, best free music app 2026, beatwave, beatlabs">
+    <meta name="author" content="BeatLabs, Akshansh Sinha">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="https://beatwave.beatlabs.dev/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="BeatWave — Best Ad-Free Music App | Free Music Streaming">
+    <meta property="og:description" content="Stream millions of songs with zero ads and zero tracking. BeatWave is the best free, ad-free music app — available as a web player and Android app.">
+    <meta property="og:url" content="https://beatwave.beatlabs.dev/">
+    <meta property="og:site_name" content="BeatWave by BeatLabs">
+    <meta property="og:image" content="https://i.ibb.co/PZHk4cjT/image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="BeatWave — Best Ad-Free Music App">
+    <meta name="twitter:description" content="Stream millions of songs for free. No ads, no tracking, no account needed. BeatWave by BeatLabs.">
+    <meta name="twitter:image" content="https://i.ibb.co/PZHk4cjT/image.png">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "BeatWave",
+      "operatingSystem": "Android, Web",
+      "applicationCategory": "MusicApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "BeatWave is the best ad-free music app. Stream millions of songs for free with zero ads, zero tracking, and no account required.",
+      "url": "https://beatwave.beatlabs.dev/",
+      "author": {
+        "@type": "Person",
+        "name": "Akshansh Sinha",
+        "url": "https://support-akshansh.vercel.app"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5",
+        "reviewCount": "1"
+      }
+    }
+    </script>
+
+    <!-- Sitemap discovery -->
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+    <!-- Favicon & Assets -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/PZHk4cjT/image.png">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/PZHk4cjT/image.png">
+
+    <!-- Google Verification -->
+    <meta name="google-site-verification" content="_VcsB-p9ObAD2xWVJylitzjf-Zum0-8YcISZxGO5CX4">
+
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3391001876342429" crossorigin="anonymous"></script>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="config.js"></script>
     <style>                
         :root {                
@@ -1740,13 +1802,24 @@
         </section>
 
         <section class="support-container reveal">                        
-            <div class="support-card">                                
-                <div class="upi-logo-wrapper">                                        
-                    <img src="upi logo.png" alt="UPI Logo" style="height: 48px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.3)); border-radius: 8px;">
+            <div class="support-card" style="position: relative; overflow: hidden; padding: 2.5rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; backdrop-filter: blur(12px); text-align: center; max-width: 500px; margin: 2rem auto; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">                                
+                <div class="upi-logo-wrapper" style="margin-bottom: 1.5rem; display: flex; justify-content: center;">                                        
+                    <img src="upi logo.png" alt="UPI Logo" style="height: 90px; object-fit: contain; filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.4)); transition: transform 0.3s; margin: 0 auto;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
                 </div>                                
-                <h3>Support the Project</h3>                                
-                <p>Financial assistance is 100% voluntary and optional. Contributed payments are applied directly to balancing standalone community database server node costs.</p>                                
-                <div class="coming-soon-badge">Coming Soon</div>                        
+                <h3 style="font-size: 1.75rem; font-weight: 800; background: linear-gradient(135deg, #fff, #a3a3a3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.75rem;">Support Our Work!</h3>                                
+                <p style="font-size: 0.9rem; color: #a1a1aa; line-height: 1.6; margin-bottom: 1.75rem;">Financial assistance is 100% voluntary and optional. Contributed payments are applied directly to balancing standalone community database server node costs.</p>                                
+                
+                <!-- Copyable UPI capsule -->
+                <div style="display: flex; flex-direction: column; gap: 0.75rem; align-items: center; justify-content: center; width: 100%;">
+                    <div onclick="copyUpiIdToClipboard()" style="display: inline-flex; align-items: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.75rem 1.25rem; border-radius: 9999px; cursor: pointer; transition: all 0.2s; user-select: none;" onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'; this.style.borderColor='rgba(255, 255, 255, 0.2)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)';">
+                        <span id="upiIdText" style="font-family: 'Space Mono', monospace; font-size: 0.85rem; color: #e4e4e7; font-weight: bold; letter-spacing: 0.05em;">akshanshsinha67@axl</span>
+                        <i id="upiCopyIcon" class="fa-regular fa-copy" style="color: #a1a1aa; font-size: 0.9rem;"></i>
+                    </div>
+                    
+                    <a href="https://support-akshansh.vercel.app" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #097939, #0084a9); color: white; font-weight: bold; padding: 0.75rem 1.75rem; border-radius: 9999px; font-size: 0.85rem; text-decoration: none; box-shadow: 0 4px 15px rgba(0, 132, 169, 0.3); transition: all 0.3s; margin-top: 0.5rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 132, 169, 0.5)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0, 132, 169, 0.3)';">
+                        Donate via Webpage <i class="fa-solid fa-arrow-up-right-from-square" style="margin-left: 0.5rem; font-size: 0.75rem;"></i>
+                    </a>
+                </div>
             </div>                
         </section>                                                                                
 
