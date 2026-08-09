@@ -64,8 +64,8 @@
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
 
     <!-- Favicon & Assets -->
-    <link rel="icon" type="image/png" href="https://i.ibb.co/PZHk4cjT/image.png">
-    <link rel="apple-touch-icon" href="https://i.ibb.co/PZHk4cjT/image.png">
+    <link rel="icon" type="image/png" href="hero%20image.png">
+    <link rel="apple-touch-icon" href="hero%20image.png">
 
     <!-- Google Verification -->
     <meta name="google-site-verification" content="_VcsB-p9ObAD2xWVJylitzjf-Zum0-8YcISZxGO5CX4">
@@ -1522,7 +1522,7 @@
 
     <div id="loading-screen">                
         <canvas id="loading-canvas"></canvas>
-        <img src="https://i.ibb.co/PZHk4cjT/image.png" alt="BeatWave Logo" class="loader-logo">                
+        <img src="hero%20image.png" alt="BeatWave Logo" class="loader-logo">                
         <div class="wavy-text-container" id="wavy-text-anchor"></div>        
         <div class="loader-progress-matrix-bar">
             <div class="loader-progress-matrix-fill" id="loaderMatrixProgressBarNode"></div>
@@ -1575,7 +1575,7 @@
     <div id="app-dynamic-render">                
         <nav>                        
             <a href="#" class="nav-brand">                
-                <img src="https://i.ibb.co/PZHk4cjT/image.png" alt="Logo" class="nav-logo">                                                                                                                                                                                                                                                                                
+                <img src="hero%20image.png" alt="Logo" class="nav-logo">                                                                                                                                                                                                                                                                                
                 <span>BeatWave</span>                        
             </a>                        
             <div class="nav-links-desktop" style="display: flex; align-items: center; gap: 30px;">
@@ -1589,7 +1589,7 @@
             <div class="menu-trigger" style="cursor:pointer; opacity: 0.7; padding: 5px;"><i class="fas fa-bars fa-lg"></i></div>        
         </nav>                
         <section class="hero reveal active">                        
-            <img src="https://i.ibb.co/PZHk4cjT/image.png" alt="BeatWave Main Logo" class="hero-logo">                        
+            <img src="hero%20image.png" alt="BeatWave Main Logo" class="hero-logo">                        
             <h1>BeatWave</h1>                        
             <div class="scramble-title" id="scramble-target">Made With ❤️ By The BeatLabs Team.</div>                        
             <div class="hero-buttons">                                
@@ -2352,7 +2352,7 @@
                     videoId: vId,
                     title: title,
                     artist: artist,
-                    artUrl: artUrl || 'https://i.ibb.co/PZHk4cjT/image.png'
+                    artUrl: artUrl || 'hero%20image.png'
                 }).then(() => {
                     document.getElementById('admin-music-videoid').value = '';
                     document.getElementById('admin-music-title').value = '';
@@ -2625,178 +2625,236 @@
             randomChar() { return this.chars[Math.floor(Math.random() * this.chars.length)]; }                
         }
 
-        const canvas = document.getElementById('particle-canvas');                
-        const ctx = canvas.getContext('2d');                        
-        let mouse = { x: null, y: null, radius: 180 };                
-        let isMobile = window.innerWidth <= 768;
-
-        function project3D(x, y, z, angleX, angleY, centerX, centerY) {                        
-            let cosX = Math.cos(angleX), sinX = Math.sin(angleX);                        
-            let y1 = y * cosX - z * sinX;            
-            let z1 = y * sinX + z * cosX;
-            let cosY = Math.cos(angleY), sinY = Math.sin(angleY);                        
-            let x2 = x * cosY + z1 * sinY;                        
-            let z2 = -x * sinY + z1 * cosY;            
-            const perspective = 400;                        
-            let scale = perspective / (perspective + z2);                        
-            return { x: x2 * scale + centerX, y: y1 * scale + centerY, scale: scale };                
-        }
-
-        function createCubeInstance(targetCanvas) {                        
-            const colorsDark = ['rgba(0, 210, 255, ', 'rgba(179, 0, 255, ', 'rgba(255, 59, 59, '];                        
-            return {                                                    
-                x: Math.random() * targetCanvas.width,                                                    
-                y: Math.random() * targetCanvas.height + targetCanvas.height,                                                    
-                z: Math.random() * 200 - 100,                                                    
-                size: Math.random() * 24 + 10,                                                    
-                baseSpeed: Math.random() * 0.6 + 0.3,                                                    
-                speedY: 0,                                                    
-                rotX: Math.random() * Math.PI,                                                    
-                rotY: Math.random() * Math.PI,                                                    
-                rotSpeedX: (Math.random() - 0.5) * 0.015,                                                    
-                rotSpeedY: (Math.random() - 0.5) * 0.015,                                                    
-                color: colorsDark[Math.floor(Math.random() * colorsDark.length)],                                                    
-                opacity: Math.random() * 0.35 + 0.15,                
-                targetX: 0,                                                    
-                targetY: 0                        
-            };                
-        }
-
-        function initParticles() {                        
-            if(!canvas) return;                        
-            canvas.width = window.innerWidth;                             
-            canvas.height = window.innerHeight;            
-            isMobile = window.innerWidth <= 768;                         
-            backgroundCubes = [];                                                    
-            let cubeCount = isMobile ? 12 : 32;                        
-            for (let i = 0; i < cubeCount; i++) {                                                    
-                let cube = createCubeInstance(canvas);                                                    
-                cube.y = Math.random() * canvas.height;                                                    
-                backgroundCubes.push(cube);                        
-            }                
-        }
-
-        function initLoadingParticles() {
-            loadingCanvas = document.getElementById('loading-canvas');
-            if(!loadingCanvas) return;
-            loadingCtx = loadingCanvas.getContext('2d');
-            loadingCanvas.width = window.innerWidth;
-            loadingCanvas.height = window.innerHeight;
-            loadingCubes = [];
-            let count = isMobile ? 10 : 25;
-            for(let i = 0; i < count; i++) {
-                let cube = createCubeInstance(loadingCanvas);
-                cube.y = Math.random() * loadingCanvas.height;
-                loadingCubes.push(cube);
+        // Simplex Noise Generator for Waves Background
+        function buildPermutationTable(seed) {
+            const table = new Uint8Array(256);
+            for (let i = 0; i < 256; i++) table[i] = i;
+            let s = seed * 65536;
+            for (let i = 255; i > 0; i--) {
+                s = (s * 16807) % 2147483647;
+                const n = Math.floor((s / 2147483647) * (i + 1));
+                const q = table[i];
+                table[i] = table[n];
+                table[n] = q;
             }
+            return table;
         }
 
-        function drawCube(targetCtx, cube) {                        
-            let half = cube.size / 2;                        
-            let vertices = [                                                    
-                {x: -half, y: -half, z: -half}, {x: half, y: -half, z: -half},                                                    
-                {x: half, y: half, z: -half}, {x: -half, y: half, z: -half},                                                    
-                {x: -half, y: -half, z: half}, {x: half, y: -half, z: half},                                                    
-                {x: half, y: half, z: half}, {x: -half, y: half, z: half}                        
-            ];            
-            let edges = [                                                    
-                [0,1], [1,2], [2,3], [3,0],                                                    
-                [4,5], [5,6], [6,7], [7,4],                                                    
-                [0,4], [1,5], [2,6], [3,7]                        
-            ];            
-            let projected = [];                        
-            for (let i = 0; i < vertices.length; i++) {                                                    
-                let pt = project3D(vertices[i].x, vertices[i].y, vertices[i].z, cube.rotX, cube.rotY, cube.x, cube.y);                                                    
-                projected.push(pt);                        
-            }            
-            let isLight = document.body.classList.contains('light-theme');                        
-            targetCtx.strokeStyle = cube.color + (isLight ? '0.25)' : cube.opacity + ')');            
-            targetCtx.lineWidth = Math.max(0.5, 1.2 * projected[0].scale);                                                    
-            if (!isLight) {                                                    
-                targetCtx.shadowColor = cube.color.replace(', ', ')');                                                    
-                targetCtx.shadowBlur = 12 * projected[0].scale;                        
-            } else {                                                    
-                targetCtx.shadowBlur = 0;                        
-            }            
-            targetCtx.beginPath();                        
-            for (let i = 0; i < edges.length; i++) {                
-                let p1 = projected[edges[i][0]];                                                    
-                let p2 = projected[edges[i][1]];                                                    
-                targetCtx.moveTo(p1.x, p1.y);                                                    
-                targetCtx.lineTo(p2.x, p2.y);                        
-            }                        
-            targetCtx.stroke();                        
-            targetCtx.shadowBlur = 0;                
-        }
+        function createNoise2D(seed = Math.random()) {
+            const p = buildPermutationTable(seed);
+            const perm = new Uint8Array(512);
+            const permMod12 = new Uint8Array(512);
+            for (let i = 0; i < 512; i++) {
+                perm[i] = p[i & 255];
+                permMod12[i] = perm[i] % 12;
+            }
+            const grad2 = [
+                [1, 1], [-1, 1], [1, -1], [-1, -1],
+                [1, 0], [-1, 0], [1, 0], [-1, 0],
+                [0, 1], [-0, 1], [0, 1], [-0, 1]
+            ];
+            const F2 = 0.5 * (Math.sqrt(3) - 1);
+            const G2 = (3 - Math.sqrt(3)) / 6;
 
-        function animateParticles() {                        
-            if(!ctx || !canvas) return;                        
-            ctx.clearRect(0, 0, canvas.width, canvas.height);                                                    
-            const count = backgroundCubes.length;            
-            const mX = mouse.x;             
-            const mY = mouse.y;             
-            const mRad = mouse.radius;            
-            for (let i = 0; i < count; i++) {                                                    
-                let cube = backgroundCubes[i];                                                                                                                                                                                                                                                                                
-                cube.rotX += cube.rotSpeedX;                                                    
-                cube.rotY += cube.rotSpeedY;                
-                cube.speedY = -cube.baseSpeed;                                                    
-                if (mX !== null && mY !== null && !isMobile) {                                        
-                    let dx = cube.x - mX;                                        
-                    let dy = cube.y - mY;                                        
-                    let dist = Math.sqrt(dx * dx + dy * dy);                                        
-                    if (dist < mRad) {                                                                                                                                                                                                                                                                                                        
-                        let force = (mRad - dist) / mRad;                                                                                                                                                                                                                                                                                                        
-                        cube.x += (dx / dist) * force * 4;                                                                                                                                                                                                                                                                                                        
-                        cube.y += (dy / dist) * force * 4;                                                                                                                                                                                                                                                                                                        
-                        cube.speedY -= force * 0.5;                                        
-                    }                                        
-                }                
-                cube.y += cube.speedY;                
-                if (cube.y < -50) {                                        
-                    backgroundCubes[i] = createCubeInstance(canvas);                                
-                }                
-                drawCube(ctx, cube);                        
-            }                        
-            requestAnimationFrame(animateParticles);                
-        }
-
-        function animateLoadingParticles() {
-            if(!loadingCtx || !loadingCanvas) return;
-            loadingCtx.clearRect(0, 0, loadingCanvas.width, loadingCanvas.height);
-            for(let i = 0; i < loadingCubes.length; i++) {
-                let cube = loadingCubes[i];
-                cube.rotX += cube.rotSpeedX * 1.5;
-                cube.rotY += cube.rotSpeedY * 1.5;
-                cube.speedY = -(cube.baseSpeed * 1.4);
-                cube.y += cube.speedY;
-                if(cube.y < -50) {
-                    loadingCubes[i] = createCubeInstance(loadingCanvas);
+            return function noise2D(x, y) {
+                let n0 = 0, n1 = 0, n2 = 0;
+                const s = (x + y) * F2;
+                const i = Math.floor(x + s);
+                const j = Math.floor(y + s);
+                const t = (i + j) * G2;
+                const X0 = i - t;
+                const Y0 = j - t;
+                const x0 = x - X0;
+                const y0 = y - Y0;
+                let i1, j1;
+                if (x0 > y0) { i1 = 1; j1 = 0; } else { i1 = 0; j1 = 1; }
+                const x1 = x0 - i1 + G2;
+                const y1 = y0 - j1 + G2;
+                const x2 = x0 - 1 + 2 * G2;
+                const y2 = y0 - 1 + 2 * G2;
+                const ii = i & 255;
+                const jj = j & 255;
+                let t0 = 0.5 - x0 * x0 - y0 * y0;
+                if (t0 >= 0) {
+                    t0 *= t0;
+                    const gi0 = permMod12[ii + perm[jj]];
+                    n0 = t0 * t0 * (grad2[gi0][0] * x0 + grad2[gi0][1] * y0);
                 }
-                drawCube(loadingCtx, cube);
-            }
-            requestAnimationFrame(animateLoadingParticles);
+                let t1 = 0.5 - x1 * x1 - y1 * y1;
+                if (t1 >= 0) {
+                    t1 *= t1;
+                    const gi1 = permMod12[ii + i1 + perm[jj + j1]];
+                    n1 = t1 * t1 * (grad2[gi1][0] * x1 + grad2[gi1][1] * y1);
+                }
+                let t2 = 0.5 - x2 * x2 - y2 * y2;
+                if (t2 >= 0) {
+                    t2 *= t2;
+                    const gi2 = permMod12[ii + 1 + perm[jj + 1]];
+                    n2 = t2 * t2 * (grad2[gi2][0] * x2 + grad2[gi2][1] * y2);
+                }
+                return 70 * (n0 + n1 + n2);
+            };
         }
 
-        let transformUpdatePending = false;                
-        window.addEventListener('mousemove', (e) => {             
-            mouse.x = e.clientX; mouse.y = e.clientY;             
-            const cursorGlow = document.getElementById('cursor-glow');             
-            if (!transformUpdatePending && !isMobile && cursorGlow) {                                        
-                transformUpdatePending = true;                
-                requestAnimationFrame(() => { cursorGlow.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0)`; transformUpdatePending = false; });                        
-            }                
-        });                
-        window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });                
-        window.addEventListener('resize', () => { 
-            clearTimeout(resizeTimeout); 
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas ? canvas.getContext('2d') : null;
+        let mouse = { x: -100, y: -100, sx: -100, sy: -100, lx: -100, ly: -100, vs: 0, a: 0, set: false };
+        let isMobile = window.innerWidth <= 768;
+        let lines = [];
+        let noise2D = createNoise2D();
+        let animationFrameId = null;
+
+        function initParticles() {
+            if (!canvas) return;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            isMobile = window.innerWidth <= 768;
+
+            lines = [];
+            const spacing = isMobile ? 18 : 10;
+            const xGap = spacing;
+            const yGap = spacing;
+            
+            const totalLines = Math.ceil(canvas.width / xGap) + 4;
+            const totalPoints = Math.ceil(canvas.height / yGap) + 4;
+            
+            const xStart = -20;
+            const yStart = -20;
+
+            for (let i = 0; i < totalLines; i++) {
+                const points = [];
+                for (let j = 0; j < totalPoints; j++) {
+                    points.push({
+                        baseX: xStart + xGap * i,
+                        baseY: yStart + yGap * j,
+                        x: xStart + xGap * i,
+                        y: yStart + yGap * j,
+                        waveX: 0,
+                        waveY: 0,
+                        cx: 0,
+                        cy: 0,
+                        vx: 0,
+                        vy: 0
+                    });
+                }
+                lines.push(points);
+            }
+        }
+
+        function animateParticles(time = 0) {
+            if (!ctx || !canvas) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Interpolate mouse movement
+            mouse.sx += (mouse.x - mouse.sx) * 0.1;
+            mouse.sy += (mouse.y - mouse.sy) * 0.1;
+            const dx = mouse.x - mouse.lx;
+            const dy = mouse.y - mouse.ly;
+            const d = Math.hypot(dx, dy);
+            mouse.vs += (d - mouse.vs) * 0.1;
+            mouse.vs = Math.min(100, mouse.vs);
+            mouse.lx = mouse.x;
+            mouse.ly = mouse.y;
+            mouse.a = Math.atan2(dy, dx);
+
+            const isLight = document.body.classList.contains('light-theme');
+            ctx.strokeStyle = isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.12)';
+            ctx.lineWidth = 1;
+
+            const t = time;
+            const mSize = Math.max(175, mouse.vs);
+
+            for (let i = 0; i < lines.length; i++) {
+                const points = lines[i];
+                ctx.beginPath();
+                for (let j = 0; j < points.length; j++) {
+                    const p = points[j];
+
+                    // Noise wave calculation
+                    const move = noise2D((p.baseX + t * 0.008) * 0.003, (p.baseY + t * 0.003) * 0.002) * 8;
+                    p.waveX = Math.cos(move) * 12;
+                    p.waveY = Math.sin(move) * 6;
+
+                    // Mouse reaction
+                    const mdx = p.baseX - mouse.sx;
+                    const mdy = p.baseY - mouse.sy;
+                    const md = Math.hypot(mdx, mdy);
+                    
+                    if (md < mSize) {
+                        const s = 1 - md / mSize;
+                        const f = Math.cos(md * 0.001) * s;
+                        p.vx += Math.cos(mouse.a) * f * mSize * mouse.vs * 0.00035;
+                        p.vy += Math.sin(mouse.a) * f * mSize * mouse.vs * 0.00035;
+                    }
+
+                    // Drag back forces (spring)
+                    p.vx += (0 - p.cx) * 0.01;
+                    p.vy += (0 - p.cy) * 0.01;
+                    p.vx *= 0.95;
+                    p.vy *= 0.95;
+                    p.cx += p.vx;
+                    p.cy += p.vy;
+
+                    p.cx = Math.min(50, Math.max(-50, p.cx));
+                    p.cy = Math.min(50, Math.max(-50, p.cy));
+
+                    const drawX = p.baseX + p.waveX + p.cx;
+                    const drawY = p.baseY + p.waveY + p.cy;
+
+                    if (j === 0) {
+                        ctx.moveTo(drawX, drawY);
+                    } else {
+                        ctx.lineTo(drawX, drawY);
+                    }
+                }
+                ctx.stroke();
+            }
+
+            animationFrameId = requestAnimationFrame(animateParticles);
+        }
+
+        function initLoadingParticles() {}
+        function animateLoadingParticles() {}
+
+        let transformUpdatePending = false;
+        window.addEventListener('mousemove', (e) => {
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+            
+            if (!mouse.set) {
+                mouse.sx = mouse.x;
+                mouse.sy = mouse.y;
+                mouse.lx = mouse.x;
+                mouse.ly = mouse.y;
+                mouse.set = true;
+            }
+
+            const cursorGlow = document.getElementById('cursor-glow');
+            if (!transformUpdatePending && !isMobile && cursorGlow) {
+                transformUpdatePending = true;
+                requestAnimationFrame(() => {
+                    cursorGlow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+                    transformUpdatePending = false;
+                });
+            }
+        });
+
+        window.addEventListener('mouseout', () => {
+            mouse.x = -100;
+            mouse.y = -100;
+        });
+
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
                 initParticles();
-                if(loadingCanvas) {
+                if (loadingCanvas) {
                     loadingCanvas.width = window.innerWidth;
                     loadingCanvas.height = window.innerHeight;
                 }
-            }, 2000); 
+            }, 2000);
         });
 
         function refreshRenderObservers() {                        
@@ -2843,7 +2901,7 @@
             }                
         }        
         window.addEventListener('scroll', scrollReveal);                
-        window.addEventListener('load', () => {                        
+        function startApp() {
             initParticles();                        
             animateParticles();
             initLoadingParticles();
@@ -2854,8 +2912,14 @@
                 const screen = document.getElementById('loading-screen');                                
                 if(screen) screen.classList.add('fade-out');            
                 runOdometerAnimation();
-            }, 500);                
-        });        
+            }, 100);                
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startApp);
+        } else {
+            startApp();
+        }        
     </script>    
     <script src="ai-assistant.js"></script>
 </body>

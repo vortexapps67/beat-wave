@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terms & Conditions | BeatWave</title>
     
-    <link rel="icon" type="image/png" href="https://i.ibb.co/VpTq12z5/logo.png">
+    <link rel="icon" type="image/png" href="hero%20image.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -94,6 +94,22 @@
             border-radius: 50%; pointer-events: none; z-index: -2;
             transform: translate(-50%, -50%); transition: transform 0.1s ease-out;
             mix-blend-mode: screen; filter: blur(30px);
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.85;
+            mix-blend-mode: screen;
+        }
+        body.light-theme #particle-canvas {
+            opacity: 0.4;
+            mix-blend-mode: normal;
         }
 
         @keyframes breathe {
@@ -328,12 +344,13 @@
     <div id="scroll-tracker"></div>
     <div class="ambient-glow"></div>
     <div id="cursor-glow"></div>
+    <canvas id="particle-canvas"></canvas>
 
     <div class="container">
         <a href="index.html" class="back-btn fade-up"><i class="fas fa-arrow-left"></i> Return Home</a>
         
         <div class="header fade-up delay-1">
-            <img src="https://i.ibb.co/v6mXhHWN/image.png" alt="Logo" class="logo">
+            <img src="hero%20image.png" alt="Logo" class="logo">
             <h1>Privacy & Terms</h1>
             <p class="last-updated">Last Updated: April 2026</p>
         </div>
@@ -341,7 +358,7 @@
         <!-- Premium Happiness Banner -->
         <div class="happiness-banner fade-up delay-2">
             <!-- Using a high-quality Unsplash image representing joy and music -->
-            <img src="https://i.ibb.co/v6mXhHWN/image.png" alt="Joy of Music">
+            <img src="hero%20image.png" alt="Joy of Music">
             <div class="banner-text">
                 <h3>Logic & Soul.</h3>
                 <p>Fueling your everyday happiness.</p>
@@ -388,16 +405,14 @@
 
         // Smooth Cursor Spotlight Logic
         const cursorGlow = document.getElementById('cursor-glow');
-        
         window.addEventListener('mousemove', (e) => { 
-            // Added requestAnimationFrame for smoother rendering
             requestAnimationFrame(() => {
-                cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                if (cursorGlow) cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
             });
         });
         
         window.addEventListener('mouseout', () => { 
-            cursorGlow.style.transform = `translate(-1000px, -1000px)`; 
+            if (cursorGlow) cursorGlow.style.transform = `translate(-1000px, -1000px)`; 
         });
 
         // Scroll Tracker Logic
@@ -405,8 +420,237 @@
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
-            document.getElementById("scroll-tracker").style.width = scrolled + "%";
+            const tracker = document.getElementById("scroll-tracker");
+            if (tracker) tracker.style.width = scrolled + "%";
         });
+
+        // Simplex Noise Waves Background
+        function buildPermutationTable(seed) {
+            const table = new Uint8Array(256);
+            for (let i = 0; i < 256; i++) table[i] = i;
+            let s = seed * 65536;
+            for (let i = 255; i > 0; i--) {
+                s = (s * 16807) % 2147483647;
+                const n = Math.floor((s / 2147483647) * (i + 1));
+                const q = table[i];
+                table[i] = table[n];
+                table[n] = q;
+            }
+            return table;
+        }
+
+        function createNoise2D(seed = Math.random()) {
+            const p = buildPermutationTable(seed);
+            const perm = new Uint8Array(512);
+            const permMod12 = new Uint8Array(512);
+            for (let i = 0; i < 512; i++) {
+                perm[i] = p[i & 255];
+                permMod12[i] = perm[i] % 12;
+            }
+            const grad2 = [
+                [1, 1], [-1, 1], [1, -1], [-1, -1],
+                [1, 0], [-1, 0], [1, 0], [-1, 0],
+                [0, 1], [-0, 1], [0, 1], [-0, 1]
+            ];
+            const F2 = 0.5 * (Math.sqrt(3) - 1);
+            const G2 = (3 - Math.sqrt(3)) / 6;
+
+            return function noise2D(x, y) {
+                let n0 = 0, n1 = 0, n2 = 0;
+                const s = (x + y) * F2;
+                const i = Math.floor(x + s);
+                const j = Math.floor(y + s);
+                const t = (i + j) * G2;
+                const X0 = i - t;
+                const Y0 = j - t;
+                const x0 = x - X0;
+                const y0 = y - Y0;
+                let i1, j1;
+                if (x0 > y0) { i1 = 1; j1 = 0; } else { i1 = 0; j1 = 1; }
+                const x1 = x0 - i1 + G2;
+                const y1 = y0 - j1 + G2;
+                const x2 = x0 - 1 + 2 * G2;
+                const y2 = y0 - 1 + 2 * G2;
+                const ii = i & 255;
+                const jj = j & 255;
+                let t0 = 0.5 - x0 * x0 - y0 * y0;
+                if (t0 >= 0) {
+                    t0 *= t0;
+                    const gi0 = permMod12[ii + perm[jj]];
+                    n0 = t0 * t0 * (grad2[gi0][0] * x0 + grad2[gi0][1] * y0);
+                }
+                let t1 = 0.5 - x1 * x1 - y1 * y1;
+                if (t1 >= 0) {
+                    t1 *= t1;
+                    const gi1 = permMod12[ii + i1 + perm[jj + j1]];
+                    n1 = t1 * t1 * (grad2[gi1][0] * x1 + grad2[gi1][1] * y1);
+                }
+                let t2 = 0.5 - x2 * x2 - y2 * y2;
+                if (t2 >= 0) {
+                    t2 *= t2;
+                    const gi2 = permMod12[ii + 1 + perm[jj + 1]];
+                    n2 = t2 * t2 * (grad2[gi2][0] * x2 + grad2[gi2][1] * y2);
+                }
+                return 70 * (n0 + n1 + n2);
+            };
+        }
+
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas ? canvas.getContext('2d') : null;
+        let mouse = { x: -100, y: -100, sx: -100, sy: -100, lx: -100, ly: -100, vs: 0, a: 0, set: false };
+        let isMobile = window.innerWidth <= 768;
+        let lines = [];
+        let noise2D = createNoise2D();
+        let animationFrameId = null;
+
+        function initParticles() {
+            if (!canvas) return;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            isMobile = window.innerWidth <= 768;
+
+            lines = [];
+            const spacing = isMobile ? 18 : 10;
+            const xGap = spacing;
+            const yGap = spacing;
+            
+            const totalLines = Math.ceil(canvas.width / xGap) + 4;
+            const totalPoints = Math.ceil(canvas.height / yGap) + 4;
+            
+            const xStart = -20;
+            const yStart = -20;
+
+            for (let i = 0; i < totalLines; i++) {
+                const points = [];
+                for (let j = 0; j < totalPoints; j++) {
+                    points.push({
+                        baseX: xStart + xGap * i,
+                        baseY: yStart + yGap * j,
+                        x: xStart + xGap * i,
+                        y: yStart + yGap * j,
+                        waveX: 0,
+                        waveY: 0,
+                        cx: 0,
+                        cy: 0,
+                        vx: 0,
+                        vy: 0
+                    });
+                }
+                lines.push(points);
+            }
+        }
+
+        function animateParticles(time = 0) {
+            if (!ctx || !canvas) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Interpolate mouse movement
+            mouse.sx += (mouse.x - mouse.sx) * 0.1;
+            mouse.sy += (mouse.y - mouse.sy) * 0.1;
+            const dx = mouse.x - mouse.lx;
+            const dy = mouse.y - mouse.ly;
+            const d = Math.hypot(dx, dy);
+            mouse.vs += (d - mouse.vs) * 0.1;
+            mouse.vs = Math.min(100, mouse.vs);
+            mouse.lx = mouse.x;
+            mouse.ly = mouse.y;
+            mouse.a = Math.atan2(dy, dx);
+
+            const isLight = document.body.classList.contains('light-theme');
+            ctx.strokeStyle = isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.12)';
+            ctx.lineWidth = 1;
+
+            const t = time;
+            const mSize = Math.max(175, mouse.vs);
+
+            for (let i = 0; i < lines.length; i++) {
+                const points = lines[i];
+                ctx.beginPath();
+                for (let j = 0; j < points.length; j++) {
+                    const p = points[j];
+
+                    // Noise wave calculation
+                    const move = noise2D((p.baseX + t * 0.008) * 0.003, (p.baseY + t * 0.003) * 0.002) * 8;
+                    p.waveX = Math.cos(move) * 12;
+                    p.waveY = Math.sin(move) * 6;
+
+                    // Mouse reaction
+                    const mdx = p.baseX - mouse.sx;
+                    const mdy = p.baseY - mouse.sy;
+                    const md = Math.hypot(mdx, mdy);
+                    
+                    if (md < mSize) {
+                        const s = 1 - md / mSize;
+                        const f = Math.cos(md * 0.001) * s;
+                        p.vx += Math.cos(mouse.a) * f * mSize * mouse.vs * 0.00035;
+                        p.vy += Math.sin(mouse.a) * f * mSize * mouse.vs * 0.00035;
+                    }
+
+                    // Drag back forces (spring)
+                    p.vx += (0 - p.cx) * 0.01;
+                    p.vy += (0 - p.cy) * 0.01;
+                    p.vx *= 0.95;
+                    p.vy *= 0.95;
+                    p.cx += p.vx;
+                    p.cy += p.vy;
+
+                    p.cx = Math.min(50, Math.max(-50, p.cx));
+                    p.cy = Math.min(50, Math.max(-50, p.cy));
+
+                    const drawX = p.baseX + p.waveX + p.cx;
+                    const drawY = p.baseY + p.waveY + p.cy;
+
+                    if (j === 0) {
+                        ctx.moveTo(drawX, drawY);
+                    } else {
+                        ctx.lineTo(drawX, drawY);
+                    }
+                }
+                ctx.stroke();
+            }
+
+            animationFrameId = requestAnimationFrame(animateParticles);
+        }
+
+        let transformUpdatePending = false;
+        window.addEventListener('mousemove', (e) => {
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+            
+            if (!mouse.set) {
+                mouse.sx = mouse.x;
+                mouse.sy = mouse.y;
+                mouse.lx = mouse.x;
+                mouse.ly = mouse.y;
+                mouse.set = true;
+            }
+        });
+
+        window.addEventListener('mouseout', () => {
+            mouse.x = -100;
+            mouse.y = -100;
+        });
+
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                initParticles();
+            }, 500);
+        });
+
+        function startApp() {
+            initParticles();
+            animateParticles();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startApp);
+        } else {
+            startApp();
+        }
     </script>
     <script src="ai-assistant.js"></script>
 </body>
