@@ -1,0 +1,659 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms & Conditions | BeatWave</title>
+    
+    <link rel="icon" type="image/png" href="https://i.ibb.co/PZHk4cjT/image.png">
+    <meta property="og:image" content="og%20img.png">
+    <meta name="twitter:image" content="og%20img.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #030305;
+            --bg-panel: rgba(10, 10, 15, 0.5);
+            --accent-blue: #00d2ff;
+            --accent-red: #ff3b3b;
+            --accent-purple: #b300ff;
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body.light-theme {
+            --bg-dark: #f5f6fa;
+            --bg-panel: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            color: #1d212a;
+        }
+        body.light-theme h1 {
+            background: linear-gradient(135deg, #1d212a 40%, #5c5d61 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        body.light-theme h2 {
+            color: #1d212a;
+        }
+        body.light-theme .back-btn {
+            color: #1d212a;
+        }
+        body.light-theme .banner-text h3 {
+            color: #fff;
+        }
+        body.light-theme .content-box {
+            box-shadow: 0 15px 35px rgba(0,0,0,0.04);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg-dark); 
+            color: rgba(255, 255, 255, 0.75); 
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* --- INTERACTIVE SCROLL INDICATOR --- */
+        #scroll-tracker {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-red));
+            z-index: 9999; width: 0%; transition: width 0.1s linear;
+            box-shadow: 0 0 15px var(--accent-purple);
+        }
+
+        /* --- AMBIENT RGB LIGHTING ENGINE --- */
+        .ambient-glow {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(to bottom, #030305, #07070a);
+            z-index: -3; pointer-events: none; overflow: hidden;
+        }
+        .ambient-glow::before, .ambient-glow::after {
+            content: ''; position: absolute; border-radius: 50%;
+            filter: blur(150px); opacity: 0.35;
+            animation: breathe 14s infinite alternate ease-in-out;
+            mix-blend-mode: screen;
+        }
+        .ambient-glow::before {
+            width: 50vw; height: 50vh; top: -10%; left: -10%;
+            background: radial-gradient(circle, rgba(0, 210, 255, 0.25), rgba(179, 0, 255, 0.15));
+            animation-delay: 0s;
+        }
+        .ambient-glow::after {
+            width: 60vw; height: 60vh; bottom: -10%; right: -10%;
+            background: radial-gradient(circle, rgba(255, 59, 59, 0.15), rgba(179, 0, 255, 0.2));
+            animation-delay: -7s;
+        }
+
+        #cursor-glow {
+            position: fixed; top: 0; left: 0; width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(179, 0, 255, 0.12) 0%, rgba(0, 210, 255, 0.04) 40%, transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: -2;
+            transform: translate(-50%, -50%); transition: transform 0.1s ease-out;
+            mix-blend-mode: screen; filter: blur(30px);
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.85;
+            mix-blend-mode: screen;
+        }
+        body.light-theme #particle-canvas {
+            opacity: 0.4;
+            mix-blend-mode: normal;
+        }
+
+        @keyframes breathe {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.3; }
+            50% { transform: scale(1.1) translate(3%, 5%); opacity: 0.5; }
+            100% { transform: scale(0.95) translate(-2%, -3%); opacity: 0.3; }
+        }
+
+        /* --- MAIN CONTAINER & ANIMATIONS --- */
+        .container {
+            max-width: 850px;
+            margin: 80px auto;
+            padding: 0 5%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUpFade 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.3s; }
+        .delay-3 { animation-delay: 0.5s; }
+
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HEADER --- */
+        .header { text-align: center; margin-bottom: 50px; }
+        .logo { width: 65px; margin-bottom: 25px; filter: drop-shadow(0 0 20px rgba(0,210,255,0.4)); transition: var(--transition); }
+        .logo:hover { transform: scale(1.1) rotate(5deg); filter: drop-shadow(0 0 30px rgba(179,0,255,0.6)); }
+        
+        h1 {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            margin-bottom: 15px;
+            background: linear-gradient(180deg, #ffffff 30%, rgba(255,255,255,0.3) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: rgbTextGlow 8s linear infinite alternate;
+        }
+
+        @keyframes rgbTextGlow {
+            0% { filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.2)); }
+            50% { filter: drop-shadow(0 0 25px rgba(179, 0, 255, 0.3)); }
+            100% { filter: drop-shadow(0 0 15px rgba(255, 59, 59, 0.2)); }
+        }
+
+        .last-updated {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent-blue);
+            font-weight: 700;
+            opacity: 0.8;
+        }
+
+        /* --- HAPPINESS BANNER --- */
+        .happiness-banner {
+            width: 100%;
+            height: 280px;
+            border-radius: 35px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 40px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            background: #000;
+        }
+        
+        .happiness-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.65;
+            transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+            mix-blend-mode: luminosity; /* Gives it a premium, slightly desaturated vibe */
+        }
+        
+        .happiness-banner:hover img {
+            transform: scale(1.08);
+            opacity: 0.8;
+            mix-blend-mode: normal;
+        }
+
+        .happiness-banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(3,3,5,1) 0%, rgba(3,3,5,0) 60%);
+            pointer-events: none;
+        }
+
+        .banner-text {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            z-index: 2;
+        }
+        
+        .banner-text h3 {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 5px;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.8);
+        }
+        
+        .banner-text p {
+            color: var(--accent-blue);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin: 0;
+            opacity: 1;
+        }
+
+        /* --- CONTENT BOX WITH CHROMA BORDER --- */
+        .content-box {
+            background: var(--bg-panel);
+            border: 1px solid var(--glass-border);
+            padding: 60px;
+            border-radius: 35px;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            position: relative;
+            transition: box-shadow 0.4s ease;
+        }
+
+        .content-box::before {
+            content: ""; position: absolute; inset: 0;
+            border-radius: 35px; padding: 2px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-red), var(--accent-blue));
+            background-size: 300% 300%;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+            opacity: 0; transition: opacity 0.6s ease;
+            animation: chromaStream 4s linear infinite;
+            z-index: 0;
+        }
+
+        .content-box:hover::before { opacity: 0.6; }
+        .content-box:hover { box-shadow: 0 25px 60px rgba(179, 0, 255, 0.1); }
+        .content-box > * { position: relative; z-index: 1; }
+
+        @keyframes chromaStream {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        section { margin-bottom: 45px; }
+        section:last-child { margin-bottom: 0; }
+        
+        h2 {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            letter-spacing: -0.5px;
+        }
+        
+        h2::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple));
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.6);
+        }
+        
+        p { 
+            margin-bottom: 15px; 
+            font-size: 1rem; 
+            font-weight: 400;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 800;
+            margin-bottom: 40px;
+            font-size: 0.8rem;
+            font-family: 'Space Mono', monospace;
+            transition: var(--transition);
+            opacity: 0.5;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .back-btn:hover { 
+            opacity: 1; 
+            transform: translateX(-8px); 
+            color: var(--accent-blue);
+            text-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 80px;
+            padding-bottom: 60px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            opacity: 0.3;
+            letter-spacing: 2px;
+        }
+        
+        @media (max-width: 600px) {
+            .content-box { padding: 35px; }
+            .happiness-banner { height: 200px; }
+            .banner-text h3 { font-size: 1.4rem; }
+            .banner-text { left: 20px; bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="scroll-tracker"></div>
+    <div class="ambient-glow"></div>
+    <div id="cursor-glow"></div>
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="container">
+        <a href="index.html" class="back-btn fade-up"><i class="fas fa-arrow-left"></i> Return Home</a>
+        
+        <div class="header fade-up delay-1">
+            <img src="https://i.ibb.co/PZHk4cjT/image.png" alt="Logo" class="logo">
+            <h1>Privacy & Terms</h1>
+            <p class="last-updated">Last Updated: April 2026</p>
+        </div>
+
+        <!-- Premium Happiness Banner -->
+        <div class="happiness-banner fade-up delay-2">
+            <!-- Using a high-quality Unsplash image representing joy and music -->
+            <img src="https://i.ibb.co/v6mXhHWN/image.png" alt="Joy of Music">
+            <div class="banner-text">
+                <h3>Logic & Soul.</h3>
+                <p>Fueling your everyday happiness.</p>
+            </div>
+        </div>
+        
+        <div class="content-box fade-up delay-3">
+            <section>
+                <h2>1. Data Collection</h2>
+                <p>BeatWave is built with privacy in mind. We do not collect, store, or sell your personal music files. All audio processing happens locally on your device, ensuring your listening habits remain yours alone.</p>
+            </section>
+            <section>
+                <h2>2. Permissions</h2>
+                <p>The application requires minimal access to your device's storage strictly to scan and play your local audio files. These permissions are siloed and used exclusively for playback functionality.</p>
+            </section>
+            <section>
+                <h2>3. Open Source Foundation</h2>
+                <p>As an open-source project, our logic is entirely transparent. You are free to inspect the source code on our official GitHub repository to verify our security standards and community-driven updates.</p>
+            </section>
+            <section>
+                <h2>4. Liability</h2>
+                <p>BeatWave is provided "as is" without warranty of any kind. The development team is not responsible for any data loss or device issues resulting from the use of the software.</p>
+            </section>
+            <section>
+                <h2>5. Contact Infrastructure</h2>
+                <p>For any legal inquiries or support regarding your data, please reach out to the Support Squad via the official Discord or Instagram channels found on our core system homepage.</p>
+            </section>
+        </div>
+        
+        <footer class="fade-up delay-3" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            <p>&copy; 2026 BEATLABS INFRASTRUCTURE.</p>
+            <div style="display: flex; align-items: center; gap: 8px; opacity: 0.4;">
+                <span style="font-size: 0.7rem; font-family: 'Space Mono', monospace; font-weight: 700;">SECURED BY</span>
+                <img src="upi logo.png" alt="UPI" style="height: 16px; object-fit: contain; filter: grayscale(1) brightness(1.5);">
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Theme Sync
+        if (localStorage.getItem('beatwave-theme') === 'light') {
+            document.body.classList.add('light-theme');
+        }
+
+        // Smooth Cursor Spotlight Logic
+        const cursorGlow = document.getElementById('cursor-glow');
+        window.addEventListener('mousemove', (e) => { 
+            requestAnimationFrame(() => {
+                if (cursorGlow) cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+            });
+        });
+        
+        window.addEventListener('mouseout', () => { 
+            if (cursorGlow) cursorGlow.style.transform = `translate(-1000px, -1000px)`; 
+        });
+
+        // Scroll Tracker Logic
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            const tracker = document.getElementById("scroll-tracker");
+            if (tracker) tracker.style.width = scrolled + "%";
+        });
+
+        // Simplex Noise Waves Background
+        function buildPermutationTable(seed) {
+            const table = new Uint8Array(256);
+            for (let i = 0; i < 256; i++) table[i] = i;
+            let s = seed * 65536;
+            for (let i = 255; i > 0; i--) {
+                s = (s * 16807) % 2147483647;
+                const n = Math.floor((s / 2147483647) * (i + 1));
+                const q = table[i];
+                table[i] = table[n];
+                table[n] = q;
+            }
+            return table;
+        }
+
+        function createNoise2D(seed = Math.random()) {
+            const p = buildPermutationTable(seed);
+            const perm = new Uint8Array(512);
+            const permMod12 = new Uint8Array(512);
+            for (let i = 0; i < 512; i++) {
+                perm[i] = p[i & 255];
+                permMod12[i] = perm[i] % 12;
+            }
+            const grad2 = [
+                [1, 1], [-1, 1], [1, -1], [-1, -1],
+                [1, 0], [-1, 0], [1, 0], [-1, 0],
+                [0, 1], [-0, 1], [0, 1], [-0, 1]
+            ];
+            const F2 = 0.5 * (Math.sqrt(3) - 1);
+            const G2 = (3 - Math.sqrt(3)) / 6;
+
+            return function noise2D(x, y) {
+                let n0 = 0, n1 = 0, n2 = 0;
+                const s = (x + y) * F2;
+                const i = Math.floor(x + s);
+                const j = Math.floor(y + s);
+                const t = (i + j) * G2;
+                const X0 = i - t;
+                const Y0 = j - t;
+                const x0 = x - X0;
+                const y0 = y - Y0;
+                let i1, j1;
+                if (x0 > y0) { i1 = 1; j1 = 0; } else { i1 = 0; j1 = 1; }
+                const x1 = x0 - i1 + G2;
+                const y1 = y0 - j1 + G2;
+                const x2 = x0 - 1 + 2 * G2;
+                const y2 = y0 - 1 + 2 * G2;
+                const ii = i & 255;
+                const jj = j & 255;
+                let t0 = 0.5 - x0 * x0 - y0 * y0;
+                if (t0 >= 0) {
+                    t0 *= t0;
+                    const gi0 = permMod12[ii + perm[jj]];
+                    n0 = t0 * t0 * (grad2[gi0][0] * x0 + grad2[gi0][1] * y0);
+                }
+                let t1 = 0.5 - x1 * x1 - y1 * y1;
+                if (t1 >= 0) {
+                    t1 *= t1;
+                    const gi1 = permMod12[ii + i1 + perm[jj + j1]];
+                    n1 = t1 * t1 * (grad2[gi1][0] * x1 + grad2[gi1][1] * y1);
+                }
+                let t2 = 0.5 - x2 * x2 - y2 * y2;
+                if (t2 >= 0) {
+                    t2 *= t2;
+                    const gi2 = permMod12[ii + 1 + perm[jj + 1]];
+                    n2 = t2 * t2 * (grad2[gi2][0] * x2 + grad2[gi2][1] * y2);
+                }
+                return 70 * (n0 + n1 + n2);
+            };
+        }
+
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas ? canvas.getContext('2d') : null;
+        let mouse = { x: -100, y: -100, sx: -100, sy: -100, lx: -100, ly: -100, vs: 0, a: 0, set: false };
+        let isMobile = window.innerWidth <= 768;
+        let lines = [];
+        let noise2D = createNoise2D();
+        let animationFrameId = null;
+
+        function initParticles() {
+            if (!canvas) return;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            isMobile = window.innerWidth <= 768;
+
+            lines = [];
+            const spacing = isMobile ? 18 : 10;
+            const xGap = spacing;
+            const yGap = spacing;
+            
+            const totalLines = Math.ceil(canvas.width / xGap) + 4;
+            const totalPoints = Math.ceil(canvas.height / yGap) + 4;
+            
+            const xStart = -20;
+            const yStart = -20;
+
+            for (let i = 0; i < totalLines; i++) {
+                const points = [];
+                for (let j = 0; j < totalPoints; j++) {
+                    points.push({
+                        baseX: xStart + xGap * i,
+                        baseY: yStart + yGap * j,
+                        x: xStart + xGap * i,
+                        y: yStart + yGap * j,
+                        waveX: 0,
+                        waveY: 0,
+                        cx: 0,
+                        cy: 0,
+                        vx: 0,
+                        vy: 0
+                    });
+                }
+                lines.push(points);
+            }
+        }
+
+        function animateParticles(time = 0) {
+            if (!ctx || !canvas) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Interpolate mouse movement
+            mouse.sx += (mouse.x - mouse.sx) * 0.1;
+            mouse.sy += (mouse.y - mouse.sy) * 0.1;
+            const dx = mouse.x - mouse.lx;
+            const dy = mouse.y - mouse.ly;
+            const d = Math.hypot(dx, dy);
+            mouse.vs += (d - mouse.vs) * 0.1;
+            mouse.vs = Math.min(100, mouse.vs);
+            mouse.lx = mouse.x;
+            mouse.ly = mouse.y;
+            mouse.a = Math.atan2(dy, dx);
+
+            const isLight = document.body.classList.contains('light-theme');
+            ctx.strokeStyle = isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.12)';
+            ctx.lineWidth = 1;
+
+            const t = time;
+            const mSize = Math.max(175, mouse.vs);
+
+            for (let i = 0; i < lines.length; i++) {
+                const points = lines[i];
+                ctx.beginPath();
+                for (let j = 0; j < points.length; j++) {
+                    const p = points[j];
+
+                    // Noise wave calculation
+                    const move = noise2D((p.baseX + t * 0.008) * 0.003, (p.baseY + t * 0.003) * 0.002) * 8;
+                    p.waveX = Math.cos(move) * 12;
+                    p.waveY = Math.sin(move) * 6;
+
+                    // Mouse reaction
+                    const mdx = p.baseX - mouse.sx;
+                    const mdy = p.baseY - mouse.sy;
+                    const md = Math.hypot(mdx, mdy);
+                    
+                    if (md < mSize) {
+                        const s = 1 - md / mSize;
+                        const f = Math.cos(md * 0.001) * s;
+                        p.vx += Math.cos(mouse.a) * f * mSize * mouse.vs * 0.00035;
+                        p.vy += Math.sin(mouse.a) * f * mSize * mouse.vs * 0.00035;
+                    }
+
+                    // Drag back forces (spring)
+                    p.vx += (0 - p.cx) * 0.01;
+                    p.vy += (0 - p.cy) * 0.01;
+                    p.vx *= 0.95;
+                    p.vy *= 0.95;
+                    p.cx += p.vx;
+                    p.cy += p.vy;
+
+                    p.cx = Math.min(50, Math.max(-50, p.cx));
+                    p.cy = Math.min(50, Math.max(-50, p.cy));
+
+                    const drawX = p.baseX + p.waveX + p.cx;
+                    const drawY = p.baseY + p.waveY + p.cy;
+
+                    if (j === 0) {
+                        ctx.moveTo(drawX, drawY);
+                    } else {
+                        ctx.lineTo(drawX, drawY);
+                    }
+                }
+                ctx.stroke();
+            }
+
+            animationFrameId = requestAnimationFrame(animateParticles);
+        }
+
+        let transformUpdatePending = false;
+        window.addEventListener('mousemove', (e) => {
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+            
+            if (!mouse.set) {
+                mouse.sx = mouse.x;
+                mouse.sy = mouse.y;
+                mouse.lx = mouse.x;
+                mouse.ly = mouse.y;
+                mouse.set = true;
+            }
+        });
+
+        window.addEventListener('mouseout', () => {
+            mouse.x = -100;
+            mouse.y = -100;
+        });
+
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                initParticles();
+            }, 500);
+        });
+
+        function startApp() {
+            initParticles();
+            animateParticles();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startApp);
+        } else {
+            startApp();
+        }
+    </script>
+    <script src="ai-assistant.js"></script>
+</body>
+</html>

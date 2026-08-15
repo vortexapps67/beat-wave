@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>        
+    <meta charset="UTF-8">        
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">        
+    
+    <!-- Primary SEO Optimization -->
+    <title>BeatWave | Cloud Connect Web Player — Free Ad-Free Music Streaming</title>
+    <meta name="description" content="Access the BeatWave Cloud Connect Web Player. Experience the best open-source, ad-free local music streaming dashboard with beautiful glassmorphism style, zero tracking, and no ads.">
+    <meta name="keywords" content="BeatWave player, web player, ad free music player, foss music app, best open source music app, music player, android music player, open source audio player, beatlabs">
+    <meta name="author" content="BeatLabs">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://beatwave.beatlabs.dev/web.html">
+
+    <!-- Open Graph SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="BeatWave Web Player — Premium FOSS Music Client">
+    <meta property="og:description" content="Stream local songs with zero ads. BeatWave is a secure, elegant open source music player by BeatLabs.">
+    <meta property="og:image" content="og%20img.png">
+    <meta name="twitter:image" content="og%20img.png">
+
+    <!-- Stylesheets and Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>        
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">        
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>        
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>        
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="config.js"></script>
+    <link rel="stylesheet" href="web.css">
+</head>
+<body class="h-screen flex flex-col mode-audio select-none">
+
+    <!-- Video Background -->
+    <div id="video-background-container">
+        <video id="bg-video" autoplay loop muted playsinline></video>
+    </div>
+
+    <!-- Maintenance Countdown Banner -->
+    <div id="countdown-banner">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span>Scheduled Maintenance: Offline lock in <strong id="countdown-timer">00:00</strong> (<span id="countdown-msg">core engine upgrade</span>)</span>
+    </div>
+
+    <!-- Announcement Banner -->
+    <div id="announcement-banner" class="announcement-hidden">
+        <div class="announcement-content">
+            <span class="announcement-pulse-dot"></span>
+            <i class="fa-solid fa-bullhorn"></i> <span id="announcement-text">Welcome to BeatWave!</span>
+        </div>
+        <button id="announcement-close">&times;</button>
+    </div>
+
+    <!-- Maintenance Mode Screen -->
+    <div id="maintenance-screen" class="maintenance-hidden">
+        <button id="maintenance-admin-btn" class="admin-float-btn" aria-label="Admin Access">
+            <i class="fa-solid fa-lock"></i>
+        </button>
+        <div class="maintenance-box">
+            <div class="maintenance-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+            <h1>Under Maintenance</h1>
+            <p>BeatWave is undergoing scheduled enhancements to scale our cast room databases. We'll return shortly!</p>
+            <div class="maintenance-loader">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div id="admin-modal" class="admin-modal-hidden">
+        <div class="admin-modal-backdrop"></div>
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h2><i class="fa-solid fa-user-gear"></i> Admin Settings</h2>
+                <button id="admin-modal-close">&times;</button>
+            </div>
+            
+            <div id="admin-login-view" class="admin-step">
+                <p>Unlock dashboard configurations by typing your access password.</p>
+                <div class="admin-input-group">
+                    <input type="password" id="admin-password-input" placeholder="Type password here...">
+                </div>
+                <button id="admin-login-submit" class="admin-primary-btn">Log In</button>
+                <p id="admin-login-error" class="admin-error-msg"></p>
+            </div>
+
+            <!-- Tab Buttons Container -->
+            <div id="admin-tabs" class="admin-tabs-container admin-tab-hidden">
+                <button class="admin-tab-btn active" data-tab="dashboard">🎛️ Configs</button>
+                <button class="admin-tab-btn" data-tab="rooms">📡 Casts</button>
+                <button class="admin-tab-btn" data-tab="catalog">🎵 Music</button>
+                <button class="admin-tab-btn" data-tab="apikeys">🔑 Keys</button>
+                <button class="admin-tab-btn" data-tab="alerts">🚨 Alerts</button>
+            </div>
+
+            <div id="admin-dashboard-view" class="admin-step admin-step-hidden">
+                <!-- Tab: Configs -->
+                <div id="admin-tab-dashboard" class="admin-tab-content">
+                    <div class="admin-field">
+                        <label class="admin-switch-label">
+                            <input type="checkbox" id="admin-maintenance-toggle">
+                            <span class="admin-slider"></span>
+                            <strong>Maintenance Mode</strong>
+                        </label>
+                        <p class="field-desc">Toggle to lock out public user access.</p>
+                    </div>
+                    <hr class="admin-divider">
+                    <div class="admin-field">
+                        <label class="admin-switch-label">
+                            <input type="checkbox" id="admin-announcement-toggle">
+                            <span class="admin-slider"></span>
+                            <strong>Active Announcement Banner</strong>
+                        </label>
+                        <div class="admin-input-group mt-2">
+                            <input type="text" id="admin-announcement-input" placeholder="Type banner message here...">
+                        </div>
+                    </div>
+                    <hr class="admin-divider">
+                    <div class="admin-field">
+                        <label><strong>Target Downloads Counter</strong></label>
+                        <div class="admin-input-group">
+                            <input type="number" id="admin-downloads-input" placeholder="235">
+                        </div>
+                    </div>
+                    <hr class="admin-divider">
+                    <div class="admin-field">
+                        <label><strong>Download Button Text</strong></label>
+                        <div class="admin-input-group">
+                            <input type="text" id="admin-btntext-input" placeholder="Get BeatWave v4.0 (GitHub Build Hub)">
+                        </div>
+                    </div>
+                    <div class="admin-field mb-3">
+                        <label><strong>Download Link URL</strong></label>
+                        <div class="admin-input-group">
+                            <input type="text" id="admin-btnlink-input" placeholder="https://github.com/...">
+                        </div>
+                    </div>
+                    <button id="admin-save-btn" class="admin-primary-btn w-full">Save Configurations</button>
+                </div>
+
+                <!-- Tab: Cast Monitor -->
+                <div id="admin-tab-rooms" class="admin-tab-content admin-tab-hidden">
+                    <p class="field-desc mb-3">Live room database monitor. Terminating a room will instantly disconnect casting nodes.</p>
+                    <div id="admin-rooms-list" class="admin-list-container">
+                        <p class="text-xs text-zinc-500 font-bold py-4 text-center">Scanning for cast rooms...</p>
+                    </div>
+                </div>
+
+                <!-- Tab: Music Catalog -->
+                <div id="admin-tab-catalog" class="admin-tab-content admin-tab-hidden">
+                    <p class="field-desc mb-3">Add featured music elements directly to the web player front-page playlist shelf.</p>
+                    <div class="admin-field mb-2">
+                        <label><strong>YouTube Video ID</strong></label>
+                        <input type="text" id="admin-music-videoid" class="admin-sub-input" placeholder="e.g. dQw4w9WgXcQ">
+                    </div>
+                    <div class="admin-field mb-2">
+                        <label><strong>Song Title</strong></label>
+                        <input type="text" id="admin-music-title" class="admin-sub-input" placeholder="e.g. Never Gonna Give You Up">
+                    </div>
+                    <div class="admin-field mb-2">
+                        <label><strong>Artist / Channel Title</strong></label>
+                        <input type="text" id="admin-music-artist" class="admin-sub-input" placeholder="e.g. Rick Astley">
+                    </div>
+                    <div class="admin-field mb-3">
+                        <label><strong>Cover Art URL</strong></label>
+                        <input type="text" id="admin-music-arturl" class="admin-sub-input" placeholder="e.g. https://i.ytimg.com/vi/...">
+                    </div>
+                    <button id="admin-music-add-btn" class="admin-primary-btn w-full mb-3">Add Featured Track</button>
+                    
+                    <hr class="admin-divider mb-3">
+                    <label><strong>Current Featured Playlist</strong></label>
+                    <div id="admin-catalog-list" class="admin-list-container mt-2">
+                        <p class="text-xs text-zinc-500 font-bold py-4 text-center">Retrieving track catalog...</p>
+                    </div>
+                </div>
+
+                <!-- Tab: API Keys Pool -->
+                <div id="admin-tab-apikeys" class="admin-tab-content admin-tab-hidden">
+                    <p class="field-desc mb-3">Manage YouTube API keys to dynamically resolve quota limits.</p>
+                    <div class="admin-field mb-3">
+                        <label><strong>Add New YouTube API Key</strong></label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="admin-key-input" class="admin-sub-input" placeholder="e.g. AIzaSy...">
+                            <button id="admin-key-add-btn" class="admin-primary-btn" style="padding: 10px 16px;">Add</button>
+                        </div>
+                    </div>
+                    
+                    <hr class="admin-divider mb-3">
+                    <label><strong>Active API Keys Pool</strong></label>
+                    <div id="admin-keys-list" class="admin-list-container mt-2">
+                        <p class="text-xs text-zinc-500 font-bold py-4 text-center">Loading key pool...</p>
+                    </div>
+                </div>
+
+                <!-- Tab: Alerts and Countdown Scheduler -->
+                <div id="admin-tab-alerts" class="admin-tab-content admin-tab-hidden">
+                    <div class="admin-field mb-3">
+                        <label><strong>Live Broadcaster Alert</strong></label>
+                        <p class="field-desc mb-2">Send a real-time slide-in warning card to all active webplayer browsers.</p>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="admin-alert-message" class="admin-sub-input" placeholder="e.g. Database maintenance starting in 5 minutes...">
+                            <button id="admin-alert-send-btn" class="admin-primary-btn" style="padding: 10px 16px;">Send</button>
+                        </div>
+                        <p id="admin-alert-status" class="admin-success-msg mt-1"></p>
+                    </div>
+
+                    <hr class="admin-divider mb-3">
+
+                    <div class="admin-field mb-3">
+                        <label><strong>Scheduled Maintenance Countdown</strong></label>
+                        <p class="field-desc mb-2">Configure a countdown warning banner, turning on maintenance lockout when zeroed.</p>
+                        
+                        <label class="admin-switch-label mb-2">
+                            <input type="checkbox" id="admin-countdown-toggle">
+                            <span class="admin-slider"></span>
+                            <strong>Enable Countdown Timer</strong>
+                        </label>
+                        
+                        <div class="admin-field mb-2">
+                            <label>Countdown Duration (minutes)</label>
+                            <input type="number" id="admin-countdown-minutes" class="admin-sub-input" placeholder="5" value="5">
+                        </div>
+                        <div class="admin-field mb-3">
+                            <label>Lockout Maintenance Message</label>
+                            <input type="text" id="admin-countdown-reason" class="admin-sub-input" placeholder="Core engine scaling upgrades" value="Database migration updates">
+                        </div>
+                        <button id="admin-countdown-save-btn" class="admin-primary-btn w-full">Set Countdown Alert</button>
+                        <p id="admin-countdown-status" class="admin-success-msg mt-1"></p>
+                    </div>
+                </div>
+
+                <p id="admin-save-status" class="admin-success-msg"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <img src="https://i.ibb.co/PZHk4cjT/image.png" alt="BeatWave Logo" class="w-20 h-20 animate-pulse drop-shadow-[0_0_20px_rgba(239,68,68,0.4)]">
+        <div class="text-sm font-bold tracking-widest text-zinc-400 font-mono uppercase">BeatWave Web is now loading...</div>
+        <div class="matrix-bar">
+            <div class="matrix-fill" id="loadingProgressFillNode"></div>
+        </div>
+    </div>
+
+    <!-- Immersive Theater Mode Viewframe -->
+    <div id="theater-viewframe" class="fixed inset-0 bg-black/95 z-40 transform scale-95 translate-y-4 opacity-0 pointer-events-none transition-all duration-500 ease-out flex flex-col items-center justify-center p-8">
+        <div class="absolute top-6 left-8 flex items-center gap-3">
+            <img src="https://i.ibb.co/PZHk4cjT/image.png" class="w-8 h-8 rounded-lg object-cover" alt="BeatWave Logo">
+            <div class="text-xs font-black tracking-widest font-mono text-zinc-500">BEATWAVE IMMERSIVE LAYER</div>
+        </div>
+        <button onclick="toggleTheaterMode(false)" class="absolute top-6 right-8 text-zinc-400 hover:text-white transition text-lg"><i class="fa-solid fa-xmark"></i></button>
+        
+        <div class="w-full max-w-5xl aspect-video rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-zinc-950 relative" id="theaterVideoMount"></div>
+        
+        <div class="w-full max-w-5xl mt-6 flex flex-col gap-1 px-2">
+            <h2 id="theaterTrackTitle" class="text-xl font-black truncate text-white">Not Playing</h2>
+            <p id="theaterTrackArtist" class="text-xs font-bold text-red-500 uppercase tracking-widest truncate"></p>
+        </div>
+    </div>
+
+    <!-- TV Cast Mode Panel -->
+    <div id="tvMode" class="hidden">                
+        <div class="absolute top-10 left-10 flex items-center gap-4">                        
+            <img src="https://i.ibb.co/PZHk4cjT/image.png" class="logo-img" alt="BeatWave Logo">                        
+            <h1 class="text-2xl font-extrabold italic tracking-tighter">BEATWAVE <span class="text-red-600">CONNECT</span></h1>                
+        </div>                
+        <div id="player-wrapper-tv" class="rounded-3xl overflow-hidden mb-8"></div>                
+        <img id="tvArt" src="" class="w-80 h-80 md:w-[480px] md:h-[480px] rounded-[40px] shadow-2xl mb-10 object-cover bg-zinc-900 border-8 border-white/5 transition-all" alt="TV Album Art">                
+        <h2 id="tvTitle" class="text-4xl md:text-5xl font-black mb-2 px-10 text-center max-w-4xl truncate leading-tight">Waiting for stream...</h2>                
+        <p id="tvArtist" class="text-xl md:text-2xl text-red-500 font-bold mb-8 uppercase tracking-[0.4em]"></p>                
+        <div id="tvRoomTag" class="px-8 py-3 bg-white/5 rounded-full text-zinc-400 font-mono text-xs border border-white/10 hidden"></div>                
+        <div class="absolute bottom-10 text-zinc-600 text-[10px] uppercase font-bold tracking-widest">Powered by BeatLabs <span class="text-red-900">@_beat_labs</span></div>        
+    </div>
+
+    <!-- Main Application Shell -->
+    <div class="flex flex-1 overflow-hidden relative z-10">                
+        <aside class="w-20 md:w-64 flex flex-col p-6 space-y-8 z-20 apple-aside apple-glass">                        
+            <div class="flex items-center gap-3">                                
+                <img src="https://i.ibb.co/PZHk4cjT/image.png" class="logo-img shadow-lg border border-white/5" alt="BeatWave Logo">                                
+                <h1 class="hidden md:block text-lg font-black tracking-tighter uppercase text-white">BeatWave</h1>                        
+            </div>                        
+            <nav class="space-y-2">                                
+                <button id="nav-discover-btn" onclick="switchPage('discover')" class="w-full text-left flex items-center gap-4 py-2 px-3 text-zinc-400 hover:text-white transition apple-nav-btn"><i class="fa-solid fa-house"></i> <span class="hidden md:block font-bold">Discover</span></button>                                
+                <button id="nav-search-btn" onclick="switchPage('search')" class="w-full text-left flex items-center gap-4 py-2 px-3 text-zinc-400 hover:text-white transition apple-nav-btn"><i class="fa-solid fa-magnifying-glass"></i> <span class="hidden md:block font-bold">Search</span></button>
+                <button id="nav-cast-btn" onclick="switchPage('cast')" class="w-full text-left flex items-center gap-4 py-2 px-3 text-zinc-400 hover:text-white transition apple-nav-btn"><i class="fa-solid fa-desktop"></i> <span class="hidden md:block font-bold">Casting</span></button>                                            
+                <button id="nav-queue-btn" onclick="switchPage('queue')" class="w-full text-left flex items-center gap-4 py-2 px-3 text-zinc-400 hover:text-white transition apple-nav-btn"><i class="fa-solid fa-list-ul"></i> <span class="hidden md:block font-bold">Queue / EQ</span></button>                                            
+                <a href="index.html" class="w-full text-left flex items-center gap-4 py-2 px-3 text-zinc-500 hover:text-emerald-400 transition apple-nav-btn">                    
+                    <i class="fa-solid fa-circle-arrow-left"></i>                     
+                    <span class="hidden md:block font-bold">Back Home</span>                
+                </a>            
+                <button id="admin-login-btn" class="w-full text-left flex items-center gap-4 py-2 px-3 text-zinc-500 hover:text-red-400 transition apple-nav-btn">
+                    <i class="fa-solid fa-lock"></i> 
+                    <span class="hidden md:block font-bold">Admin Settings</span>
+                </button>
+            </nav>                        
+            
+            <div class="mt-auto space-y-4">
+                <div class="liquid-glass-toggle-container">
+                    <span class="toggle-label">Liquid Theme</span>
+                    <button id="liquidToggleBtn" class="liquid-glass-switch" aria-label="Toggle Theme">
+                        <span class="liquid-glass-knob"></span>
+                    </button>
+                </div>
+                <div class="hidden md:block border-t border-zinc-800/20 pt-4">                                
+                    <p class="text-[10px] text-zinc-600 uppercase font-black mb-1">Credits</p>                                
+                    <p class="text-xs font-bold text-zinc-400">BeatLabs <span class="text-red-600/60 block">@_beat_labs</span></p>                        
+                </div>
+            </div>                
+        </aside>
+        
+        <main class="flex-1 flex flex-col overflow-hidden relative">                        
+            <header class="h-20 px-8 flex items-center justify-between border-b border-zinc-900/10 bg-transparent backdrop-blur-md z-30">                                
+                <div class="w-full max-w-xl text-zinc-400 text-xs font-extrabold tracking-widest font-mono uppercase">BeatWave Cloud Player Node</div>
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleFullscreen()" class="px-4 py-2 rounded-xl bg-zinc-900/10 border border-white/5 text-xs font-bold text-zinc-300 hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-expand"></i> <span class="hidden sm:inline">Fullscreen</span></button>
+                </div>
+            </header>                        
+            
+            <div class="flex-1 overflow-y-auto p-8 no-scrollbar pb-40">                                
+                <!-- Page: Discover -->
+                <div id="discoverView" class="page-view">
+                    <div class="mb-8 flex items-center gap-3 overflow-x-auto no-scrollbar py-2">
+                        <button onclick="triggerQuickFilter('lofi chill')" class="px-5 py-2 rounded-full bg-zinc-900/50 border border-white/5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 transition whitespace-nowrap">☕ Lofi Ambient</button>
+                        <button onclick="triggerQuickFilter('synthwave retro')" class="px-5 py-2 rounded-full bg-zinc-900/50 border border-white/5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 transition whitespace-nowrap">🌌 Retro Synthwave</button>
+                        <button onclick="triggerQuickFilter('gaming mix')" class="px-5 py-2 rounded-full bg-zinc-900/50 border border-white/5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 transition whitespace-nowrap">🎮 High-FPS Gaming</button>
+                        <button onclick="triggerQuickFilter('phonk')" class="px-5 py-2 rounded-full bg-zinc-900/50 border border-white/5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 transition whitespace-nowrap">🚗 Phonk Drive</button>
+                    </div>
+                    
+                    <!-- Featured Playlist Shelf -->
+                    <div id="featuredShelf" class="hidden mb-12">
+                        <h2 class="text-3xl font-black mb-8 flex items-center gap-3 text-white featured-title">
+                            <i class="fa-solid fa-star text-amber-500 animate-pulse text-2xl"></i> Featured Playlist
+                        </h2>
+                        <div id="featuredGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6"></div>
+                    </div>
+
+                    <h2 class="text-3xl font-black mb-8 trending-title">Trending Now</h2>
+                    <div id="trendingGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6"></div>
+                </div>                                
+                
+                <!-- Page: Search -->
+                <div id="searchView" class="page-view hidden">
+                    <div class="mb-8 max-w-xl">
+                        <h2 class="text-3xl font-black mb-4">Search Catalog</h2>
+                        <div class="flex gap-2">
+                            <input type="text" id="searchPageInput" placeholder="Artists, songs, genres..." class="w-full bg-zinc-900/50 border border-white/5 text-white rounded-2xl py-3 px-6 outline-none focus:ring-2 focus:ring-red-600">
+                            <button onclick="triggerPageSearch()" class="px-6 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl transition">Search</button>
+                        </div>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-6">Search Results</h2>
+                    <div id="searchGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                        <p class="text-zinc-500 text-sm">Enter search query to look up tracks.</p>
+                    </div>
+                </div>
+
+                <!-- Page: Casting -->
+                <div id="castView" class="page-view hidden">
+                    <div class="max-w-2xl">
+                        <h2 class="text-3xl font-black mb-4 flex items-center gap-2"><i class="fa-solid fa-desktop text-blue-500"></i> Cloud casting center</h2>
+                        <p class="text-zinc-400 text-sm mb-8 leading-relaxed">Broadcast playback states to another screen running BeatWave Connect, or listen together with synchronized client nodes.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div class="glass p-6 rounded-2xl flex flex-col justify-between">
+                                <div>
+                                    <h4 class="text-md font-bold mb-3"><i class="fa-solid fa-plus-circle text-emerald-500"></i> Host casting portal</h4>
+                                    <p class="text-xs text-zinc-500 mb-4">Initialize a casting channel ID to share playback to synchronized screens.</p>
+                                    <div class="flex gap-2 mb-3">
+                                        <input type="text" id="castRoomInput" placeholder="Room ID (e.g. BEAT1)" class="w-full bg-zinc-950/80 border border-white/5 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:ring-2 focus:ring-blue-500">
+                                        <button onclick="startCastingRoomNode(false)" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">Host</button>
+                                    </div>
+                                </div>
+                                <button onclick="startCastingRoomNode(true)" class="w-full bg-zinc-900/50 hover:bg-zinc-800/80 border border-white/5 text-zinc-400 hover:text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2"><i class="fa-solid fa-tv text-blue-500"></i> Mount as TV Receiver Screen</button>
+                            </div>
+                            <div class="glass p-6 rounded-2xl">
+                                <h4 class="text-md font-bold mb-3"><i class="fa-solid fa-wifi text-blue-400"></i> Connected status</h4>
+                                <p class="text-xs text-zinc-500 mb-4">View active synced receiver details.</p>
+                                <div class="flex items-center gap-3">
+                                    <span class="w-3 h-3 rounded-full bg-zinc-700 animate-pulse" id="castStatusIndicator"></span>
+                                    <span id="castStatusText" class="text-xs font-bold text-zinc-500">Not casting</span>
+                                </div>
+                                <button onclick="disconnectCastingNode()" id="castDisconnectBtn" class="hidden mt-4 text-[10px] text-red-500 hover:underline">Disconnect casting</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Queue & Audio Presets -->
+                <div id="queueView" class="page-view hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="glass p-6 rounded-2xl flex flex-col">
+                            <h3 class="text-lg font-black mb-4 flex items-center justify-between">
+                                <span>Play Queue</span>
+                                <button onclick="clearQueue()" class="text-xs text-red-500 hover:underline normal-case">Clear</button>
+                            </h3>
+                            <div id="queueContainerNode" class="space-y-3 max-h-[380px] overflow-y-auto no-scrollbar pr-1">
+                                <p class="text-xs text-zinc-500 font-medium py-4 text-center">Queue empty. Add tracks from Discover.</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- Audio presets / Equalizer -->
+                            <div class="glass p-6 rounded-2xl">
+                                <h3 class="text-lg font-black mb-3"><i class="fa-solid fa-sliders text-red-500"></i> Ambient audio preset EQ</h3>
+                                <p class="text-xs text-zinc-400 mb-6">Change theme presets and toggle dynamic audio acoustics.</p>
+                                
+                                <div class="grid grid-cols-2 gap-3" id="eqPresetContainer">
+                                    <button onclick="applyAudioPreset('flat')" class="eq-preset-btn active px-4 py-2.5 rounded-xl border border-white/5 bg-white/5 text-xs text-zinc-300 font-bold transition hover:bg-white/10" data-preset="flat">🎧 Normal/Flat</button>
+                                    <button onclick="applyAudioPreset('bass')" class="eq-preset-btn px-4 py-2.5 rounded-xl border border-white/5 bg-zinc-900 text-xs text-zinc-300 font-bold transition hover:bg-white/10" data-preset="bass">🔊 Bass Booster</button>
+                                    <button onclick="applyAudioPreset('vocals')" class="eq-preset-btn px-4 py-2.5 rounded-xl border border-white/5 bg-zinc-900 text-xs text-zinc-300 font-bold transition hover:bg-white/10" data-preset="vocals">🎙️ Vocal Clarifier</button>
+                                    <button onclick="applyAudioPreset('spatial')" class="eq-preset-btn px-4 py-2.5 rounded-xl border border-white/5 bg-zinc-900 text-xs text-zinc-300 font-bold transition hover:bg-white/10" data-preset="spatial">🌌 Spatial Ambient</button>
+                                </div>
+                            </div>
+
+                            <!-- Autoplay and crossfade controls -->
+                            <div class="glass p-6 rounded-2xl">
+                                <h3 class="text-lg font-black mb-3"><i class="fa-solid fa-circle-nodes text-purple-400"></i> Playback preferences</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="text-zinc-400 font-bold">Autoplay Engine</span>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="autoplayToggleCheck" class="sr-only peer" checked onchange="toggleAutoplayConfig(this.checked)">
+                                            <div class="w-9 h-5 bg-zinc-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-600 peer-checked:after:bg-white"></div>
+                                        </label>
+                                    </div>
+                                    <div class="border-t border-zinc-800/20 pt-4">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-xs text-zinc-400 font-bold">Audio crossfade</span>
+                                            <span class="text-xs font-bold text-red-500" id="crossfadeDurationLabel">Off</span>
+                                        </div>
+                                        <input type="range" min="0" max="15" value="0" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-red-600" oninput="updateCrossfadeConfig(this.value)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Apple Player Footer Controller -->
+    <footer class="apple-footer px-8 flex flex-col justify-center absolute bottom-0 z-50 gap-2">                
+        <div class="w-full flex items-center gap-3">
+            <span id="progressTimeCurrent" class="text-[10px] font-mono font-bold text-zinc-500 w-8 text-right">0:00</span>
+            <div onclick="seekTrackTimeline(event)" id="progressTimelineRail" class="flex-1 h-1.5 bg-zinc-800/80 rounded-full relative overflow-visible cursor-pointer group">
+                <div id="progressTimelineFill" class="absolute left-0 top-0 h-full w-0 bg-gradient-to-r from-red-500 to-amber-500 rounded-full relative shadow-[0_0_10px_#ef4444]">
+                    <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition shadow-md border border-zinc-400 scale-75 group-hover:scale-110"></div>
+                </div>
+            </div>
+            <span id="progressTimeDuration" class="text-[10px] font-mono font-bold text-zinc-500 w-8">0:00</span>
+        </div>
+
+        <div class="flex items-center justify-between w-full">
+            <div class="flex items-center gap-4 w-1/3">                        
+                <img id="nowArt" src="https://i.ibb.co/PZHk4cjT/image.png" class="w-12 h-14 rounded-xl object-cover bg-zinc-900 border border-white/5" alt="Now Playing Album Art">                        
+                <div class="truncate">
+                    <div id="nowTitle" class="font-bold truncate text-white text-sm">Not Playing</div>
+                    <div id="nowArtistLabel" class="text-[10px] text-zinc-500 font-medium truncate mt-0.5"></div>
+                </div>                
+            </div>                
+            <div class="flex items-center gap-4">                        
+                <button id="videoToggle" onclick="toggleVideoMode()" class="px-4 py-1.5 rounded-full glass-btn text-[10px] font-bold uppercase tracking-widest">Video: Off</button>                        
+                <button onclick="toggleLocalPlay()" class="w-12 h-12 rounded-full flex items-center justify-center glass-btn text-lg"><i id="playIcon" class="fa-solid fa-play ml-0.5"></i></button>                
+                <button onclick="advanceQueueNext()" class="w-10 h-10 rounded-full flex items-center justify-center glass-btn text-sm" title="Skip Track"><i class="fa-solid fa-forward-step"></i></button>
+                <button onclick="toggleTheaterMode(true)" class="px-4 py-1.5 rounded-full glass-btn text-[10px] font-bold uppercase tracking-widest" title="Expand Video"><i class="fa-solid fa-expand"></i> Theater View</button>
+            </div>                
+            <div class="w-1/3 flex justify-end">                        
+                <div id="activeDevice" class="flex items-center gap-3 px-4 py-2 rounded-full bg-zinc-900/50 text-zinc-600 font-bold text-[9px] uppercase tracking-widest transition">                                
+                    <span id="deviceName">Local Device</span><i class="fa-wifi fa-solid"></i>                        
+                </div>                
+            </div>        
+        </div>
+    </footer>
+    
+    <!-- Hidden player node -->
+    <div id="player-hidden-container" class="absolute pointer-events-none opacity-0 left-0 top-0 w-1 h-1 overflow-hidden z-0">        
+        <div id="player"></div>    
+    </div>
+
+    <!-- SVG Gooey Filter for switches -->
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none;">
+      <defs>
+        <filter id="liquid-gooey">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+          <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="gooey" />
+          <feBlend in="SourceGraphic" in2="gooey" />
+        </filter>
+      </defs>
+    </svg>
+
+    <script src="ai-assistant.js"></script>
+    <script src="web.js" defer></script>
+</body>
+</html>
