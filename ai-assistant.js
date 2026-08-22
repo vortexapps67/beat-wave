@@ -639,7 +639,7 @@
         }
 
         if (query.includes('creator') || query.includes('dev') || query.includes('developer') || query.includes('architect') || query.includes('built') || query.includes('who made') || query.includes('author') || query.includes('akshansh') || query.includes('aarav') || query.includes('vortex')) {
-            return `BeatWave is developed and engineered by **Vortex Apps**.\n\nYou can find more information about our studio on our [Official Website](https://vortexapps.vercel.app) or connect with us on Instagram [@vortex.apps](https://instagram.com/vortex.apps).\n\nThe project is fork-engineered based on the beautiful open-source project [Echo Music Player](https://github.com/iad1tya/Echo-music) by @iad1tya, to whom we are incredibly grateful!`;
+            return `BeatWave is developed and engineered by **Vortex Apps**.\n\nYou can find more information about our studio on our [Official Website](https://vortexapps.vercel.app) or connect with us on Instagram [@vortex.apps](https://instagram.com/vortex.apps).\n\nThe project is fork-engineered based on the beautiful open-source project [ConvX](https://github.com/cosmictaserdev-creator/Convx/) by @cosmictaserdev-creator, to whom we are incredibly grateful!`;
         }
 
         if (query.includes('cast') || query.includes('connect') || query.includes('tv') || query.includes('sync') || query.includes('listen together') || query.includes('room')) {
