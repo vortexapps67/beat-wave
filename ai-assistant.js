@@ -603,7 +603,7 @@
         if (lastAnswer.toLowerCase().includes('connect') || lastAnswer.toLowerCase().includes('cast')) {
             chips = ['Setup Cast Room', 'Troubleshooting Connect', 'Go to Webplayer'];
         } else if (lastAnswer.toLowerCase().includes('author') || lastAnswer.toLowerCase().includes('architect')) {
-            chips = ['Who is Akshansh?', 'What is BeatLabs?', 'GitHub Code repo'];
+            chips = ['What is Vortex Apps?', 'GitHub Code repo'];
         } else if (lastAnswer.toLowerCase().includes('privacy')) {
             chips = ['Are files uploaded?', 'Terms of Service', 'Read Manifest'];
         } else {
@@ -631,15 +631,15 @@
         const query = q.toLowerCase();
 
         if (query.includes('what is') || query.includes('about') || query.includes('beatwave') && !query.includes('cast') && !query.includes('built')) {
-            return `**BeatWave** is a standalone, free, and open-source audio client for Android environments natively designed by the **BeatLabs** team.\n\nKey features include:\n- Seamless local decoding (supports MP3, FLAC, WAV, etc.)\n- A beautiful, hardware-accelerated glassmorphism design system\n- No ads, trackers, or commercial telemetry\n- A built-in "Listen Together" sync caster engine.`;
+            return `**BeatWave** is a standalone, free, and open-source audio client for Android environments natively designed by **Vortex Apps**.\n\nKey features include:\n- Seamless local decoding (supports MP3, FLAC, WAV, etc.)\n- A beautiful, hardware-accelerated glassmorphism design system\n- No ads, trackers, or commercial telemetry\n- A built-in "Listen Together" sync caster engine.`;
         }
         
         if (query.includes('install') || query.includes('download') || query.includes('setup') || query.includes('get start') || query.includes('apk') || query.includes('sideload')) {
             return `Setting up BeatWave on Android is simple:\n\n1. Click the **Get BeatWave** button on the home page landing slider to jump directly to our release tags on [GitHub Releases](https://github.com/beatlabs790/beatwave/releases).\n2. Download the latest standalone **APK** file.\n3. Open the downloaded file and click **Install**. You might need to allow 'Install from Unknown Sources' in your Android Settings since this is a secure, direct FOSS build.\n4. Open the app and authorize local storage access to index your music!`;
         }
 
-        if (query.includes('creator') || query.includes('dev') || query.includes('developer') || query.includes('architect') || query.includes('built') || query.includes('who made') || query.includes('author') || query.includes('akshansh') || query.includes('aarav')) {
-            return `BeatWave is created by the team of core architects at **BeatLabs**:\n\n- **Akshansh Sinha**: Full Stack and lead UI/UX engineer ([@akshansh_6969](https://www.instagram.com/akshansh_6969/))\n- **Aarav Sharma**: Main UI/UX developer ([@aarav_sharma_sui](https://www.instagram.com/aarav_sharma_sui/))\n- **Aarav Singh**: Frontend developer specializing in framework transitions ([@precizerr](https://www.instagram.com/precizerr/))\n\nThe project is fork-engineered based on the original FOSS project [Echo Music Player](https://github.com/iad1tya/Echo-music) by @iad1tya, to whom the team is incredibly grateful!`;
+        if (query.includes('creator') || query.includes('dev') || query.includes('developer') || query.includes('architect') || query.includes('built') || query.includes('who made') || query.includes('author') || query.includes('akshansh') || query.includes('aarav') || query.includes('vortex')) {
+            return `BeatWave is developed and engineered by **Vortex Apps**.\n\nYou can find more information about our studio on our [Official Website](https://vortexapps.vercel.app) or connect with us on Instagram [@vortex.apps](https://instagram.com/vortex.apps).\n\nThe project is fork-engineered based on the beautiful open-source project [Echo Music Player](https://github.com/iad1tya/Echo-music) by @iad1tya, to whom we are incredibly grateful!`;
         }
 
         if (query.includes('cast') || query.includes('connect') || query.includes('tv') || query.includes('sync') || query.includes('listen together') || query.includes('room')) {
