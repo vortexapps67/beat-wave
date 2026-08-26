@@ -528,72 +528,73 @@
             line-height: 1.6;
         }
         .workspace-gallery-hub {
-            max-width: 600px;
+            max-width: 100%;
             margin: 40px auto;
-            padding: 0 20px;
-            text-align: center;
-        }
-        .matrix-viewport-frame {
-            position: relative;
-            width: 100%;
-            max-width: 320px;
-            aspect-ratio: 9 / 19;
-            background: #090a0f;
-            border: 10px solid #1e293b;
-            border-radius: 44px;
-            margin: 0 auto;
-            box-shadow: 0 35px 70px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06);
             overflow: hidden;
-            cursor: pointer;
-            transition: border-color 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            padding: 20px 0;
+            display: flex;
+            align-items: center;
         }
-        body.light-theme .matrix-viewport-frame {
-            background: #fff;
-            border-color: #cbd5e1;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
-        }
-        .matrix-viewport-frame:hover {
-            transform: scale(1.03) rotate3d(1, -1, 0, 6deg);
-            border-color: var(--accent-blue);
-        }
-        .matrix-viewport-frame img {
+        .workspace-gallery-hub::before,
+        .workspace-gallery-hub::after {
+            content: "";
             position: absolute;
             top: 0;
-            left: 0;
-            width: 100%;
+            width: 15%;
             height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transform: scale(1.04);
-            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 1;
+            z-index: 5;
+            pointer-events: none;
         }
-        .matrix-viewport-frame img.active-frame {
-            opacity: 1;
-            transform: scale(1);
-            z-index: 2;
+        .workspace-gallery-hub::before {
+            left: 0;
+            background: linear-gradient(to right, #050608 0%, transparent 100%);
         }
-        .matrix-navigation-dots {
+        .workspace-gallery-hub::after {
+            right: 0;
+            background: linear-gradient(to left, #050608 0%, transparent 100%);
+        }
+        body.light-theme .workspace-gallery-hub::before {
+            background: linear-gradient(to right, #f8fafc 0%, transparent 100%);
+        }
+        body.light-theme .workspace-gallery-hub::after {
+            background: linear-gradient(to left, #f8fafc 0%, transparent 100%);
+        }
+        .screenshot-strip {
             display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 25px;
+            gap: 24px;
+            width: max-content;
+            animation: scrollRightToLeft 25s linear infinite;
         }
-        .matrix-nav-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
-            cursor: pointer;
-            transition: var(--transition);
+        .screenshot-strip img {
+            width: 200px;
+            height: auto;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s;
+            background: #090a0f;
+            flex-shrink: 0;
         }
-        body.light-theme .matrix-nav-dot {
-            background: rgba(0, 0, 0, 0.12);
+        body.light-theme .screenshot-strip img {
+            background: #fff;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.06);
+            border-color: rgba(0,0,0,0.05);
         }
-        .matrix-nav-dot.active-dot {
-            background: var(--accent-blue);
-            transform: scale(1.2);
-            box-shadow: 0 0 10px var(--accent-blue);
+        .screenshot-strip img:hover {
+            transform: scale(1.06) translateY(-5px);
+            filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.3));
+        }
+        .workspace-gallery-hub:hover .screenshot-strip {
+            animation-play-state: paused;
+        }
+        @keyframes scrollRightToLeft {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(-50% - 12px));
+            }
         }
         .security-registry-card {
             max-width: 1200px;
@@ -1655,21 +1656,21 @@
         </section>                
 
         <h2 class="workspace-title reveal">Interface System Preview</h2>
-        <section class="reveal">
+        <section class="reveal" style="padding: 10px 0;">
             <div class="workspace-gallery-hub">
-                <div class="matrix-viewport-frame" id="matrixViewFrame" onclick="cycleGalleryFrameNext()">
-                    <img class="matrix-frame-node active-frame" src="https://i.ibb.co/zW0fc9cf/720073079-2840143509699590-5043169932214637014-n-portrait.png" alt="BeatWave Home Pipeline UI">
-                    <img class="matrix-frame-node" src="https://i.ibb.co/DTBQHPw/719612812-2095661720993678-6777885775990245249-n-portrait.png" alt="BeatWave Search Matrix UI">
-                    <img class="matrix-frame-node" src="https://i.ibb.co/vCG8V7SW/719938690-2418086032046127-426219671042068657-n-portrait.png" alt="BeatWave Listen Together Server UI">
-                    <img class="matrix-frame-node" src="https://i.ibb.co/prbvjpY1/720539784-4502378193330741-6726765497849135176-n-portrait.png" alt="BeatWave Settings Management Engine">
-                    <img class="matrix-frame-node" src="https://i.ibb.co/VYsVZygq/719803541-2390818994773081-3306366933143854326-n-portrait.png" alt="BeatWave About Diagnostic Sandbox">
-                </div>
-                <div class="matrix-navigation-dots" id="matrixNavigationAnchor">
-                    <div class="matrix-nav-dot active-dot" onclick="jumpToGalleryFrameIndex(0)"></div>
-                    <div class="matrix-nav-dot" onclick="jumpToGalleryFrameIndex(1)"></div>
-                    <div class="matrix-nav-dot" onclick="jumpToGalleryFrameIndex(2)"></div>
-                    <div class="matrix-nav-dot" onclick="jumpToGalleryFrameIndex(3)"></div>
-                    <div class="matrix-nav-dot" onclick="jumpToGalleryFrameIndex(4)"></div>
+                <div class="screenshot-strip">
+                    <!-- First set -->
+                    <img src="https://i.ibb.co/zW0fc9cf/720073079-2840143509699590-5043169932214637014-n-portrait.png" alt="BeatWave Home Pipeline UI">
+                    <img src="https://i.ibb.co/DTBQHPw/719612812-2095661720993678-6777885775990245249-n-portrait.png" alt="BeatWave Search Matrix UI">
+                    <img src="https://i.ibb.co/vCG8V7SW/719938690-2418086032046127-426219671042068657-n-portrait.png" alt="BeatWave Listen Together Server UI">
+                    <img src="https://i.ibb.co/prbvjpY1/720539784-4502378193330741-6726765497849135176-n-portrait.png" alt="BeatWave Settings Management Engine">
+                    <img src="https://i.ibb.co/VYsVZygq/719803541-2390818994773081-3306366933143854326-n-portrait.png" alt="BeatWave About Diagnostic Sandbox">
+                    <!-- Duplicate set for seamless loop -->
+                    <img src="https://i.ibb.co/zW0fc9cf/720073079-2840143509699590-5043169932214637014-n-portrait.png" alt="BeatWave Home Pipeline UI">
+                    <img src="https://i.ibb.co/DTBQHPw/719612812-2095661720993678-6777885775990245249-n-portrait.png" alt="BeatWave Search Matrix UI">
+                    <img src="https://i.ibb.co/vCG8V7SW/719938690-2418086032046127-426219671042068657-n-portrait.png" alt="BeatWave Listen Together Server UI">
+                    <img src="https://i.ibb.co/prbvjpY1/720539784-4502378193330741-6726765497849135176-n-portrait.png" alt="BeatWave Settings Management Engine">
+                    <img src="https://i.ibb.co/VYsVZygq/719803541-2390818994773081-3306366933143854326-n-portrait.png" alt="BeatWave About Diagnostic Sandbox">
                 </div>
             </div>
         </section>
