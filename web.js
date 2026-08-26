@@ -492,7 +492,7 @@ function setupAdminModalHandlers() {
             videoId: vId,
             title: title,
             artist: artist,
-            artUrl: artUrl || 'https://i.ibb.co/PZHk4cjT/image.png'
+            artUrl: artUrl || 'beatwave%20new%20new.png'
         }).then(() => {
             document.getElementById('admin-music-videoid').value = '';
             document.getElementById('admin-music-title').value = '';
