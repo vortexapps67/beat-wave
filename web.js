@@ -574,6 +574,22 @@ let playQueueArray = [], activeQueueIndex = -1;
 let autoplayEngineActive = true, crossfadeDurationSeconds = 0, crossfadeTriggeredFlag = false;
 let crossfadeIntervalPoller = null, timelineProgressPoller = null;
 
+// BeatWave Sync Collaborative Engine State
+let syncRoomId = null;
+let isSyncHost = false;
+let syncClientId = localStorage.getItem('beatwave-client-id') || ('web_' + Math.random().toString(36).substring(2, 9));
+localStorage.setItem('beatwave-client-id', syncClientId);
+let syncUserName = localStorage.getItem('beatwave-username') || ('Listener_' + Math.floor(100 + Math.random() * 900));
+localStorage.setItem('beatwave-username', syncUserName);
+let syncUnreadMessagesCount = 0;
+let syncChatDrawerOpen = false;
+let syncPlaybackRef = null;
+let syncChatRef = null;
+let syncListenersRef = null;
+let syncQueueRef = null;
+let syncIgnoreRemoteLoop = false;
+let currentPlayingId = null;
+
 async function fetchWithRetry(url) {                        
     try {                                
         const currentKey = keys[keyIndex];                                
@@ -670,6 +686,15 @@ function onPlayerStateChange(e) {
         crossfadeTriggeredFlag = false;
         startPlaybackMonitoring();
         startTimelineTrackerEngine();
+        if (syncRoomId && !syncIgnoreRemoteLoop) {
+            broadcastSyncPlayback(true);
+        }
+    } else if (e.data == YT.PlayerState.PAUSED) {
+        clearInterval(crossfadeIntervalPoller);
+        clearInterval(timelineProgressPoller);
+        if (syncRoomId && !syncIgnoreRemoteLoop) {
+            broadcastSyncPlayback(false);
+        }
     } else {
         clearInterval(crossfadeIntervalPoller);
         clearInterval(timelineProgressPoller);
@@ -715,6 +740,9 @@ window.seekTrackTimeline = function(event) {
         player.seekTo(destinationTargetTime, true);
         document.getElementById('progressTimelineFill').style.width = `${percentage * 100}%`;
         document.getElementById('progressTimeCurrent').innerText = formatTimelineClockString(destinationTargetTime);
+        if (syncRoomId && !syncIgnoreRemoteLoop) {
+            broadcastSyncPlayback(playState, destinationTargetTime);
+        }
     }
 }
 
@@ -803,6 +831,8 @@ window.loadMusic = function(id, t, img, a, remoteBypass = false) {
     activeQueueIndex = playQueueArray.findIndex(item => item.id === id);
     updateQueueInterfaceDisplay();
 
+    currentPlayingId = id;
+
     document.getElementById('theaterTrackTitle').innerText = parsedTitle;
     document.getElementById('theaterTrackArtist').innerText = parsedArtist;
 
@@ -816,6 +846,12 @@ window.loadMusic = function(id, t, img, a, remoteBypass = false) {
         document.getElementById('nowArt').src = img;                 
         document.getElementById('nowTitle').innerText = parsedTitle;                        
         document.getElementById('nowArtistLabel').innerText = parsedArtist;                        
+    }
+
+    // Broadcast track change across BeatWave Sync room
+    if (syncRoomId && !remoteBypass && !syncIgnoreRemoteLoop) {
+        broadcastSyncPlayback(true, 0);
+        sendSyncSystemMessage(`🎶 Now playing: ${parsedTitle}`);
     }                
 }
 
@@ -827,6 +863,12 @@ window.pushTrackToQueueArray = function(id, t, img, a, eventNode) {
     if (playQueueArray.some(item => item.id === id)) return;
     playQueueArray.push({ id, t: parsedTitle, img, a: parsedArtist });
     updateQueueInterfaceDisplay();
+
+    // Broadcast collaborative queue to BeatWave Sync room
+    if (syncRoomId && !syncIgnoreRemoteLoop) {
+        broadcastSyncQueue();
+        sendSyncSystemMessage(`➕ ${syncUserName} added "${parsedTitle}" to the queue`);
+    }
 }
 
 window.advanceQueueNext = function() {
@@ -1106,6 +1148,383 @@ window.disconnectCastingNode = function() {
     }
 };
 
+// ==========================================================================
+// BEATWAVE SYNC COLLABORATIVE ENGINE & LIVE CHAT CONTROLLER
+// ==========================================================================
+
+window.openSyncModal = function() {
+    const modal = document.getElementById('syncRoomModal');
+    if (!modal) return;
+    modal.classList.add('active');
+    
+    const joinView = document.getElementById('syncModalJoinView');
+    const activeView = document.getElementById('syncModalActiveView');
+    
+    if (syncRoomId) {
+        joinView.classList.add('hidden');
+        activeView.classList.remove('hidden');
+        document.getElementById('syncModalActiveRoomText').innerText = syncRoomId.toUpperCase();
+        
+        const roleBadge = document.getElementById('syncModalRoleBadge');
+        if (roleBadge) {
+            roleBadge.className = isSyncHost ? 'sync-role-badge sync-role-host' : 'sync-role-badge sync-role-guest';
+            roleBadge.innerText = isSyncHost ? 'HOST' : 'GUEST';
+        }
+        
+        const appDeepLink = document.getElementById('syncModalAppDeepLink');
+        if (appDeepLink) {
+            appDeepLink.href = `beatwave://sync?room=${encodeURIComponent(syncRoomId)}`;
+        }
+    } else {
+        joinView.classList.remove('hidden');
+        activeView.classList.add('hidden');
+        const input = document.getElementById('syncModalRoomInput');
+        if (input) input.focus();
+    }
+};
+
+window.closeSyncModal = function() {
+    const modal = document.getElementById('syncRoomModal');
+    if (modal) modal.classList.remove('active');
+};
+
+window.toggleSyncChatDrawer = function(forceState = null) {
+    const drawer = document.getElementById('syncChatDrawer');
+    if (!drawer) return;
+    
+    if (forceState !== null) {
+        syncChatDrawerOpen = forceState;
+    } else {
+        syncChatDrawerOpen = !syncChatDrawerOpen;
+    }
+    
+    if (syncChatDrawerOpen) {
+        drawer.classList.add('open');
+        syncUnreadMessagesCount = 0;
+        const badge = document.getElementById('syncUnreadBadge');
+        if (badge) {
+            badge.innerText = '0';
+            badge.classList.add('hidden');
+        }
+        const input = document.getElementById('syncChatInput');
+        if (input) input.focus();
+        
+        const container = document.getElementById('syncChatMessages');
+        if (container) container.scrollTop = container.scrollHeight;
+    } else {
+        drawer.classList.remove('open');
+    }
+};
+
+window.hostNewSyncRoomFromModal = function() {
+    const randomCode = 'WAVE' + Math.floor(1000 + Math.random() * 9000);
+    joinSyncRoom(randomCode, true);
+    closeSyncModal();
+};
+
+window.joinSyncRoomFromModal = function() {
+    const input = document.getElementById('syncModalRoomInput');
+    if (!input) return;
+    const roomCode = input.value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+    if (!roomCode) {
+        alert("Please enter a valid room code.");
+        return;
+    }
+    joinSyncRoom(roomCode, false);
+    closeSyncModal();
+};
+
+window.joinSyncRoom = function(roomCode, asHost = false) {
+    if (!db) {
+        alert("Connecting to database, please try again in a moment.");
+        return;
+    }
+    
+    const cleanRoom = roomCode.toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+    if (!cleanRoom) return;
+    
+    if (syncRoomId && syncRoomId !== cleanRoom) {
+        leaveSyncRoom();
+    }
+    
+    syncRoomId = cleanRoom;
+    isSyncHost = asHost;
+    
+    const pill = document.getElementById('syncStatusPill');
+    const roomNameText = document.getElementById('syncRoomNameText');
+    const roleBadge = document.getElementById('syncRoleBadge');
+    
+    if (pill && roomNameText && roleBadge) {
+        pill.classList.remove('hidden');
+        roomNameText.innerText = syncRoomId;
+        roleBadge.className = isSyncHost ? 'sync-role-badge sync-role-host' : 'sync-role-badge sync-role-guest';
+        roleBadge.innerText = isSyncHost ? 'HOST' : 'GUEST';
+    }
+    
+    const chatRoomName = document.getElementById('syncChatRoomName');
+    if (chatRoomName) chatRoomName.innerText = syncRoomId;
+    
+    // Register presence in Firebase RTDB
+    const clientRef = db.ref(`sync_rooms/${syncRoomId}/listeners/${syncClientId}`);
+    clientRef.set({
+        name: syncUserName,
+        role: isSyncHost ? 'host' : 'guest',
+        joinedAt: Date.now(),
+        lastSeen: Date.now()
+    });
+    clientRef.onDisconnect().remove();
+    
+    // Attach real-time listeners for room state
+    setupSyncRoomListeners();
+    
+    // System join broadcast
+    sendSyncSystemMessage(`${syncUserName} joined the room.`);
+    
+    showLiveToast(`Connected to Sync Room: ${syncRoomId} (${isSyncHost ? 'Host' : 'Guest'})`);
+    
+    // Update URL query parameter without full reload
+    const url = new URL(window.location);
+    url.searchParams.set('sync', syncRoomId);
+    window.history.replaceState({}, '', url);
+};
+
+window.leaveSyncRoom = function() {
+    if (!syncRoomId) return;
+    
+    if (db) {
+        db.ref(`sync_rooms/${syncRoomId}/listeners/${syncClientId}`).remove();
+        if (syncPlaybackRef) syncPlaybackRef.off();
+        if (syncChatRef) syncChatRef.off();
+        if (syncListenersRef) syncListenersRef.off();
+        if (syncQueueRef) syncQueueRef.off();
+    }
+    
+    sendSyncSystemMessage(`${syncUserName} left the room.`);
+    showLiveToast(`Disconnected from Sync Room ${syncRoomId}`);
+    
+    syncRoomId = null;
+    isSyncHost = false;
+    
+    const pill = document.getElementById('syncStatusPill');
+    if (pill) pill.classList.add('hidden');
+    
+    closeSyncModal();
+    toggleSyncChatDrawer(false);
+    
+    const url = new URL(window.location);
+    url.searchParams.delete('sync');
+    url.searchParams.delete('room');
+    window.history.replaceState({}, '', url);
+};
+
+window.copySyncRoomLink = function() {
+    if (!syncRoomId) return;
+    const inviteUrl = `${window.location.origin}/sync.html?room=${encodeURIComponent(syncRoomId)}`;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(inviteUrl).then(() => {
+            showLiveToast("Invite link copied to clipboard!");
+        }).catch(() => {
+            prompt("Copy room invite link:", inviteUrl);
+        });
+    } else {
+        prompt("Copy room invite link:", inviteUrl);
+    }
+};
+
+function setupSyncRoomListeners() {
+    if (!db || !syncRoomId) return;
+    
+    // 1. Listeners presence counter
+    syncListenersRef = db.ref(`sync_rooms/${syncRoomId}/listeners`);
+    syncListenersRef.on('value', snapshot => {
+        const listeners = snapshot.val() || {};
+        const count = Object.keys(listeners).length;
+        
+        const countText = `${count} listener${count === 1 ? '' : 's'}`;
+        const headerCountNode = document.getElementById('syncListenersCount');
+        const chatCountNode = document.getElementById('syncChatListenerCount');
+        const modalCountNode = document.getElementById('syncModalListenersText');
+        
+        if (headerCountNode) headerCountNode.innerText = `${count}`;
+        if (chatCountNode) chatCountNode.innerText = `${countText} online`;
+        if (modalCountNode) modalCountNode.innerText = `${countText} Connected`;
+    });
+    
+    // 2. Playback State Synchronization
+    syncPlaybackRef = db.ref(`sync_rooms/${syncRoomId}/playback`);
+    syncPlaybackRef.on('value', snapshot => {
+        const playback = snapshot.val();
+        if (!playback) return;
+        
+        if (playback.updatedBy === syncClientId) return;
+        
+        syncIgnoreRemoteLoop = true;
+        
+        // Synchronize track selection
+        if (playback.videoId && playback.videoId !== currentPlayingId) {
+            currentPlayingId = playback.videoId;
+            loadMusic(playback.videoId, playback.title, playback.artUrl, playback.artist, true);
+        }
+        
+        // Synchronize play / pause state
+        if (player && typeof player.getPlayerState === 'function') {
+            const isPlayerPlaying = player.getPlayerState() === YT.PlayerState.PLAYING;
+            if (playback.isPlaying && !isPlayerPlaying) {
+                player.playVideo();
+            } else if (!playback.isPlaying && isPlayerPlaying) {
+                player.pauseVideo();
+            }
+            
+            // Synchronize seek position with drift threshold
+            if (playback.isPlaying && typeof player.getCurrentTime === 'function') {
+                const elapsedSinceUpdate = (Date.now() - playback.updatedAt) / 1000;
+                const expectedCurrentTime = playback.currentTime + elapsedSinceUpdate;
+                const localCurrentTime = player.getCurrentTime() || 0;
+                
+                if (Math.abs(expectedCurrentTime - localCurrentTime) > 2.5) {
+                    player.seekTo(expectedCurrentTime, true);
+                }
+            }
+        }
+        
+        setTimeout(() => { syncIgnoreRemoteLoop = false; }, 300);
+    });
+    
+    // 3. Collaborative Queue Synchronization
+    syncQueueRef = db.ref(`sync_rooms/${syncRoomId}/queue`);
+    syncQueueRef.on('value', snapshot => {
+        const queueData = snapshot.val();
+        if (queueData) {
+            playQueueArray = Array.isArray(queueData) ? queueData : Object.values(queueData);
+            updateQueueInterfaceDisplay();
+        }
+    });
+    
+    // 4. In-Room Live Chat Stream
+    const chatContainer = document.getElementById('syncChatMessages');
+    if (chatContainer) {
+        chatContainer.innerHTML = `
+            <div class="chat-msg-item chat-msg-system">
+                <div class="chat-bubble">Connected to room #${syncRoomId}. Start chatting!</div>
+            </div>
+        `;
+    }
+    
+    syncChatRef = db.ref(`sync_rooms/${syncRoomId}/chat`);
+    syncChatRef.limitToLast(50).on('child_added', snapshot => {
+        const msg = snapshot.val();
+        if (!msg) return;
+        appendSyncChatMessage(msg);
+    });
+}
+
+function broadcastSyncPlayback(isPlaying = null, seekTime = null) {
+    if (!syncRoomId || !db || syncIgnoreRemoteLoop) return;
+    
+    const currentTrack = playQueueArray[activeQueueIndex] || {};
+    const currentTime = (seekTime !== null) ? seekTime : (player && typeof player.getCurrentTime === 'function' ? player.getCurrentTime() : 0);
+    const playingState = (isPlaying !== null) ? isPlaying : playState;
+    
+    db.ref(`sync_rooms/${syncRoomId}/playback`).set({
+        videoId: currentTrack.id || currentPlayingId || '',
+        title: currentTrack.t || document.getElementById('nowTitle')?.innerText || '',
+        artist: currentTrack.a || document.getElementById('nowArtistLabel')?.innerText || '',
+        artUrl: currentTrack.img || document.getElementById('nowArt')?.src || '',
+        isPlaying: playingState,
+        currentTime: currentTime || 0,
+        updatedAt: Date.now(),
+        updatedBy: syncClientId
+    });
+}
+
+function broadcastSyncQueue() {
+    if (!syncRoomId || !db) return;
+    db.ref(`sync_rooms/${syncRoomId}/queue`).set(playQueueArray);
+}
+
+function sendSyncSystemMessage(text) {
+    if (!syncRoomId || !db) return;
+    db.ref(`sync_rooms/${syncRoomId}/chat`).push({
+        sender: 'System',
+        text: text,
+        isSystem: true,
+        timestamp: Date.now()
+    });
+}
+
+window.handleSendSyncChatMessage = function(event) {
+    if (event) event.preventDefault();
+    if (!syncRoomId || !db) {
+        showLiveToast("Join a Sync Room first to send chat messages!");
+        return;
+    }
+    
+    const input = document.getElementById('syncChatInput');
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+    
+    db.ref(`sync_rooms/${syncRoomId}/chat`).push({
+        sender: syncUserName,
+        senderId: syncClientId,
+        text: text,
+        isHost: isSyncHost,
+        timestamp: Date.now()
+    }).then(() => {
+        input.value = '';
+    }).catch(err => {
+        console.error("Chat error:", err);
+    });
+};
+
+function appendSyncChatMessage(msg) {
+    const container = document.getElementById('syncChatMessages');
+    if (!container) return;
+    
+    const isSelf = msg.senderId === syncClientId;
+    const isSystem = msg.isSystem || msg.sender === 'System';
+    
+    const msgEl = document.createElement('div');
+    msgEl.className = isSystem ? 'chat-msg-item chat-msg-system' : (isSelf ? 'chat-msg-item chat-msg-self' : 'chat-msg-item chat-msg-peer');
+    
+    const timeStr = new Date(msg.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    if (isSystem) {
+        msgEl.innerHTML = `<div class="chat-bubble">${msg.text}</div>`;
+    } else {
+        const roleHtml = msg.isHost ? `<span class="sync-role-badge sync-role-host" style="font-size: 8px; padding: 1px 5px;">HOST</span>` : '';
+        msgEl.innerHTML = `
+            <div class="chat-msg-meta">
+                <span>${msg.sender}</span>
+                ${roleHtml}
+                <span>· ${timeStr}</span>
+            </div>
+            <div class="chat-bubble">${escapeHtml(msg.text)}</div>
+        `;
+    }
+    
+    container.appendChild(msgEl);
+    container.scrollTop = container.scrollHeight;
+    
+    if (!syncChatDrawerOpen && !isSelf) {
+        syncUnreadMessagesCount++;
+        const badge = document.getElementById('syncUnreadBadge');
+        if (badge) {
+            badge.innerText = syncUnreadMessagesCount > 9 ? '9+' : syncUnreadMessagesCount;
+            badge.classList.remove('hidden');
+        }
+        if (!isSystem) {
+            showLiveToast(`💬 ${msg.sender}: ${msg.text}`);
+        }
+    }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.innerText = text;
+    return div.innerHTML;
+}
+
 window.onload = async () => {                         
     const progressNode = document.getElementById('loadingProgressFillNode');
     if(progressNode) progressNode.style.width = '50%';
@@ -1146,6 +1565,15 @@ window.onload = async () => {
         searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') triggerPageSearch(); });
     }
 
+    // Auto-join sync room if specified in URL parameters (?sync=XYZ or ?room=XYZ)
+    const urlParams = new URLSearchParams(window.location.search);
+    const syncParam = urlParams.get('sync') || urlParams.get('room');
+    if (syncParam) {
+        setTimeout(() => {
+            joinSyncRoom(syncParam, false);
+        }, 600);
+    }
+
     if(progressNode) progressNode.style.width = '100%';
     setTimeout(() => {
         const loader = document.getElementById('loading-screen');
@@ -1158,3 +1586,4 @@ window.onload = async () => {
             if (data && data.items) render(data.items, 'trendingGrid');
         });
 };
+

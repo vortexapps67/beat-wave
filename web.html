@@ -25,6 +25,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>        
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>        
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <script src="config.js"></script>
     <link rel="stylesheet" href="web.css">
 </head>
@@ -282,6 +283,7 @@
             <nav class="space-y-2">                                
                 <button id="nav-discover-btn" onclick="switchPage('discover')" class="w-full text-left flex items-center gap-4 py-2 px-3 text-zinc-400 hover:text-white transition apple-nav-btn"><i class="fa-solid fa-house"></i> <span class="hidden md:block font-bold">Discover</span></button>                                
                 <button id="nav-search-btn" onclick="switchPage('search')" class="w-full text-left flex items-center gap-4 py-2 px-3 text-zinc-400 hover:text-white transition apple-nav-btn"><i class="fa-solid fa-magnifying-glass"></i> <span class="hidden md:block font-bold">Search</span></button>
+                <button id="nav-sync-btn" onclick="openSyncModal()" class="w-full text-left flex items-center gap-4 py-2 px-3 text-cyan-400 hover:text-white transition apple-nav-btn"><i class="fa-solid fa-tower-broadcast text-cyan-400"></i> <span class="hidden md:block font-bold">Live Sync</span></button>
                 <button id="nav-cast-btn" onclick="switchPage('cast')" class="w-full text-left flex items-center gap-4 py-2 px-3 text-zinc-400 hover:text-white transition apple-nav-btn"><i class="fa-solid fa-desktop"></i> <span class="hidden md:block font-bold">Casting</span></button>                                            
                 <button id="nav-queue-btn" onclick="switchPage('queue')" class="w-full text-left flex items-center gap-4 py-2 px-3 text-zinc-400 hover:text-white transition apple-nav-btn"><i class="fa-solid fa-list-ul"></i> <span class="hidden md:block font-bold">Queue / EQ</span></button>                                            
                 <a href="index.html" class="w-full text-left flex items-center gap-4 py-2 px-3 text-zinc-500 hover:text-emerald-400 transition apple-nav-btn">                    
@@ -310,9 +312,35 @@
         
         <main class="flex-1 flex flex-col overflow-hidden relative">                        
             <header class="h-20 px-8 flex items-center justify-between border-b border-zinc-900/10 bg-transparent backdrop-blur-md z-30">                                
-                <div class="w-full max-w-xl text-zinc-400 text-xs font-extrabold tracking-widest font-mono uppercase">BeatWave Cloud Player Node</div>
                 <div class="flex items-center gap-4">
-                    <button onclick="toggleFullscreen()" class="px-4 py-2 rounded-xl bg-zinc-900/10 border border-white/5 text-xs font-bold text-zinc-300 hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-expand"></i> <span class="hidden sm:inline">Fullscreen</span></button>
+                    <div class="text-zinc-400 text-xs font-extrabold tracking-widest font-mono uppercase hidden sm:block">BeatWave Cloud Player Node</div>
+                    <!-- Sync Live Status Pill (clickable to manage room) -->
+                    <div id="syncStatusPill" onclick="openSyncModal()" class="sync-status-pill hidden">
+                        <span class="sync-pulse-dot"></span>
+                        <span>Sync: <strong id="syncRoomNameText" class="text-cyan-400 font-mono">---</strong></span>
+                        <span id="syncRoleBadge" class="sync-role-badge sync-role-guest">GUEST</span>
+                        <span id="syncListenersCount" class="text-[10px] text-zinc-400">1</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <!-- Sync Quick Host / Join Button -->
+                    <button id="syncQuickConnectBtn" onclick="openSyncModal()" class="px-3.5 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-xs font-bold text-cyan-400 transition flex items-center gap-2">
+                        <i class="fa-solid fa-tower-broadcast"></i>
+                        <span class="hidden md:inline">Sync Room</span>
+                    </button>
+
+                    <!-- Live Chat Drawer Toggle Button -->
+                    <button id="syncChatOpenBtn" onclick="toggleSyncChatDrawer()" class="sync-chat-trigger-btn">
+                        <i class="fa-solid fa-comments text-cyan-400"></i>
+                        <span class="hidden md:inline">Chat</span>
+                        <span id="syncUnreadBadge" class="sync-unread-badge hidden">0</span>
+                    </button>
+
+                    <button onclick="toggleFullscreen()" class="px-3.5 py-2 rounded-xl bg-zinc-900/10 border border-white/5 text-xs font-bold text-zinc-300 hover:text-white transition flex items-center gap-2" aria-label="Toggle Fullscreen">
+                        <i class="fa-solid fa-expand"></i>
+                        <span class="hidden sm:inline">Fullscreen</span>
+                    </button>
                 </div>
             </header>                        
             
@@ -475,6 +503,125 @@
     <!-- Hidden player node -->
     <div id="player-hidden-container" class="absolute pointer-events-none opacity-0 left-0 top-0 w-1 h-1 overflow-hidden z-0">        
         <div id="player"></div>    
+    </div>
+
+    <!-- In-Room Live Chat Drawer -->
+    <div id="syncChatDrawer">
+        <div class="sync-chat-header">
+            <div class="flex items-center gap-2.5">
+                <span class="sync-pulse-dot"></span>
+                <div>
+                    <h3 class="text-sm font-black text-white flex items-center gap-2">
+                        <span>Room: <span id="syncChatRoomName" class="text-cyan-400 font-mono">---</span></span>
+                    </h3>
+                    <p class="text-[10px] text-zinc-400 font-bold" id="syncChatListenerCount">1 listener online</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="copySyncRoomLink()" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-cyan-400 flex items-center justify-center transition" title="Copy Invite Link">
+                    <i class="fa-regular fa-copy text-xs"></i>
+                </button>
+                <button onclick="toggleSyncChatDrawer(false)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white flex items-center justify-center transition" aria-label="Close Chat">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="syncChatMessages" class="sync-chat-messages-container">
+            <div class="chat-msg-item chat-msg-system">
+                <div class="chat-bubble">Welcome to BeatWave Sync Live Chat! Messages sent here appear to everyone in this room.</div>
+            </div>
+        </div>
+
+        <div class="sync-chat-input-wrapper">
+            <form id="syncChatForm" onsubmit="handleSendSyncChatMessage(event)" class="sync-chat-input-form">
+                <input type="text" id="syncChatInput" placeholder="Send a message..." autocomplete="off" class="sync-chat-input">
+                <button type="submit" id="syncChatSendBtn" class="sync-chat-send-btn" aria-label="Send Message">
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sync Room Connect / Manage Modal -->
+    <div id="syncRoomModal">
+        <div class="sync-modal-backdrop" onclick="closeSyncModal()"></div>
+        <div class="sync-modal-content">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                        <i class="fa-solid fa-tower-broadcast text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-black text-white">BeatWave Sync</h2>
+                        <p class="text-xs text-zinc-400">Real-Time Collaborative Listening</p>
+                    </div>
+                </div>
+                <button onclick="closeSyncModal()" class="text-zinc-400 hover:text-white transition" aria-label="Close Sync Modal"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+
+            <!-- When NOT in room -->
+            <div id="syncModalJoinView">
+                <p class="text-xs text-zinc-400 mb-4 leading-relaxed">
+                    Listen to music with friends in sync, share a collaborative queue, and chat in real-time.
+                </p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block mb-2">Room Code</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="syncModalRoomInput" placeholder="e.g. PARTY99" class="flex-1 bg-zinc-950/80 border border-white/10 rounded-xl px-4 py-3 text-xs text-white uppercase font-mono tracking-widest outline-none focus:border-cyan-500 transition">
+                            <button onclick="joinSyncRoomFromModal()" class="px-5 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-black uppercase transition">
+                                Join
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 my-2">
+                        <div class="flex-1 h-px bg-zinc-800"></div>
+                        <span class="text-[10px] text-zinc-600 font-bold uppercase">or</span>
+                        <div class="flex-1 h-px bg-zinc-800"></div>
+                    </div>
+                    <button onclick="hostNewSyncRoomFromModal()" class="w-full py-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-cyan-400"></i>
+                        <span>Host a New Live Room</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- When IN room -->
+            <div id="syncModalActiveView" class="hidden">
+                <div class="p-4 rounded-2xl bg-zinc-950/60 border border-white/5 mb-6 text-center">
+                    <div class="text-[10px] uppercase font-bold text-zinc-500 tracking-widest mb-1 font-mono">Current Live Room</div>
+                    <div class="text-2xl font-black text-cyan-400 font-mono tracking-wider mb-2" id="syncModalActiveRoomText">---</div>
+                    <div class="flex items-center justify-center gap-2">
+                        <span id="syncModalRoleBadge" class="sync-role-badge sync-role-host">HOST</span>
+                        <span class="text-xs text-zinc-400" id="syncModalListenersText">1 Listener Connected</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <button onclick="copySyncRoomLink()" class="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-zinc-200 transition flex items-center justify-center gap-2">
+                        <i class="fa-regular fa-copy text-cyan-400"></i>
+                        <span>Copy Invite Link</span>
+                    </button>
+                    <button onclick="toggleSyncChatDrawer(true); closeSyncModal();" class="py-3 px-4 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-xs font-bold text-cyan-400 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-comments"></i>
+                        <span>Open Live Chat</span>
+                    </button>
+                </div>
+
+                <div class="border-t border-zinc-800/40 pt-4 flex items-center justify-between">
+                    <a id="syncModalAppDeepLink" href="#" class="text-xs font-bold text-zinc-400 hover:text-cyan-400 transition flex items-center gap-1.5">
+                        <i class="fa-brands fa-android text-sm"></i>
+                        <span>Open in App</span>
+                    </a>
+                    <button onclick="leaveSyncRoom()" class="text-xs font-bold text-red-500 hover:text-red-400 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Leave Room</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <!-- SVG Gooey Filter for switches -->

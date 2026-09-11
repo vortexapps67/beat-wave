@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeatWave Sync | Real-Time Collaborative Music Session</title>
+    <meta name="description" content="Join a live BeatWave Sync room. Listen together in real time, collaborate on the queue, and chat with friends in the BeatWave Android app or Web Player.">
+    <meta name="keywords" content="BeatWave Sync, listen together, collaborative music player, real time music sync, stream together, vortex apps">
+    <meta name="author" content="Vortex Apps">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://beatwave.de5.net/sync.html">
+
+    <!-- Open Graph SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Join my BeatWave Sync Session 🎧">
+    <meta property="og:description" content="Listen together in real time on BeatWave. Join on Android or the Web Player with zero ads.">
+    <meta property="og:image" content="og%20img.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="og%20img.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="beatwave%20new%20new.png">
+    <link rel="apple-touch-icon" href="beatwave%20new%20new.png">
+
+    <!-- Stylesheets & CDNs -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #050608;
+            --accent-cyan: #00f2fe;
+            --accent-magenta: #ff007f;
+            --accent-purple: #8a2be2;
+            --glass-bg: rgba(12, 14, 22, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #f8fafc;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Ambient Glow Backdrop */
+        .ambient-glow {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: clamp(350px, 80vw, 750px);
+            height: clamp(350px, 80vw, 750px);
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(138, 43, 226, 0.08) 40%, rgba(255, 0, 127, 0.04) 60%, transparent 75%);
+            filter: blur(90px);
+            z-index: 0;
+            pointer-events: none;
+            animation: pulseAmbient 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulseAmbient {
+            0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.7; }
+            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
+        }
+
+        .brand-gradient-text {
+            background: linear-gradient(135deg, #00f2fe 0%, #8a2be2 50%, #ff007f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-app-open {
+            background: linear-gradient(135deg, #00f2fe 0%, #0084ff 100%);
+            color: #000;
+            font-weight: 800;
+            box-shadow: 0 10px 30px rgba(0, 242, 254, 0.35);
+            transition: var(--transition);
+        }
+
+        .btn-app-open:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 15px 40px rgba(0, 242, 254, 0.5);
+        }
+
+        .btn-web-player {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transition: var(--transition);
+        }
+
+        .btn-web-player:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .room-code-badge {
+            font-family: 'Space Mono', monospace;
+            background: rgba(0, 242, 254, 0.08);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            color: var(--accent-cyan);
+            letter-spacing: 3px;
+            text-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+        }
+
+        .qr-wrapper {
+            background: #ffffff;
+            padding: 14px;
+            border-radius: 18px;
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .qr-wrapper img, .qr-wrapper canvas {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: #00ff66;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 12px #00ff66;
+            animation: livePulse 1.8s infinite;
+        }
+
+        @keyframes livePulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.6; }
+        }
+
+        /* Toast notification */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(12, 15, 24, 0.95);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.2);
+            font-size: 0.85rem;
+            font-weight: 700;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+
+    <div class="ambient-glow"></div>
+
+    <!-- Navigation Header -->
+    <header class="relative z-10 max-w-4xl mx-auto w-full flex items-center justify-between py-4">
+        <a href="index.html" class="flex items-center gap-3 group text-decoration-none">
+            <img src="beatwave%20new%20new.png" alt="BeatWave Logo" class="w-9 h-9 object-contain group-hover:scale-105 transition">
+            <span class="font-black text-xl tracking-tight text-white flex items-center gap-1.5">
+                BeatWave <span class="text-xs px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono font-bold tracking-wider uppercase">Sync</span>
+            </span>
+        </a>
+
+        <div class="flex items-center gap-3">
+            <a href="web.html" class="px-4 py-2 rounded-full glass-card text-xs font-bold text-zinc-300 hover:text-white hover:border-cyan-500/40 transition flex items-center gap-2">
+                <i class="fa-solid fa-play text-cyan-400"></i>
+                <span>Web Player</span>
+            </a>
+            <a href="index.html" class="px-4 py-2 rounded-full glass-card text-xs font-bold text-zinc-400 hover:text-white transition">
+                Home
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="relative z-10 max-w-2xl mx-auto w-full my-auto py-8">
+        <div class="glass-card rounded-3xl p-6 sm:p-10 text-center relative overflow-hidden">
+            
+            <!-- Live Indicator Badge -->
+            <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold mb-6">
+                <span class="pulse-dot"></span>
+                <span>Live Sync Room Active</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight mb-3">
+                Listen <span class="brand-gradient-text">Together</span>
+            </h1>
+            <p class="text-zinc-400 text-sm sm:text-base max-w-md mx-auto mb-8 leading-relaxed">
+                Join a synchronized real-time audio session with collaborative queue and in-room chat.
+            </p>
+
+            <!-- Room Code Card -->
+            <div class="mb-8 p-5 rounded-2xl bg-zinc-950/60 border border-white/5 max-w-md mx-auto">
+                <div class="text-[11px] uppercase font-bold text-zinc-500 tracking-widest mb-2 font-mono">Connected Room Code</div>
+                <div class="flex items-center justify-center gap-3">
+                    <span id="roomCodeDisplay" class="room-code-badge text-2xl sm:text-3xl font-bold px-5 py-2.5 rounded-xl">
+                        ---
+                    </span>
+                    <button onclick="copyInviteLink()" class="w-11 h-11 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-cyan-400 flex items-center justify-center transition" title="Copy Invite Link" aria-label="Copy Invite Link">
+                        <i class="fa-regular fa-copy text-base"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Primary CTAs -->
+            <div class="flex flex-col sm:flex-row gap-3.5 max-w-md mx-auto mb-8">
+                <!-- Deep Link CTA -->
+                <a id="openAppBtn" href="#" class="btn-app-open flex-1 py-4 px-6 rounded-2xl flex items-center justify-center gap-3 text-sm transition">
+                    <i class="fa-brands fa-android text-lg"></i>
+                    <span>Open in BeatWave App</span>
+                </a>
+
+                <!-- Web Player CTA -->
+                <a id="joinWebBtn" href="#" class="btn-web-player flex-1 py-4 px-6 rounded-2xl flex items-center justify-center gap-3 text-sm font-bold transition">
+                    <i class="fa-solid fa-globe text-cyan-400"></i>
+                    <span>Join in Web Player</span>
+                </a>
+            </div>
+
+            <!-- QR Code Section for Cross-Device Quick Scanning -->
+            <div class="border-t border-zinc-800/40 pt-8 mt-2">
+                <div class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-qrcode text-cyan-400"></i>
+                    <span>Scan to Join on Mobile</span>
+                </div>
+                
+                <div class="qr-wrapper mx-auto mb-4" id="qrcodeContainer"></div>
+                
+                <p class="text-[11px] text-zinc-500 max-w-xs mx-auto">
+                    Scan with your phone's camera to instantly join on the BeatWave Android app or mobile browser.
+                </p>
+            </div>
+
+            <!-- Custom Room Code Switcher -->
+            <div class="mt-8 pt-6 border-t border-zinc-800/40 flex flex-col items-center">
+                <button onclick="toggleCustomRoomInput()" class="text-xs text-zinc-400 hover:text-cyan-400 font-bold transition flex items-center gap-2">
+                    <span>Have a different room code?</span>
+                    <i id="customRoomChevron" class="fa-solid fa-chevron-down text-[10px] transition-transform"></i>
+                </button>
+
+                <div id="customRoomSection" class="hidden w-full max-w-md mt-4 transition-all">
+                    <div class="flex gap-2">
+                        <input type="text" id="customRoomInput" placeholder="Enter Room Code (e.g. WAVE77)" class="flex-1 bg-zinc-950/80 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white uppercase font-mono tracking-widest outline-none focus:border-cyan-500 transition">
+                        <button onclick="applyCustomRoom()" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-black uppercase transition">
+                            Switch
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 max-w-4xl mx-auto w-full text-center py-6 text-xs text-zinc-500">
+        <p class="font-bold text-zinc-400 mb-1">BeatWave Sync Engine · Powered by Vortex Apps</p>
+        <p>100% Free · Ad-Free · FOSS Collaborative Audio Experience</p>
+    </footer>
+
+    <!-- Copied Toast -->
+    <div id="toast">
+        <i class="fa-solid fa-circle-check text-cyan-400"></i>
+        <span id="toastMsg">Invite link copied to clipboard!</span>
+    </div>
+
+    <script>
+        // Room Code Resolution
+        function getRoomCode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let room = urlParams.get('room') || urlParams.get('sync');
+            
+            // Check hash fallback (e.g. sync.html#ROOMCODE)
+            if (!room && window.location.hash) {
+                room = window.location.hash.replace('#', '').trim();
+            }
+
+            // Check pathname sub-route fallback (e.g. /sync/XYZ)
+            if (!room) {
+                const parts = window.location.pathname.split('/').filter(Boolean);
+                if (parts.length >= 2 && parts[parts.length - 2] === 'sync') {
+                    room = parts[parts.length - 1];
+                }
+            }
+
+            // Default fallback if opened directly without parameters
+            if (!room || room.trim() === '') {
+                room = 'BEAT' + Math.floor(1000 + Math.random() * 9000);
+            }
+
+            return room.toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+        }
+
+        let currentRoom = getRoomCode();
+
+        function updateRoomUI(room) {
+            currentRoom = room;
+            document.getElementById('roomCodeDisplay').innerText = currentRoom;
+            
+            const fullInviteUrl = `${window.location.origin}/sync.html?room=${encodeURIComponent(currentRoom)}`;
+            const webPlayerUrl = `web.html?sync=${encodeURIComponent(currentRoom)}`;
+            const appDeepLink = `beatwave://sync?room=${encodeURIComponent(currentRoom)}`;
+
+            // Update CTAs
+            const openAppBtn = document.getElementById('openAppBtn');
+            const joinWebBtn = document.getElementById('joinWebBtn');
+            
+            openAppBtn.href = appDeepLink;
+            openAppBtn.onclick = function(e) {
+                // Fallback mechanism: if app is not installed, prompt after 1.5s
+                setTimeout(() => {
+                    if (document.hidden) return;
+                    showToast("Redirecting to Web Player...");
+                    window.location.href = webPlayerUrl;
+                }, 1500);
+            };
+
+            joinWebBtn.href = webPlayerUrl;
+
+            // Generate QR Code
+            const qrContainer = document.getElementById('qrcodeContainer');
+            qrContainer.innerHTML = '';
+            new QRCode(qrContainer, {
+                text: fullInviteUrl,
+                width: 140,
+                height: 140,
+                colorDark : "#050608",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
+        }
+
+        function copyInviteLink() {
+            const fullInviteUrl = `${window.location.origin}/sync.html?room=${encodeURIComponent(currentRoom)}`;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(fullInviteUrl).then(() => {
+                    showToast("Invite link copied to clipboard!");
+                }).catch(() => {
+                    fallbackCopy(fullInviteUrl);
+                });
+            } else {
+                fallbackCopy(fullInviteUrl);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast("Invite link copied to clipboard!");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function toggleCustomRoomInput() {
+            const section = document.getElementById('customRoomSection');
+            const chevron = document.getElementById('customRoomChevron');
+            if (section.classList.contains('hidden')) {
+                section.classList.remove('hidden');
+                chevron.classList.add('rotate-180');
+                document.getElementById('customRoomInput').focus();
+            } else {
+                section.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+            }
+        }
+
+        function applyCustomRoom() {
+            const input = document.getElementById('customRoomInput');
+            const val = input.value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+            if (!val) {
+                showToast("Please enter a valid room code.");
+                return;
+            }
+            updateRoomUI(val);
+            window.history.replaceState(null, '', `?room=${encodeURIComponent(val)}`);
+            toggleCustomRoomInput();
+            showToast(`Switched to room: ${val}`);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateRoomUI(currentRoom);
+        });
+    </script>
+</body>
+</html>
