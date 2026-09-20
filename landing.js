@@ -58,20 +58,20 @@ function initProgressBarEngine(onComplete) {
     const pctLabel = document.getElementById('loaderProgressPct');
     if (!barFill) { if (onComplete) onComplete(); return; }
     let p = 0;
-    // 2% every 35ms = 1 750ms total
+    // 5% every 50ms = 1 000ms total
     const timer = setInterval(() => {
-        p += 2;
+        p += 5;
         if (p >= 100) {
             p = 100;
             clearInterval(timer);
             barFill.style.width = '100%';
             if (pctLabel) pctLabel.textContent = 100;
-            setTimeout(() => { if (onComplete) onComplete(); }, 200);
+            setTimeout(() => { if (onComplete) onComplete(); }, 160);
         } else {
             barFill.style.width = p + '%';
             if (pctLabel) pctLabel.textContent = p;
         }
-    }, 35);
+    }, 50);
 }
 
 // ---------- Firebase: admin + listeners ----------
@@ -998,6 +998,28 @@ function refreshRenderObservers() {
 }
 
 // ---------- Boot ----------
+/* ── Smooth scroll — JS with nav offset ─────────────────── */
+function initSmoothScroll() {
+    const nav = document.querySelector('nav:not(.mobile-dock)');
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+            const hash = a.getAttribute('href');
+            if (hash === '#') { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+            const id = hash.slice(1);
+            const target = document.getElementById(id);
+            if (!target) return;
+            e.preventDefault();
+            const offset = (nav ? nav.offsetHeight : 64) + 20;
+            const top = target.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+            // update mobile dock active state
+            document.querySelectorAll('.dock-item').forEach(d => d.classList.remove('active'));
+            const dockMatch = document.querySelector(`.dock-item[href="${hash}"]`);
+            if (dockMatch) dockMatch.classList.add('active');
+        });
+    });
+}
+
 /* ── Antigravity / parallax scroll ──────────────────────── */
 function initAntigravity() {
     if (prefersReducedMotion) return;
@@ -1078,6 +1100,7 @@ function startApp() {
     }
 
     refreshRenderObservers();
+    initSmoothScroll();
     buildCurtainPanels();
     initAntigravity();
 
