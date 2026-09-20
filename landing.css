@@ -1172,6 +1172,16 @@ body.light-theme .btn-chroma-download:hover {
     box-sizing: border-box;
 }
 .security-audit-advisory span { color: var(--text-mid); font-weight: 600; }
+body.light-theme .download-explainer-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.05);
+}
+body.light-theme .security-audit-advisory {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.12);
+    color: #52525b;
+}
 
 .hero-progressive-blur {
     position: absolute;
@@ -1276,8 +1286,15 @@ body.light-theme .static-counter-badge span { color: #09090b; background: rgba(0
     background: var(--bg-card-hover);
     box-shadow: var(--shadow-md);
 }
+body.light-theme .bento-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
 body.light-theme .bento-card:hover {
-    border-color: rgba(0, 0, 0, 0.3);
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.22);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
 }
 .bento-card > * { position: relative; z-index: 1; }
 .bento-card.wide { grid-column: span 2; }
