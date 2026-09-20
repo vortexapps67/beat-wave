@@ -57,7 +57,7 @@
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Firebase -->
@@ -393,17 +393,21 @@
             <h1 data-ag="0.12">BeatWave</h1>
             <div class="scramble-title" id="scramble-target" data-ag="0.08">Made With ❤️ By Vortex Apps.</div>
 
-            <div class="hero-buttons" data-ag="0.06">
-                <a href="https://github.com/beatlabs790/beatwave" target="_blank" rel="noopener" class="btn-github"><i class="fab fa-github"></i> VIEW ON GITHUB</a>
-                <a href="https://discord.gg/spbuDTePSR" target="_blank" rel="noopener" class="btn-discord"><i class="fab fa-discord"></i> JOIN DISCORD</a>
+            <!-- Primary CTA: download first -->
+            <div class="hero-download-primary" data-ag="0.06">
+                <a href="https://github.com/beatlabs790/beatwave/releases/tag/v4.0" target="_blank" rel="noopener" class="btn-chroma-download" id="downloadButtonMain">
+                    <i class="fas fa-cloud-arrow-down"></i>
+                    <span>Get BeatWave v4.0</span>
+                </a>
+            </div>
+
+            <!-- Secondary CTAs -->
+            <div class="hero-buttons" data-ag="0.04">
+                <a href="https://github.com/beatlabs790/beatwave" target="_blank" rel="noopener" class="btn-github"><i class="fab fa-github"></i> View on GitHub</a>
+                <a href="https://discord.gg/spbuDTePSR" target="_blank" rel="noopener" class="btn-discord"><i class="fab fa-discord"></i> Join Discord</a>
             </div>
 
             <div id="download-container-context">
-                <a href="https://github.com/beatlabs790/beatwave/releases/tag/v4.0" target="_blank" rel="noopener" class="btn-chroma-download" id="downloadButtonMain">
-                    <i class="fas fa-cloud-arrow-down"></i>
-                    <span>Get BeatWave v4.0 (GitHub Build Hub)</span>
-                </a>
-
                 <div class="download-explainer-card">
                     <p class="download-btn-caption"><strong>Package Information:</strong> BeatWave is a secure, free, ad-free music player and FOSS music app, engineered natively by Vortex Apps. We are recognized as the best open source music app for local audio library rendering on Android environments.</p>
                     <p class="download-verification-instructions">To verify installation safety, inspect our open repository assets and cross-check your runtime signatures with our explicit manifest targets below.</p>
@@ -735,7 +739,7 @@
         </footer>
     </div>
 
-    <script src="landing.js?v=9"></script>
+    <script src="landing.js?v=10"></script>
     <script src="ai-assistant.js"></script>
 </body>
 </html>
