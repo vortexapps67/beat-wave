@@ -32,9 +32,7 @@
             color: #1d212a;
         }
         body.light-theme h1 {
-            background: linear-gradient(135deg, #1d212a 40%, #5c5d61 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #1d212a;
         }
         body.light-theme h2 {
             color: #1d212a;
@@ -62,40 +60,18 @@
         /* --- INTERACTIVE SCROLL INDICATOR --- */
         #scroll-tracker {
             position: fixed; top: 0; left: 0; height: 3px;
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-red));
+            background: #ffffff;
             z-index: 9999; width: 0%; transition: width 0.1s linear;
-            box-shadow: 0 0 15px var(--accent-purple);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
-        /* --- AMBIENT RGB LIGHTING ENGINE --- */
+        /* --- AMBIENT LIGHTING ENGINE (Zero Gradients) --- */
         .ambient-glow {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(to bottom, #030305, #07070a);
-            z-index: -3; pointer-events: none; overflow: hidden;
-        }
-        .ambient-glow::before, .ambient-glow::after {
-            content: ''; position: absolute; border-radius: 50%;
-            filter: blur(150px); opacity: 0.35;
-            animation: breathe 14s infinite alternate ease-in-out;
-            mix-blend-mode: screen;
-        }
-        .ambient-glow::before {
-            width: 50vw; height: 50vh; top: -10%; left: -10%;
-            background: radial-gradient(circle, rgba(0, 210, 255, 0.25), rgba(179, 0, 255, 0.15));
-            animation-delay: 0s;
-        }
-        .ambient-glow::after {
-            width: 60vw; height: 60vh; bottom: -10%; right: -10%;
-            background: radial-gradient(circle, rgba(255, 59, 59, 0.15), rgba(179, 0, 255, 0.2));
-            animation-delay: -7s;
+            display: none;
         }
 
         #cursor-glow {
-            position: fixed; top: 0; left: 0; width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(179, 0, 255, 0.12) 0%, rgba(0, 210, 255, 0.04) 40%, transparent 70%);
-            border-radius: 50%; pointer-events: none; z-index: -2;
-            transform: translate(-50%, -50%); transition: transform 0.1s ease-out;
-            mix-blend-mode: screen; filter: blur(30px);
+            display: none;
         }
 
         #particle-canvas {
@@ -152,15 +128,7 @@
             font-weight: 900;
             letter-spacing: -1.5px;
             margin-bottom: 15px;
-            background: linear-gradient(180deg, #ffffff 30%, rgba(255,255,255,0.3) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: rgbTextGlow 8s linear infinite alternate;
-        }
-
-        @keyframes rgbTextGlow {
-            0% { filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.2)); }
-            50% { filter: drop-shadow(0 0 25px rgba(179, 0, 255, 0.3)); }
-            100% { filter: drop-shadow(0 0 15px rgba(255, 59, 59, 0.2)); }
+            color: #ffffff;
         }
 
         .last-updated {
@@ -168,20 +136,19 @@
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 3px;
-            color: var(--accent-blue);
+            color: #a1a1aa;
             font-weight: 700;
-            opacity: 0.8;
         }
 
         /* --- HAPPINESS BANNER --- */
         .happiness-banner {
             width: 100%;
             height: 280px;
-            border-radius: 35px;
+            border-radius: 28px;
             overflow: hidden;
             position: relative;
             margin-bottom: 40px;
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 30px 60px rgba(0,0,0,0.6);
             background: #000;
         }
@@ -192,7 +159,7 @@
             object-fit: cover;
             opacity: 0.65;
             transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
-            mix-blend-mode: luminosity; /* Gives it a premium, slightly desaturated vibe */
+            mix-blend-mode: luminosity;
         }
         
         .happiness-banner:hover img {
@@ -205,7 +172,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(3,3,5,1) 0%, rgba(3,3,5,0) 60%);
+            background: rgba(0, 0, 0, 0.45);
             pointer-events: none;
         }
 
@@ -226,7 +193,7 @@
         }
         
         .banner-text p {
-            color: var(--accent-blue);
+            color: #a1a1aa;
             font-family: 'Space Mono', monospace;
             font-size: 0.85rem;
             font-weight: 700;
@@ -235,12 +202,12 @@
             opacity: 1;
         }
 
-        /* --- CONTENT BOX WITH CHROMA BORDER --- */
+        /* --- CONTENT BOX (Crisp 1px Border, Zero Gradients) --- */
         .content-box {
-            background: var(--bg-panel);
-            border: 1px solid var(--glass-border);
+            background: #09090b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 60px;
-            border-radius: 35px;
+            border-radius: 28px;
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             position: relative;
@@ -248,27 +215,11 @@
         }
 
         .content-box::before {
-            content: ""; position: absolute; inset: 0;
-            border-radius: 35px; padding: 2px;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-red), var(--accent-blue));
-            background-size: 300% 300%;
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: destination-out;
-            mask-composite: exclude;
-            opacity: 0; transition: opacity 0.6s ease;
-            animation: chromaStream 4s linear infinite;
-            z-index: 0;
+            display: none;
         }
 
-        .content-box:hover::before { opacity: 0.6; }
-        .content-box:hover { box-shadow: 0 25px 60px rgba(179, 0, 255, 0.1); }
+        .content-box:hover { box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5); }
         .content-box > * { position: relative; z-index: 1; }
-
-        @keyframes chromaStream {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
 
         section { margin-bottom: 45px; }
         section:last-child { margin-bottom: 0; }
@@ -288,9 +239,8 @@
             content: '';
             width: 4px;
             height: 18px;
-            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple));
+            background: #ffffff;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 210, 255, 0.6);
         }
         
         p { 

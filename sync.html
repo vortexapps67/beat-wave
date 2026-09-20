@@ -60,24 +60,9 @@
             justify-content: space-between;
         }
 
-        /* Ambient Glow Backdrop */
+        /* Ambient Glow Backdrop — Zero Gradients */
         .ambient-glow {
-            position: fixed;
-            top: 20%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: clamp(350px, 80vw, 750px);
-            height: clamp(350px, 80vw, 750px);
-            background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(138, 43, 226, 0.08) 40%, rgba(255, 0, 127, 0.04) 60%, transparent 75%);
-            filter: blur(90px);
-            z-index: 0;
-            pointer-events: none;
-            animation: pulseAmbient 8s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulseAmbient {
-            0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.7; }
-            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            display: none;
         }
 
         .glass-card {
@@ -89,22 +74,22 @@
         }
 
         .brand-gradient-text {
-            background: linear-gradient(135deg, #00e5f2 0%, #8a2be2 50%, #ff2e88 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #ffffff;
+            font-weight: 800;
         }
 
         .btn-app-open {
-            background: linear-gradient(135deg, #00e5f2 0%, #0084ff 100%);
-            color: #000;
+            background: #ffffff;
+            color: #000000;
             font-weight: 800;
-            box-shadow: 0 10px 30px rgba(0, 242, 254, 0.35);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             transition: var(--transition);
         }
 
         .btn-app-open:hover {
-            transform: translateY(-2px) scale(1.01);
-            box-shadow: 0 15px 40px rgba(0, 242, 254, 0.5);
+            transform: translateY(-2px);
+            background: #e4e4e7;
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.2);
         }
 
         .btn-web-player {

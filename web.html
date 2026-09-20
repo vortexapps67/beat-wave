@@ -236,7 +236,7 @@
 
     <!-- Loading Screen -->
     <div id="loading-screen">
-        <img src="beatwave%20new%20new.png" alt="BeatWave Logo" class="w-20 h-20 animate-pulse drop-shadow-[0_0_20px_rgba(239,68,68,0.4)]">
+        <img src="beatwave%20new%20new.png" alt="BeatWave Logo" class="w-24 h-24 rounded-full mix-blend-screen animate-pulse drop-shadow-[0_0_24px_rgba(255,255,255,0.25)]">
         <div class="text-sm font-bold tracking-widest text-zinc-400 font-mono uppercase">BeatWave Web is now loading...</div>
         <div class="matrix-bar">
             <div class="matrix-fill" id="loadingProgressFillNode"></div>
@@ -255,7 +255,7 @@
         
         <div class="w-full max-w-5xl mt-6 flex flex-col gap-1 px-2">
             <h2 id="theaterTrackTitle" class="text-xl font-black truncate text-white">Not Playing</h2>
-            <p id="theaterTrackArtist" class="text-xs font-bold text-red-500 uppercase tracking-widest truncate"></p>
+            <p id="theaterTrackArtist" class="text-xs font-bold text-zinc-400 uppercase tracking-widest truncate"></p>
         </div>
     </div>
 
@@ -263,14 +263,14 @@
     <div id="tvMode" class="hidden">                
         <div class="absolute top-10 left-10 flex items-center gap-4">                        
             <img src="beatwave%20new%20new.png" class="logo-img" alt="BeatWave Logo">                        
-            <h1 class="text-2xl font-extrabold italic tracking-tighter">BEATWAVE <span class="text-red-600">CONNECT</span></h1>                
+            <h1 class="text-2xl font-extrabold italic tracking-tighter">BEATWAVE <span class="text-white">CONNECT</span></h1>                
         </div>                
         <div id="player-wrapper-tv" class="rounded-3xl overflow-hidden mb-8"></div>                
         <img id="tvArt" src="" class="w-80 h-80 md:w-[480px] md:h-[480px] rounded-[40px] shadow-2xl mb-10 object-cover bg-zinc-900 border-8 border-white/5 transition-all" alt="TV Album Art">                
         <h2 id="tvTitle" class="text-4xl md:text-5xl font-black mb-2 px-10 text-center max-w-4xl truncate leading-tight">Waiting for stream...</h2>                
-        <p id="tvArtist" class="text-xl md:text-2xl text-red-500 font-bold mb-8 uppercase tracking-[0.4em]"></p>                
+        <p id="tvArtist" class="text-xl md:text-2xl text-white font-bold mb-8 uppercase tracking-[0.4em]"></p>                
         <div id="tvRoomTag" class="px-8 py-3 bg-white/5 rounded-full text-zinc-400 font-mono text-xs border border-white/10 hidden"></div>                
-        <div class="absolute bottom-10 text-zinc-600 text-[10px] uppercase font-bold tracking-widest">Powered by Vortex Apps <span class="text-red-900">@vortex.apps</span></div>        
+        <div class="absolute bottom-10 text-zinc-600 text-[10px] uppercase font-bold tracking-widest">Powered by Vortex Apps <span class="text-zinc-400">@vortex.apps</span></div>        
     </div>
 
     <!-- Main Application Shell -->
@@ -290,7 +290,7 @@
                     <i class="fa-solid fa-circle-arrow-left"></i>                     
                     <span class="hidden md:block font-bold">Back Home</span>                
                 </a>            
-                <button id="admin-login-btn" class="w-full text-left flex items-center gap-4 py-2 px-3 text-zinc-500 hover:text-red-400 transition apple-nav-btn">
+                <button id="admin-login-btn" class="w-full text-left flex items-center gap-4 py-2 px-3 text-zinc-500 hover:text-white transition apple-nav-btn">
                     <i class="fa-solid fa-lock"></i> 
                     <span class="hidden md:block font-bold">Admin Settings</span>
                 </button>
@@ -305,7 +305,7 @@
                 </div>
                 <div class="hidden md:block border-t border-zinc-800/20 pt-4">                                
                     <p class="text-[10px] text-zinc-600 uppercase font-black mb-1">Credits</p>                                
-                    <p class="text-xs font-bold text-zinc-400">Vortex Apps <span class="text-red-600/60 block">@vortex.apps</span></p>                        
+                    <p class="text-xs font-bold text-zinc-400">Vortex Apps <span class="text-zinc-400 block">@vortex.apps</span></p>                        
                 </div>
             </div>                
         </aside>
@@ -371,8 +371,8 @@
                     <div class="mb-8 max-w-xl">
                         <h2 class="text-3xl font-black mb-4">Search Catalog</h2>
                         <div class="flex gap-2">
-                            <input type="text" id="searchPageInput" placeholder="Artists, songs, genres..." class="w-full bg-zinc-900/50 border border-white/5 text-white rounded-2xl py-3 px-6 outline-none focus:ring-2 focus:ring-red-600">
-                            <button onclick="triggerPageSearch()" class="px-6 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl transition">Search</button>
+                            <input type="text" id="searchPageInput" placeholder="Artists, songs, genres..." class="w-full bg-zinc-900/50 border border-white/5 text-white rounded-2xl py-3 px-6 outline-none focus:ring-2 focus:ring-white/40">
+                            <button onclick="triggerPageSearch()" class="px-6 bg-white hover:bg-zinc-200 text-black font-bold rounded-2xl transition">Search</button>
                         </div>
                     </div>
                     <h2 class="text-2xl font-bold mb-6">Search Results</h2>
@@ -384,29 +384,29 @@
                 <!-- Page: Casting -->
                 <div id="castView" class="page-view hidden">
                     <div class="max-w-2xl">
-                        <h2 class="text-3xl font-black mb-4 flex items-center gap-2"><i class="fa-solid fa-desktop text-blue-500"></i> Cloud casting center</h2>
+                        <h2 class="text-3xl font-black mb-4 flex items-center gap-2"><i class="fa-solid fa-desktop text-white"></i> Cloud casting center</h2>
                         <p class="text-zinc-400 text-sm mb-8 leading-relaxed">Broadcast playback states to another screen running BeatWave Connect, or listen together with synchronized client nodes.</p>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                             <div class="glass p-6 rounded-2xl flex flex-col justify-between">
                                 <div>
-                                    <h4 class="text-md font-bold mb-3"><i class="fa-solid fa-plus-circle text-emerald-500"></i> Host casting portal</h4>
+                                    <h4 class="text-md font-bold mb-3"><i class="fa-solid fa-plus-circle text-white"></i> Host casting portal</h4>
                                     <p class="text-xs text-zinc-500 mb-4">Initialize a casting channel ID to share playback to synchronized screens.</p>
                                     <div class="flex gap-2 mb-3">
-                                        <input type="text" id="castRoomInput" placeholder="Room ID (e.g. BEAT1)" class="w-full bg-zinc-950/80 border border-white/5 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:ring-2 focus:ring-blue-500">
-                                        <button onclick="startCastingRoomNode(false)" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">Host</button>
+                                        <input type="text" id="castRoomInput" placeholder="Room ID (e.g. BEAT1)" class="w-full bg-zinc-950/80 border border-white/5 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:ring-2 focus:ring-white/40">
+                                        <button onclick="startCastingRoomNode(false)" class="bg-white hover:bg-zinc-200 text-black text-xs font-bold px-4 py-2.5 rounded-xl transition">Host</button>
                                     </div>
                                 </div>
-                                <button onclick="startCastingRoomNode(true)" class="w-full bg-zinc-900/50 hover:bg-zinc-800/80 border border-white/5 text-zinc-400 hover:text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2"><i class="fa-solid fa-tv text-blue-500"></i> Mount as TV Receiver Screen</button>
+                                <button onclick="startCastingRoomNode(true)" class="w-full bg-zinc-900/50 hover:bg-zinc-800/80 border border-white/5 text-zinc-400 hover:text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2"><i class="fa-solid fa-tv text-white"></i> Mount as TV Receiver Screen</button>
                             </div>
                             <div class="glass p-6 rounded-2xl">
-                                <h4 class="text-md font-bold mb-3"><i class="fa-solid fa-wifi text-blue-400"></i> Connected status</h4>
+                                <h4 class="text-md font-bold mb-3"><i class="fa-solid fa-wifi text-white"></i> Connected status</h4>
                                 <p class="text-xs text-zinc-500 mb-4">View active synced receiver details.</p>
                                 <div class="flex items-center gap-3">
                                     <span class="w-3 h-3 rounded-full bg-zinc-700 animate-pulse" id="castStatusIndicator"></span>
                                     <span id="castStatusText" class="text-xs font-bold text-zinc-500">Not casting</span>
                                 </div>
-                                <button onclick="disconnectCastingNode()" id="castDisconnectBtn" class="hidden mt-4 text-[10px] text-red-500 hover:underline">Disconnect casting</button>
+                                <button onclick="disconnectCastingNode()" id="castDisconnectBtn" class="hidden mt-4 text-[10px] text-zinc-400 hover:text-white hover:underline">Disconnect casting</button>
                             </div>
                         </div>
                     </div>
@@ -418,7 +418,7 @@
                         <div class="glass p-6 rounded-2xl flex flex-col">
                             <h3 class="text-lg font-black mb-4 flex items-center justify-between">
                                 <span>Play Queue</span>
-                                <button onclick="clearQueue()" class="text-xs text-red-500 hover:underline normal-case">Clear</button>
+                                <button onclick="clearQueue()" class="text-xs text-zinc-400 hover:text-white hover:underline normal-case">Clear</button>
                             </h3>
                             <div id="queueContainerNode" class="space-y-3 max-h-[380px] overflow-y-auto no-scrollbar pr-1">
                                 <p class="text-xs text-zinc-500 font-medium py-4 text-center">Queue empty. Add tracks from Discover.</p>
@@ -428,7 +428,7 @@
                         <div class="space-y-6">
                             <!-- Audio presets / Equalizer -->
                             <div class="glass p-6 rounded-2xl">
-                                <h3 class="text-lg font-black mb-3"><i class="fa-solid fa-sliders text-red-500"></i> Ambient audio preset EQ</h3>
+                                <h3 class="text-lg font-black mb-3"><i class="fa-solid fa-sliders text-white"></i> Ambient audio preset EQ</h3>
                                 <p class="text-xs text-zinc-400 mb-6">Change theme presets and toggle dynamic audio acoustics.</p>
                                 
                                 <div class="grid grid-cols-2 gap-3" id="eqPresetContainer">
@@ -441,21 +441,21 @@
 
                             <!-- Autoplay and crossfade controls -->
                             <div class="glass p-6 rounded-2xl">
-                                <h3 class="text-lg font-black mb-3"><i class="fa-solid fa-circle-nodes text-purple-400"></i> Playback preferences</h3>
+                                <h3 class="text-lg font-black mb-3"><i class="fa-solid fa-circle-nodes text-zinc-400"></i> Playback preferences</h3>
                                 <div class="space-y-4">
                                     <div class="flex items-center justify-between text-xs">
                                         <span class="text-zinc-400 font-bold">Autoplay Engine</span>
                                         <label class="relative inline-flex items-center cursor-pointer">
                                             <input type="checkbox" id="autoplayToggleCheck" class="sr-only peer" checked onchange="toggleAutoplayConfig(this.checked)">
-                                            <div class="w-9 h-5 bg-zinc-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-600 peer-checked:after:bg-white"></div>
+                                            <div class="w-9 h-5 bg-zinc-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-white peer-checked:after:bg-black"></div>
                                         </label>
                                     </div>
                                     <div class="border-t border-zinc-800/20 pt-4">
                                         <div class="flex items-center justify-between mb-2">
                                             <span class="text-xs text-zinc-400 font-bold">Audio crossfade</span>
-                                            <span class="text-xs font-bold text-red-500" id="crossfadeDurationLabel">Off</span>
+                                            <span class="text-xs font-bold text-white" id="crossfadeDurationLabel">Off</span>
                                         </div>
-                                        <input type="range" min="0" max="15" value="0" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-red-600" oninput="updateCrossfadeConfig(this.value)">
+                                        <input type="range" min="0" max="15" value="0" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-white" oninput="updateCrossfadeConfig(this.value)">
                                     </div>
                                 </div>
                             </div>
@@ -471,7 +471,7 @@
         <div class="w-full flex items-center gap-3">
             <span id="progressTimeCurrent" class="text-[10px] font-mono font-bold text-zinc-500 w-8 text-right">0:00</span>
             <div onclick="seekTrackTimeline(event)" id="progressTimelineRail" class="flex-1 h-1.5 bg-zinc-800/80 rounded-full relative overflow-visible cursor-pointer group">
-                <div id="progressTimelineFill" class="absolute left-0 top-0 h-full w-0 bg-gradient-to-r from-red-500 to-amber-500 rounded-full relative shadow-[0_0_10px_#ef4444]">
+                <div id="progressTimelineFill" class="absolute left-0 top-0 h-full w-0 bg-white rounded-full relative shadow-[0_0_8px_rgba(255,255,255,0.5)]">
                     <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition shadow-md border border-zinc-400 scale-75 group-hover:scale-110"></div>
                 </div>
             </div>
@@ -614,7 +614,7 @@
                         <i class="fa-brands fa-android text-sm"></i>
                         <span>Open in App</span>
                     </a>
-                    <button onclick="leaveSyncRoom()" class="text-xs font-bold text-red-500 hover:text-red-400 transition flex items-center gap-1.5">
+                    <button onclick="leaveSyncRoom()" class="text-xs font-bold text-zinc-400 hover:text-white transition flex items-center gap-1.5">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span>Leave Room</span>
                     </button>

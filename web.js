@@ -262,7 +262,7 @@ function setupAdminListenersAndUI() {
                 <div class="glass p-4 rounded-2xl cursor-pointer hover-card transition group relative flex flex-col h-full" onclick="loadMusic('${t.videoId}', '${titleSought}', '${t.artUrl}', '${trackArtist}')">                                        
                     <div class="relative overflow-hidden rounded-xl mb-4 aspect-square">
                         <img src="${t.artUrl}" class="w-full h-full object-cover group-hover:scale-105 transition shadow-lg">                                        
-                        <button onclick="pushTrackToQueueArray('${t.videoId}', '${titleSought}', '${t.artUrl}', '${trackArtist}', event)" class="absolute bottom-2 right-2 w-8 h-8 bg-black/80 hover:bg-red-600 rounded-lg backdrop-blur-md flex items-center justify-center border border-white/10 text-white opacity-0 group-hover:opacity-100 transition transform translate-y-1 group-hover:translate-y-0" title="Add to Queue">
+                        <button onclick="pushTrackToQueueArray('${t.videoId}', '${titleSought}', '${t.artUrl}', '${trackArtist}', event)" class="absolute bottom-2 right-2 w-8 h-8 bg-black/80 hover:bg-white hover:text-black rounded-lg backdrop-blur-md flex items-center justify-center border border-white/10 text-white opacity-0 group-hover:opacity-100 transition transform translate-y-1 group-hover:translate-y-0" title="Add to Queue">
                             <i class="fa-solid fa-plus text-xs"></i>
                         </button>
                     </div>
@@ -468,9 +468,9 @@ function setupAdminModalHandlers() {
             statusNode.innerText = 'Updated successfully!';
             setTimeout(() => { statusNode.innerText = ''; }, 3000);
         }).catch(err => {
-            statusNode.style.color = '#ff3b3b';
+            statusNode.style.color = '#ffffff';
             statusNode.innerText = 'Error: ' + err.message;
-            setTimeout(() => { statusNode.innerText = ''; statusNode.style.color = '#00ff88'; }, 4000);
+            setTimeout(() => { statusNode.innerText = ''; statusNode.style.color = ''; }, 4000);
         });
     });
 
@@ -917,13 +917,13 @@ function updateQueueInterfaceDisplay() {
     container.innerHTML = playQueueArray.map((item, index) => {
         const isActive = index === activeQueueIndex;
         return `
-            <div onclick="loadMusic('${item.id}', '${item.t.replace(/'/g, "\\'")}', '${item.img}', '${item.a.replace(/'/g, "\\'")}', true)" class="flex items-center gap-3 p-2 rounded-xl border ${isActive ? 'bg-red-500/10 border-red-500/20' : 'bg-zinc-950/40 border-white/5'} cursor-pointer hover:bg-zinc-900 group transition">
+            <div onclick="loadMusic('${item.id}', '${item.t.replace(/'/g, "\\'")}', '${item.img}', '${item.a.replace(/'/g, "\\'")}', true)" class="flex items-center gap-3 p-2 rounded-xl border ${isActive ? 'bg-white/10 border-white/30' : 'bg-zinc-950/40 border-white/5'} cursor-pointer hover:bg-zinc-900 group transition">
                 <img src="${item.img}" class="w-10 h-10 rounded-lg object-cover bg-zinc-900 flex-shrink-0">
                 <div class="flex-1 min-w-0">
-                    <div class="text-xs font-bold truncate ${isActive ? 'text-red-400' : 'text-zinc-200'}">${item.t}</div>
+                    <div class="text-xs font-bold truncate ${isActive ? 'text-white' : 'text-zinc-200'}">${item.t}</div>
                     <div class="text-[9px] text-zinc-500 truncate mt-0.5">${item.a}</div>
                 </div>
-                <button onclick="removeQueueTrackIndex(${index}, event)" class="opacity-0 group-hover:opacity-100 text-zinc-500 hover:text-red-500 transition px-1 text-xs"><i class="fa-solid fa-trash"></i></button>
+                <button onclick="removeQueueTrackIndex(${index}, event)" class="opacity-0 group-hover:opacity-100 text-zinc-500 hover:text-white transition px-1 text-xs"><i class="fa-solid fa-trash"></i></button>
             </div>
         `;
     }).join('');
@@ -943,7 +943,7 @@ window.triggerPageSearch = async function() {
     switchPage('search');
     
     const grid = document.getElementById('searchGrid');                        
-    grid.innerHTML = '<div class="col-span-full py-20 text-center"><i class="fa-solid fa-circle-notch fa-spin text-4xl text-red-600"></i></div>';                                                
+    grid.innerHTML = '<div class="col-span-full py-20 text-center"><i class="fa-solid fa-circle-notch fa-spin text-4xl text-white"></i></div>';                                                
     const data = await fetchWithRetry(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=18&q=${encodeURIComponent(query)}&type=video&key=${keys[keyIndex]}`);                        
     if (data && data.items) render(data.items, 'searchGrid');                        
     else grid.innerHTML = '<p class="col-span-full text-center text-zinc-500">Service threshold timed out. Verify rotation manifest.</p>';                
@@ -965,7 +965,7 @@ function render(items, gridId) {
             <div class="glass p-4 rounded-2xl cursor-pointer hover-card transition group relative flex flex-col h-full" onclick="loadMusic('${i.id.videoId}', '${titleSought}', '${i.snippet.thumbnails.high.url}', '${trackArtist}')">                                        
                 <div class="relative overflow-hidden rounded-xl mb-4 aspect-square">
                     <img src="${i.snippet.thumbnails.high.url}" class="w-full h-full object-cover group-hover:scale-105 transition shadow-lg">                                        
-                    <button onclick="pushTrackToQueueArray('${i.id.videoId}', '${titleSought}', '${i.snippet.thumbnails.high.url}', '${trackArtist}', event)" class="absolute bottom-2 right-2 w-8 h-8 bg-black/80 hover:bg-red-600 rounded-lg backdrop-blur-md flex items-center justify-center border border-white/10 text-white opacity-0 group-hover:opacity-100 transition transform translate-y-1 group-hover:translate-y-0" title="Add to Queue">
+                    <button onclick="pushTrackToQueueArray('${i.id.videoId}', '${titleSought}', '${i.snippet.thumbnails.high.url}', '${trackArtist}', event)" class="absolute bottom-2 right-2 w-8 h-8 bg-black/80 hover:bg-white hover:text-black rounded-lg backdrop-blur-md flex items-center justify-center border border-white/10 text-white opacity-0 group-hover:opacity-100 transition transform translate-y-1 group-hover:translate-y-0" title="Add to Queue">
                         <i class="fa-solid fa-plus text-xs"></i>
                     </button>
                 </div>

@@ -57,21 +57,33 @@ function initProgressBarEngine(onComplete) {
     const barFill = document.getElementById('loaderMatrixProgressBarNode');
     const pctLabel = document.getElementById('loaderProgressPct');
     if (!barFill) { if (onComplete) onComplete(); return; }
-    let p = 0;
-    // 5% every 50ms = 1 000ms total
-    const timer = setInterval(() => {
-        p += 5;
-        if (p >= 100) {
-            p = 100;
-            clearInterval(timer);
-            barFill.style.width = '100%';
-            if (pctLabel) pctLabel.textContent = 100;
-            setTimeout(() => { if (onComplete) onComplete(); }, 160);
+
+    const duration = 1200;
+    let startTimestamp = null;
+
+    function step(timestamp) {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const elapsed = timestamp - startTimestamp;
+        const linearProgress = Math.min(1, elapsed / duration);
+        // easeOutCubic for organic acceleration and smooth deceleration into 100%
+        const progress = 1 - Math.pow(1 - linearProgress, 3);
+        const currentPct = Math.round(progress * 100);
+
+        barFill.style.width = `${progress * 100}%`;
+        if (pctLabel) pctLabel.textContent = currentPct;
+
+        if (linearProgress < 1) {
+            requestAnimationFrame(step);
         } else {
-            barFill.style.width = p + '%';
-            if (pctLabel) pctLabel.textContent = p;
+            barFill.style.width = '100%';
+            if (pctLabel) pctLabel.textContent = '100';
+            setTimeout(() => {
+                if (onComplete) onComplete();
+            }, 120);
         }
-    }, 50);
+    }
+
+    requestAnimationFrame(step);
 }
 
 // ---------- Firebase: admin + listeners ----------
@@ -443,7 +455,7 @@ function setupAdminModalHandlers() {
             statusNode.innerText = 'Configurations successfully updated!';
             setTimeout(() => { statusNode.innerText = ''; }, 3000);
         }).catch(err => {
-            statusNode.style.color = '#ff3b3b';
+            statusNode.style.color = '#ffffff';
             statusNode.innerText = 'Error writing to database: ' + err.message;
             setTimeout(() => { statusNode.innerText = ''; statusNode.style.color = ''; }, 4000);
         });
@@ -706,7 +718,7 @@ class TextScramble {
             if (this.frame >= end) { complete++; output += to; }
             else if (this.frame >= start) {
                 if (!char || Math.random() < 0.28) { char = this.randomChar(); this.queue[i].char = char; }
-                output += `<span style="color: var(--purple)">${char}</span>`;
+                output += `<span style="color: var(--text-mid)">${char}</span>`;
             } else { output += from; }
         }
         this.el.innerHTML = output;
@@ -795,8 +807,8 @@ function initParticles() {
     isMobile = window.innerWidth <= 768;
 
     lines = [];
-    // Perf: much sparser grid on mobile than the original (was 18 → now 34)
-    const spacing = isMobile ? 34 : (window.innerWidth < 1200 ? 14 : 10);
+    // Perf: high-efficiency spacing (56px on mobile for ~100 points, 16px/12px on desktop)
+    const spacing = isMobile ? 56 : (window.innerWidth < 1200 ? 16 : 12);
 
     const totalLines = Math.ceil(canvas.width / spacing) + 4;
     const totalPoints = Math.ceil(canvas.height / spacing) + 4;
@@ -816,6 +828,29 @@ function animateParticles(time = 0) {
     if (!ctx || !canvas) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    const isLight = document.body.classList.contains('light-theme');
+    ctx.strokeStyle = isLight ? 'rgba(13, 21, 38, 0.07)' : 'rgba(255, 255, 255, 0.08)';
+    ctx.lineWidth = 1;
+
+    // Mobile ultra-fast liquid wave: zero mouse calculations, pure 60fps performance
+    if (isMobile) {
+        for (let i = 0; i < lines.length; i++) {
+            const points = lines[i];
+            ctx.beginPath();
+            for (let j = 0; j < points.length; j++) {
+                const p = points[j];
+                const waveY = Math.sin((p.baseX * 0.004) + (time * 0.0012) + (j * 0.18)) * 8;
+                const drawX = p.baseX;
+                const drawY = p.baseY + waveY;
+                if (j === 0) ctx.moveTo(drawX, drawY);
+                else ctx.lineTo(drawX, drawY);
+            }
+            ctx.stroke();
+        }
+        animationFrameId = requestAnimationFrame(animateParticles);
+        return;
+    }
+
     mouse.sx += (mouse.x - mouse.sx) * 0.1;
     mouse.sy += (mouse.y - mouse.sy) * 0.1;
     const dx = mouse.x - mouse.lx;
@@ -826,10 +861,6 @@ function animateParticles(time = 0) {
     mouse.lx = mouse.x;
     mouse.ly = mouse.y;
     mouse.a = Math.atan2(dy, dx);
-
-    const isLight = document.body.classList.contains('light-theme');
-    ctx.strokeStyle = isLight ? 'rgba(13, 21, 38, 0.07)' : 'rgba(255, 255, 255, 0.1)';
-    ctx.lineWidth = 1;
 
     const mSize = Math.max(175, mouse.vs);
 
@@ -951,7 +982,7 @@ function refreshRenderObservers() {
     if (targetEl) {
         textScrambleInstance = new TextScramble(targetEl);
         const phrases = [
-            'Made With ❤️ By Vortex Apps.',
+            'Engineered For Pure Audio.',
             'Zero Ads. Zero Tracking.',
             'Open Source. Forever.'
         ];
@@ -973,10 +1004,12 @@ function refreshRenderObservers() {
             const rect = card.getBoundingClientRect();
             const xc = rect.width / 2, yc = rect.height / 2;
             const x = e.clientX - rect.left, y = e.clientY - rect.top;
-            card.style.transform = `rotateX(${(yc - y) / 25}deg) rotateY(${(x - xc) / 25}deg) translate3d(0, -4px, 0) scale(1.01)`;
+            const dx = (x - xc) / (xc || 1);
+            const dy = (y - yc) / (yc || 1);
+            card.style.transform = `perspective(1000px) rotateY(${dx * 3}deg) rotateX(${-dy * 3}deg) translateY(-2px)`;
         });
         card.addEventListener('mouseleave', () => {
-            card.style.transform = 'rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0) scale(1)';
+            card.style.transform = '';
         });
     });
 
@@ -1020,9 +1053,9 @@ function initSmoothScroll() {
     });
 }
 
-/* ── Antigravity / parallax scroll ──────────────────────── */
+/* ── Antigravity / parallax scroll (Desktop only, clamped) ── */
 function initAntigravity() {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || window.innerWidth <= 768) return;
     const els = document.querySelectorAll('[data-ag]');
     if (!els.length) return;
 
@@ -1030,8 +1063,10 @@ function initAntigravity() {
     function applyAg() {
         const sy = window.scrollY;
         els.forEach(el => {
-            const factor = parseFloat(el.dataset.ag) || 0.1;
-            el.style.transform = `translateY(${-sy * factor}px)`;
+            const factor = parseFloat(el.dataset.ag) || 0.05;
+            // Clamp displacement to prevent elements drifting out of view
+            const offset = Math.max(-30, -sy * factor);
+            el.style.transform = `translateY(${offset}px)`;
         });
         ticking = false;
     }
@@ -1043,9 +1078,11 @@ function initAntigravity() {
 
 /* ── Curtain reveal ─────────────────────────────────────── */
 function buildCurtainPanels() {
+    const screen = document.getElementById('loading-screen');
     const container = document.getElementById('curtain-container');
     if (!container) return;
-    const count = window.innerWidth <= 640 ? 5 : 8;
+    const isSmall = window.innerWidth <= 640;
+    const count = isSmall ? 5 : 8;
     container.innerHTML = '';
     for (let i = 0; i < count; i++) {
         const panel = document.createElement('div');
@@ -1055,6 +1092,8 @@ function buildCurtainPanels() {
         panel.appendChild(inner);
         container.appendChild(panel);
     }
+    // Once opaque panels are attached, ensure screen background is transparent so curtain lifts reveal the site
+    if (screen) screen.style.background = 'transparent';
 }
 
 function triggerCurtainReveal(onDone) {
@@ -1062,15 +1101,24 @@ function triggerCurtainReveal(onDone) {
     const overlay = screen ? screen.querySelector('.curtain-logo-overlay') : null;
     const panels  = screen ? screen.querySelectorAll('.curtain-panel-inner') : [];
 
-    if (!screen || !panels.length) { if (onDone) onDone(); return; }
+    if (!screen || !panels.length) {
+        if (screen) screen.style.display = 'none';
+        if (onDone) onDone();
+        return;
+    }
 
-    // 1. Fade out the logo overlay first
+    // 1. Instantly release pointer-events and guarantee background transparency
+    screen.classList.add('revealing');
+    screen.style.background = 'transparent';
+
+    // 2. Fade & progressively blur out the logo overlay smoothly
     if (overlay) overlay.classList.add('fade-out-logo');
 
-    const STAGGER = 90;
-    const DURATION = 700;
+    const isSmall = window.innerWidth <= 640;
+    const STAGGER = isSmall ? 38 : 50;
+    const DURATION = 820;
 
-    // 2. After logo fades (400ms), lift panels upward one by one left→right
+    // 3. Lift panels upward in silky staggered cascade
     setTimeout(() => {
         panels.forEach((inner, i) => {
             setTimeout(() => {
@@ -1078,13 +1126,16 @@ function triggerCurtainReveal(onDone) {
             }, i * STAGGER);
         });
 
-        // 3. After last panel finishes, hide the whole screen
-        const totalMs = (panels.length - 1) * STAGGER + DURATION + 60;
+        // 4. Smoothly fade out screen container after all panels complete their sweep
+        const totalMs = (panels.length - 1) * STAGGER + DURATION + 40;
         setTimeout(() => {
-            screen.style.display = 'none';
-            if (onDone) onDone();
+            screen.classList.add('fade-out');
+            setTimeout(() => {
+                screen.style.display = 'none';
+                if (onDone) onDone();
+            }, 350);
         }, totalMs);
-    }, 420);
+    }, 280);
 }
 
 function startApp() {
