@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5">
+    <meta name="theme-color" content="#0a0b10">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>BeatWave — Ad-Free Music Streaming</title>
+    <meta name="description" content="Stream millions of songs for free. No ads, no tracking, no account needed. BeatWave by Vortex Apps.">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="BeatWave — Ad-Free Music App">
+    <meta property="og:description" content="Free music streaming with zero ads and zero tracking.">
+    <meta property="og:image" content="og img.png">
+    
+    <link rel="icon" type="image/png" href="beatwave new new.png">
+    <link rel="apple-touch-icon" href="beatwave new new.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ========== CSS RESET & BASE ========== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #0a0b10;
+            --bg-secondary: #12131a;
+            --bg-card: rgba(18, 19, 26, 0.6);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-cyan: #00f2fe;
+            --accent-purple: #8a2be2;
+            --accent-pink: #ff007f;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-full: 9999px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.3);
+            --shadow-lg: 0 20px 50px rgba(0,0,0,0.4);
+            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        body.light {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --bg-card: rgba(255, 255, 255, 0.8);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --glass-bg: rgba(0, 0, 0, 0.02);
+            --glass-border: rgba(0, 0, 0, 0.06);
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* ========== PERFORMANCE OPTIMIZATIONS ========== */
+        .no-animate {
+            animation: none !important;
+            transition: none !important;
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            html { scroll-behavior: auto; }
+        }
+        
+        /* ========== LOADING SCREEN ========== */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
+            z-index: 9999;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        
+        #loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        
+        .loader-logo {
+            width: 80px;
+            height: 80px;
+            filter: drop-shadow(0 0 30px rgba(0, 242, 254, 0.3));
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        .loader-bar {
+            width: min(60%, 240px);
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        
+        .loader-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: var(--radius-full);
+            transition: width 0.3s ease;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.3)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 40px rgba(138, 43, 226, 0.4)); }
+        }
+        
+        /* ========== NAVIGATION ========== */
+        header {
+            position: sticky;
+            top: 0;
+            background: rgba(10, 11, 16, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 100;
+            padding: 0 5%;
+        }
+        
+        body.light header {
+            background: rgba(255, 255, 255, 0.85);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 800;
+            font-size: 1.25rem;
+        }
+        
+        .nav-logo {
+            width: 28px;
+            height: 28px;
+            transition: transform var(--transition-base);
+        }
+        
+        .nav-brand:hover .nav-logo {
+            transform: rotate(180deg);
+        }
+        
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: color var(--transition-fast);
+            padding: 8px 0;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a:focus-visible {
+            color: var(--text-primary);
+        }
+        
+        .nav-links a.cta {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            color: white !important;
+            padding: 10px 20px;
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.2);
+        }
+        
+        .nav-links a.cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 242, 254, 0.3);
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: 1rem;
+        }
+        
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-primary);
+            transform: scale(1.05);
+        }
+        
+        .icon-btn.active {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            border-color: var(--accent-cyan);
+        }
+        
+        body.light .icon-btn.active {
+            background: var(--accent-purple);
+            color: white;
+        }
+        
+        /* Mobile menu toggle */
+        .menu-toggle {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        .menu-toggle span {
+            width: 20px;
+            height: 2px;
+            background: currentColor;
+            border-radius: 2px;
+            transition: transform var(--transition-base);
+        }
+        
+        .menu-toggle.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .menu-toggle.open span:nth-child(2) { opacity: 0; }
+        .menu-toggle.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        /* ========== MOBILE BOTTOM NAV ========== */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 11, 16, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
+            z-index: 100;
+        }
+        
+        .mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+            list-style: none;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 8px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: color var(--transition-fast);
+            position: relative;
+        }
+        
+        .mobile-nav-item i {
+            font-size: 1.2rem;
+        }
+        
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            color: var(--accent-cyan);
+        }
+        
+        .mobile-nav-item.active::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 3px;
+            background: var(--accent-cyan);
+            border-radius: var(--radius-full);
+        }
+        
+        .mobile-nav-item.cta-player {
+            color: var(--accent-cyan);
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            border-radius: var(--radius-full);
+            padding: 8px 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .menu-toggle { display: flex; }
+            .mobile-nav { display: block; }
+            body { padding-bottom: 70px; }
+            
+            .hero-section { padding-top: 120px !important; }
+        }
+        
+        /* ========== HERO SECTION ========== */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 120px 5% 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.15), transparent 70%);
+            top: -100px;
+            left: -100px;
+            animation: floatGlow 8s ease-in-out infinite alternate;
+        }
+        
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.1), transparent 70%);
+            bottom: -50px;
+            right: -50px;
+            animation: floatGlow 10s ease-in-out infinite alternate-reverse;
+        }
+        
+        @keyframes floatGlow {
+            from { transform: translate(0, 0); }
+            to { transform: translate(30px, 20px); }
+        }
+        
+        .hero-content {
+            position: relative;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(0, 242, 254, 0.08);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 24px;
+        }
+        
+        .live-indicator {
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ff88;
+            animation: livePulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+        
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 30%, var(--accent-cyan) 70%, var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-tagline {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border: none;
+            font-family: inherit;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            color: white;
+            box-shadow: 0 8px 24px rgba(0, 242, 254, 0.25);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 242, 254, 0.35);
+        }
+        
+        .btn-secondary {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+        
+        body.light .btn-secondary {
+            background: rgba(0,0,0,0.03);
+        }
+        
+        body.light .btn-secondary:hover {
+            background: rgba(0,0,0,0.06);
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* ========== FEATURES SECTION ========== */
+        .section {
+            padding: 80px 5%;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .section-header h2 {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+        
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-purple), transparent);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.12);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        
+        body.light .feature-card {
+            background: rgba(255,255,255,0.7);
+        }
+        
+        body.light .feature-card:hover {
+            border-color: rgba(0,0,0,0.1);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+        }
+        
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.1), rgba(138, 43, 226, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--accent-cyan);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        /* ========== SCREENSHOTS SECTION ========== */
+        .screenshots-section {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .screenshot-carousel {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 20px 0;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .screenshot-carousel::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .screenshot-slide {
+            flex: 0 0 auto;
+            width: min(280px, 60vw);
+            scroll-snap-align: center;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            transition: transform var(--transition-base), box-shadow var(--transition-base);
+        }
+        
+        .screenshot-slide:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .screenshot-slide img {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: var(--bg-primary);
+        }
+        
+        /* ========== DOWNLOAD SECTION ========== */
+        .download-section {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .download-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+        
+        body.light .download-card {
+            background: rgba(255,255,255,0.7);
+        }
+        
+        .download-card .btn {
+            margin-top: 24px;
+        }
+        
+        .download-info {
+            margin-top: 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        .download-info a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+        
+        .download-info a:hover {
+            text-decoration: underline;
+        }
+        
+        /* ========== FAQ SECTION ========== */
+        .faq-list {
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: border-color var(--transition-fast);
+        }
+        
+        .faq-item:hover {
+            border-color: rgba(255,255,255,0.1);
+        }
+        
+        body.light .faq-item {
+            background: rgba(255,255,255,0.6);
+        }
+        
+        .faq-question {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            text-align: left;
+            transition: color var(--transition-fast);
+        }
+        
+        .faq-question:hover {
+            color: var(--accent-cyan);
+        }
+        
+        .faq-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            transition: transform var(--transition-base);
+        }
+        
+        .faq-item.open .faq-icon {
+            transform: rotate(45deg);
+            color: var(--accent-cyan);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-smooth);
+        }
+        
+        .faq-answer-inner {
+            padding: 0 24px 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .faq-item.open .faq-answer {
+            max-height: 200px;
+        }
+        
+        /* ========== TEAM SECTION ========== */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .team-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            text-align: center;
+            transition: all var(--transition-base);
+        }
+        
+        .team-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.12);
+        }
+        
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .team-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .team-role {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        
+        .team-social {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .team-social a {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: all var(--transition-fast);
+        }
+        
+        .team-social a:hover {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            border-color: var(--accent-cyan);
+        }
+        
+        /* ========== FOOTER ========== */
+        footer {
+            padding: 40px 5%;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+        
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        /* ========== MENUBACKDROP ========== */
+        #menu-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-base), visibility var(--transition-base);
+        }
+        
+        #menu-backdrop.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section {
+                padding: 60px 5%;
+            }
+            
+            .hero-section {
+                padding: 100px 5% 50px;
+            }
+            
+            .download-card {
+                padding: 24px;
+            }
+            
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: clamp(2.2rem, 10vw, 3rem);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-container {
+                height: 56px;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .hero-stats {
+                gap: 20px;
+            }
+        }
+        
+        @media (prefers-color-scheme: light) {
+            /* Respect system preference if no manual toggle */
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loader">
+        <img src="beatwave new new.png" alt="BeatWave" class="loader-logo">
+        <div class="loader-bar">
+            <div class="loader-bar-fill" id="loaderFill"></div>
+        </div>
+    </div>
+    
+    <!-- Menu Backdrop -->
+    <div id="menu-backdrop"></div>
+    
+    <!-- Header -->
+    <header>
+        <div class="nav-container">
+            <a href="#" class="nav-brand">
+                <img src="beatwave new new.png" alt="BW" class="nav-logo">
+                BeatWave
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#screenshots">Screenshots</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#team">Team</a></li>
+                <li><a href="web.html" class="cta"><i class="fa-solid fa-play"></i> Web Player</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <ul class="mobile-nav-items">
+            <li><a href="#" class="mobile-nav-item active"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="#features" class="mobile-nav-item"><i class="fa-solid fa-shield-halved"></i> Features</a></li>
+            <li><a href="sync.html" class="mobile-nav-item"><i class="fa-solid fa-signal"></i> Sync</a></li>
+            <li><a href="web.html" class="mobile-nav-item cta-player"><i class="fa-solid fa-circle-play"></i> Player</a></li>
+            <li><a href="#menu" class="mobile-nav-item" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i> Menu</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-badge animate-in">
+                <span class="live-indicator"></span>
+                v5.0.0 Live — 100% Free & Ad-Free
+            </div>
+            <h1 class="animate-in delay-1">BeatWave</h1>
+            <p class="hero-tagline animate-in delay-2">
+                Stream millions of songs for free. No ads, no tracking, no account needed. 
+                The best open-source music experience on Android and web.
+            </p>
+            <div class="hero-actions animate-in delay-3">
+                <a href="web.html" class="btn btn-primary">
+                    <i class="fa-solid fa-circle-play"></i> Open Web Player
+                </a>
+                <a href="https://github.com/beatlabs790/beatwave/releases" class="btn btn-secondary" target="_blank">
+                    <i class="fa-brands fa-github"></i> View on GitHub
+                </a>
+                <a href="https://discord.gg/spbuDTePSR" class="btn btn-secondary" target="_blank">
+                    <i class="fa-brands fa-discord"></i> Join Discord
+                </a>
+            </div>
+            <div class="hero-stats animate-in delay-4">
+                <div class="stat-item">
+                    <span class="stat-value">50K+</span>
+                    <span class="stat-label">Downloads</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">100%</span>
+                    <span class="stat-label">Ad-Free</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">4.8★</span>
+                    <span class="stat-label">Rating</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <div class="section-header">
+            <h2>Why BeatWave?</h2>
+            <p>Everything you need for a premium music experience, completely free.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-ban"></i>
+                </div>
+                <h3>Zero Ads</h3>
+                <p>No interruptions, no sponsored tracks, no premium upsells. Just pure music, forever free.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <h3>Smart Player</h3>
+                <p>Beautiful interface with gapless playback, background audio, and smooth animations.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-shield"></i>
+                </div>
+                <h3>Privacy First</h3>
+                <p>No account needed, no data collection, no tracking. Your music habits stay yours.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-code"></i>
+                </div>
+                <h3>Open Source</h3>
+                <p>Fully FOSS. Transparent, auditable, and community-driven. Built with love by Vortex Apps.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-link"></i>
+                </div>
+                <h3>Cross-Platform</h3>
+                <p>Works seamlessly on Android devices and modern web browsers. Your music anywhere.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <h3>Lightning Fast</h3>
+                <p>Optimized for performance. Smooth playback with minimal battery and memory usage.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Screenshots Section -->
+    <section class="section screenshots-section" id="screenshots">
+        <div class="section-header">
+            <h2>Interface Preview</h2>
+            <p>Swipe through to see the BeatWave experience</p>
+        </div>
+        <div class="screenshot-carousel">
+            <div class="screenshot-slide">
+                <img src="beatwave home-portrait.png" alt="Home Screen">
+            </div>
+            <div class="screenshot-slide">
+                <img src="beatwave search-portrait.png" alt="Search Screen">
+            </div>
+            <div class="screenshot-slide">
+                <img src="beatwave album-portrait.png" alt="Album View">
+            </div>
+            <div class="screenshot-slide">
+                <img src="beatwave player-portrait.png" alt="Player Screen">
+            </div>
+            <div class="screenshot-slide">
+                <img src="beatwave abt-portrait.png" alt="About Screen">
+            </div>
+        </div>
+    </section>
+    
+    <!-- Download Section -->
+    <section class="section">
+        <div class="download-section">
+            <div class="download-card">
+                <div style="font-size: 3rem; margin-bottom: 16px;">
+                    <i class="fa-solid fa-cloud-arrow-down" style="color: var(--accent-cyan);"></i>
+                </div>
+                <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 8px;">Get BeatWave</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                    Download the latest release directly from GitHub. Free, open-source, and always will be.
+                </p>
+                <a href="https://github.com/beatlabs790/beatwave/releases" class="btn btn-primary" target="_blank">
+                    <i class="fa-brands fa-github"></i> Download from GitHub
+                </a>
+                <p class="download-info">
+                    Current version: <strong>v5.0.0</strong> · Apache 2.0 License · <a href="sync.html">Live Sync</a> available
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FAQ Section -->
+    <section class="section" id="faq">
+        <div class="section-header">
+            <h2>Frequently Asked Questions</h2>
+            <p>Everything you need to know about BeatWave</p>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Is BeatWave really free?
+                    <span class="faq-icon"><i class="fa-solid fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Yes! BeatWave is completely free with no hidden costs, no premium tiers, and no ads. It's open-source software released under the Apache 2.0 license.
+                    </div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Do I need to create an account?
+                    <span class="faq-icon"><i class="fa-solid fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        No account needed. Just download and start listening. We don't collect any personal data or require any sign-up.
+                    </div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    What platforms does BeatWave support?
+                    <span class="faq-icon"><i class="fa-solid fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        BeatWave is available as an Android app and a web player that works on any modern browser. We're working on expanding to more platforms.
+                    </div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Is the source code available?
+                    <span class="faq-icon"><i class="fa-solid fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Absolutely! BeatWave is fully open-source. You can view, audit, and contribute to the code on our GitHub repository.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Team Section -->
+    <section class="section" id="team">
+        <div class="section-header">
+            <h2>Meet the Team</h2>
+            <p>The people behind BeatWave</p>
+        </div>
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="team-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h3>Akshansh Sinha</h3>
+                <p class="team-role">Founder & Lead Developer</p>
+                <div class="team-social">
+                    <a href="https://instagram.com/akshansh_6969" target="_blank" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://github.com/akshansh" target="_blank" aria-label="GitHub">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h3>Aarav Sharma</h3>
+                <p class="team-role">Developer</p>
+                <div class="team-social">
+                    <a href="https://instagram.com/aarav_sharma_sui" target="_blank" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h3>Aarav Singh</h3>
+                <p class="team-role">Designer</p>
+                <div class="team-social">
+                    <a href="https://instagram.com/precizerr" target="_blank" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="https://github.com/beatlabs790/beatwave" target="_blank">GitHub</a>
+            <a href="https://discord.gg/spbuDTePSR" target="_blank">Discord</a>
+            <a href="web.html">Web Player</a>
+            <a href="sync.html">Live Sync</a>
+            <a href="#hero">Back to Top</a>
+        </div>
+        <p>Made with <i class="fa-solid fa-heart" style="color: #ff007f;"></i> by Vortex Apps</p>
+        <p style="margin-top: 8px; font-size: 0.75rem;">
+            BeatWave is free and open-source software. <a href="#" style="color: var(--text-secondary);">Privacy Policy</a>
+        </p>
+    </footer>
+    
+    <script>
+        // ========== LOADING SCREEN ==========
+        const loader = document.getElementById('loader');
+        const loaderFill = document.getElementById('loaderFill');
+        let loadProgress = 0;
+        
+        const loadInterval = setInterval(() => {
+            loadProgress += Math.random() * 15 + 5;
+            if (loadProgress >= 100) {
+                loadProgress = 100;
+                clearInterval(loadInterval);
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                    document.body.style.opacity = '1';
+                }, 400);
+            }
+            loaderFill.style.width = loadProgress + '%';
+        }, 100);
+        
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity 0.4s ease';
+        
+        // ========== THEME TOGGLE ==========
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Check for saved preference or system preference
+        const savedTheme = localStorage.getItem('beatwave-theme');
+        const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        
+        if (savedTheme === 'light' || (!savedTheme && prefersLight)) {
+            document.body.classList.add('light');
+            themeIcon.className = 'fa-solid fa-sun';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light');
+            const isLight = document.body.classList.contains('light');
+            themeIcon.className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            localStorage.setItem('beatwave-theme', isLight ? 'light' : 'dark');
+        });
+        
+        // ========== MOBILE MENU ==========
+        const menuToggle = document.getElementById('menuToggle');
+        const menuBackdrop = document.getElementById('menu-backdrop');
+        let menuOpen = false;
+        
+        function toggleMenu() {
+            menuOpen = !menuOpen;
+            menuToggle.classList.toggle('open', menuOpen);
+            menuBackdrop.classList.toggle('visible', menuOpen);
+            document.body.style.overflow = menuOpen ? 'hidden' : '';
+        }
+        
+        menuToggle.addEventListener('click', toggleMenu);
+        menuBackdrop.addEventListener('click', toggleMenu);
+        
+        // Close menu on resize to desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768 && menuOpen) {
+                toggleMenu();
+            }
+        });
+        
+        // ========== FAQ TOGGLE ==========
+        function toggleFaq(button) {
+            const item = button.parentElement;
+            const isOpen = item.classList.contains('open');
+            
+            // Close all others
+            document.querySelectorAll('.faq-item.open').forEach(openItem => {
+                if (openItem !== item) {
+                    openItem.classList.remove('open');
+                }
+            });
+            
+            item.classList.toggle('open', !isOpen);
+        }
+        
+        // ========== SMOOTH SCROLL ==========
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
+                
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    const headerOffset = 80;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition - headerOffset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // ========== INTERSECTION OBSERVER FOR ANIMATIONS ==========
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.feature-card, .team-card, .faq-item').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                observer.observe(el);
+            });
+            
+            observer.observe = observer.observe.bind(observer);
+            document.querySelectorAll('.feature-card, .team-card, .faq-item').forEach(el => {
+                observer.observe(el);
+            });
+        }
+        
+        // ========== ACTIVE NAV LINK HIGHLIGHT ==========
+        const sections = document.querySelectorAll('section[id]');
+        const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (window.scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            mobileNavItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === '#' + current ||
+                    (current === '' && item.getAttribute('href') === '#')) {
+                    item.classList.add('active');
+                }
+            });
+        });
+        
+        // ========== KEYBOARD ACCESSIBILITY ==========
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && menuOpen) {
+                toggleMenu();
+            }
+        });
+        
+        // ========== LAZY LOAD IMAGES ==========
+        if ('loading' in HTMLImageElement.prototype) {
+            document.querySelectorAll('img[src]').forEach(img => {
+                if (!img.src.includes('data:') && !img.src.startsWith('http')) {
+                    img.loading = 'lazy';
+                }
+            });
+        }
+        
+        console.log('%c🎵 BeatWave v5.0.0', 'font-size: 16px; font-weight: bold; color: #00f2fe;');
+        console.log('%cMade with ❤️ by Vortex Apps', 'color: #8a2be2;');
+    </script>
+</body>
+</html>

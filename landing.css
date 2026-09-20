@@ -1243,6 +1243,7 @@ body.light-theme .checksum-bar { background: rgba(15,23,42,0.04); }
 .card-wrapper {
     position: relative;
     max-width: 460px; width: 100%;
+    min-width: 0;
     padding: 1px; border-radius: var(--r-xl);
     overflow: hidden;
     transition: transform 0.38s var(--ease), box-shadow 0.38s ease;
@@ -1264,6 +1265,8 @@ body.light-theme .checksum-bar { background: rgba(15,23,42,0.04); }
     border-radius: calc(var(--r-xl) - 1px);
     text-align: center;
     padding: clamp(30px, 5vw, 44px) clamp(22px, 4vw, 34px);
+    overflow: hidden;
+    min-width: 0; word-break: break-word;
 }
 .card > img { width: 72px; height: 72px; object-fit: contain; border-radius: 18px; margin: 0 auto 18px; }
 
@@ -1448,10 +1451,11 @@ footer > p { font-size: 0.8rem; color: var(--text-lo); font-weight: 400; letter-
     .mobile-dock { display: flex; }
 
     /* Hero */
-    .hero { padding-top: 48px; padding-bottom: 44px; }
+    .hero { padding-top: 48px; padding-bottom: 44px; overflow: clip; }
     .hero::before { display: none; }
 
-    h1 { font-size: clamp(2.6rem, 13vw, 4rem); }
+    /* Syne runs wide — scale down on mobile to fit viewport */
+    h1 { font-size: clamp(2rem, 10vw, 3.5rem); overflow-wrap: break-word; }
 
     /* Bento */
     .bento-grid { grid-template-columns: 1fr; gap: 12px; }
@@ -1480,7 +1484,7 @@ footer > p { font-size: 0.8rem; color: var(--text-lo); font-weight: 400; letter-
 
     .nav-brand span { font-size: 1rem; }
 
-    h1 { font-size: clamp(2.4rem, 14vw, 3.2rem); }
+    h1 { font-size: clamp(1.8rem, 10vw, 3rem); }
     .scramble-title { letter-spacing: 2.5px; font-size: 0.72rem; }
 
     .hero-buttons { flex-direction: column; align-items: stretch; }
