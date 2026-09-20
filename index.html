@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('beatwave-theme');
+                if (savedTheme === 'light') {
+                    document.documentElement.classList.add('light-theme');
+                    var metaTheme = document.querySelector('meta[name="theme-color"]');
+                    if (metaTheme) metaTheme.setAttribute('content', '#fafafa');
+                }
+            } catch (e) {}
+        })();
+    </script>
     <meta name="google-site-verification" content="mkHM8nIasTdIuDJxdP9XUkl2_cgUfTbYd0UnnhCjA6s" />
     <meta name="google-site-verification" content="_VcsB-p9ObAD2xWVJylitzjf-Zum0-8YcISZxGO5CX4">
 
@@ -296,7 +308,7 @@
     <div class="floating-nav">
         <a href="https://github.com/beatlabs790/beatwave" target="_blank" rel="noopener" class="float-icon git" aria-label="Repository Link"><i class="fab fa-github"></i></a>
         <a href="https://discord.gg/spbuDTePSR" target="_blank" rel="noopener" class="float-icon dis" aria-label="Discord Link"><i class="fab fa-discord"></i></a>
-        <div class="float-icon theme-btn" id="themeToggleBtn" role="button" tabindex="0" aria-label="Toggle Theme View Mode"><i class="fas fa-moon"></i></div>
+        <div class="float-icon theme-btn theme-toggle-btn" id="themeToggleBtn" role="button" tabindex="0" aria-label="Toggle Theme View Mode" title="Toggle Theme"><i class="fas fa-moon"></i></div>
         <div class="float-icon menu-trigger-f" role="button" tabindex="0" aria-label="Toggle Channels Menu"><i class="fas fa-headset"></i></div>
     </div>
 
@@ -304,7 +316,10 @@
     <div class="side-menu" id="sideMenu" aria-hidden="true">
         <div class="side-menu-head">
             <span>CORE CHANNELS</span>
-            <button class="side-menu-close" onclick="toggleMenu()" aria-label="Close menu">&times;</button>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button class="nav-theme-toggle theme-toggle-btn" aria-label="Toggle Theme View Mode" title="Toggle Theme" style="margin-left:0;"><i class="fas fa-moon"></i></button>
+                <button class="side-menu-close" onclick="toggleMenu()" aria-label="Close menu">&times;</button>
+            </div>
         </div>
 
         <p class="side-menu-label cyan">Ecosystem Portal:</p>
@@ -366,9 +381,13 @@
                     <a href="#origin">Our Origin</a>
                     <a href="#faq">FAQ</a>
                     <a href="web.html" class="nav-cta"><i class="fas fa-play" style="font-size:0.72rem;"></i> Web Player</a>
+                    <button class="nav-theme-toggle theme-toggle-btn" aria-label="Toggle Theme View Mode" title="Toggle Theme"><i class="fas fa-moon"></i></button>
                 </div>
 
-                <button class="menu-trigger" aria-label="Open channels menu"><i class="fas fa-bars fa-lg"></i></button>
+                <div class="nav-mobile-actions">
+                    <button class="nav-theme-toggle theme-toggle-btn" aria-label="Toggle Theme View Mode" title="Toggle Theme"><i class="fas fa-moon"></i></button>
+                    <button class="menu-trigger" aria-label="Open channels menu"><i class="fas fa-bars fa-lg"></i></button>
+                </div>
             </div>
             <div class="nav-progressive-blur" aria-hidden="true"></div>
         </nav>
@@ -470,7 +489,7 @@
             <div class="bento-grid">
                 <div class="bento-card wide">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
-                        <div style="flex:1; min-width:240px;">
+                        <div style="flex:1; min-width:0;">
                             <i class="fas fa-tower-broadcast"></i>
                             <h3>BeatWave Sync · Listen Together</h3>
                             <p>Host collaborative live rooms, synchronize playback (Play, Pause, and Seek) in real time across the BeatWave Android app and Web Player, share a collaborative queue, and chat live with friends.</p>

@@ -533,20 +533,58 @@ if (annClose && annBanner) {
     annClose.addEventListener('click', () => annBanner.classList.add('announcement-hidden'));
 }
 
-// ---------- Theme ----------
-const themeBtn = document.getElementById('themeToggleBtn');
-if (themeBtn) {
-    themeBtn.addEventListener('click', () => {
-        document.body.classList.toggle('light-theme');
-        const isLight = document.body.classList.contains('light-theme');
-        themeBtn.innerHTML = isLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-        localStorage.setItem('beatwave-theme', isLight ? 'light' : 'dark');
-    });
-    if (localStorage.getItem('beatwave-theme') === 'light') {
+// ---------- Theme System ----------
+function applyTheme(theme, persist) {
+    const isLight = theme === 'light';
+    if (isLight) {
+        document.documentElement.classList.add('light-theme');
         document.body.classList.add('light-theme');
-        themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+    } else {
+        document.documentElement.classList.remove('light-theme');
+        document.body.classList.remove('light-theme');
+    }
+
+    if (persist) {
+        try {
+            localStorage.setItem('beatwave-theme', isLight ? 'light' : 'dark');
+        } catch (e) {}
+    }
+
+    // Sync all theme toggle icons across desktop navbar, mobile header, side menu, and floating rail
+    document.querySelectorAll('.theme-toggle-btn, #themeToggleBtn').forEach(btn => {
+        const icon = btn.querySelector('i');
+        if (icon) {
+            icon.className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+        }
+    });
+
+    // Sync browser theme-color meta tag for mobile status bars
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+        metaThemeColor.setAttribute('content', isLight ? '#fafafa' : '#000000');
     }
 }
+
+function initThemeSystem() {
+    // Read saved theme or detect from document element (set by head script)
+    const savedTheme = localStorage.getItem('beatwave-theme') || 
+        (document.documentElement.classList.contains('light-theme') ? 'light' : 'dark');
+    applyTheme(savedTheme, false);
+
+    // Global event delegation for all theme toggle buttons
+    document.addEventListener('click', (e) => {
+        const toggleBtn = e.target.closest('.theme-toggle-btn, #themeToggleBtn');
+        if (toggleBtn) {
+            e.preventDefault();
+            const currentIsLight = document.body.classList.contains('light-theme') || 
+                                   document.documentElement.classList.contains('light-theme');
+            const nextTheme = currentIsLight ? 'dark' : 'light';
+            applyTheme(nextTheme, true);
+        }
+    });
+}
+
+initThemeSystem();
 
 // ---------- Side menu ----------
 document.body.addEventListener('click', function (e) {
@@ -829,7 +867,7 @@ function animateParticles(time = 0) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const isLight = document.body.classList.contains('light-theme');
-    ctx.strokeStyle = isLight ? 'rgba(13, 21, 38, 0.07)' : 'rgba(255, 255, 255, 0.08)';
+    ctx.strokeStyle = isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.08)';
     ctx.lineWidth = 1;
 
     // Mobile ultra-fast liquid wave: zero mouse calculations, pure 60fps performance
@@ -1222,7 +1260,7 @@ function animateParticlesOnce() {
     if (!ctx || !canvas) return;
     // Draw one static frame
     const isLight = document.body.classList.contains('light-theme');
-    ctx.strokeStyle = isLight ? 'rgba(13, 21, 38, 0.07)' : 'rgba(255, 255, 255, 0.1)';
+    ctx.strokeStyle = isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.1)';
     ctx.lineWidth = 1;
     for (let i = 0; i < lines.length; i++) {
         const points = lines[i];

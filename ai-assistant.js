@@ -442,19 +442,24 @@
         
         @media (max-width: 500px) {
             #beatwave-ai-container {
-                bottom: 20px;
-                right: 20px;
+                bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+                right: 16px;
             }
             #beatwave-ai-window {
-                width: calc(100vw - 40px);
+                width: calc(100vw - 32px);
+                max-width: calc(100vw - 32px);
                 height: 460px;
                 bottom: 65px;
+                right: 0;
+                box-sizing: border-box;
             }
             #beatwave-cookie-consent {
-                left: 20px;
-                right: 20px;
-                width: calc(100% - 40px);
-                bottom: 20px;
+                left: 16px;
+                right: 16px;
+                width: auto;
+                max-width: calc(100vw - 32px);
+                bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+                box-sizing: border-box;
             }
         }
     `;
