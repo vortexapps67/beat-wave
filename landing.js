@@ -53,17 +53,25 @@ function initWavyLoader() {
 }
 initWavyLoader();
 
-function initProgressBarEngine() {
+function initProgressBarEngine(onComplete) {
     const barFill = document.getElementById('loaderMatrixProgressBarNode');
     const pctLabel = document.getElementById('loaderProgressPct');
-    if (!barFill) return;
+    if (!barFill) { if (onComplete) onComplete(); return; }
     let p = 0;
+    // 2% every 35ms = 1 750ms total
     const timer = setInterval(() => {
-        p += 5;
-        if (p >= 100) { p = 100; clearInterval(timer); }
-        barFill.style.width = p + '%';
-        if (pctLabel) pctLabel.textContent = p;
-    }, 20);
+        p += 2;
+        if (p >= 100) {
+            p = 100;
+            clearInterval(timer);
+            barFill.style.width = '100%';
+            if (pctLabel) pctLabel.textContent = 100;
+            setTimeout(() => { if (onComplete) onComplete(); }, 200);
+        } else {
+            barFill.style.width = p + '%';
+            if (pctLabel) pctLabel.textContent = p;
+        }
+    }, 35);
 }
 
 // ---------- Firebase: admin + listeners ----------
@@ -990,6 +998,27 @@ function refreshRenderObservers() {
 }
 
 // ---------- Boot ----------
+/* ── Antigravity / parallax scroll ──────────────────────── */
+function initAntigravity() {
+    if (prefersReducedMotion) return;
+    const els = document.querySelectorAll('[data-ag]');
+    if (!els.length) return;
+
+    let ticking = false;
+    function applyAg() {
+        const sy = window.scrollY;
+        els.forEach(el => {
+            const factor = parseFloat(el.dataset.ag) || 0.1;
+            el.style.transform = `translateY(${-sy * factor}px)`;
+        });
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) { requestAnimationFrame(applyAg); ticking = true; }
+    }, { passive: true });
+}
+
 /* ── Curtain reveal ─────────────────────────────────────── */
 function buildCurtainPanels() {
     const container = document.getElementById('curtain-container');
@@ -1050,11 +1079,12 @@ function startApp() {
 
     refreshRenderObservers();
     buildCurtainPanels();
-    initProgressBarEngine();
+    initAntigravity();
 
-    setTimeout(() => {
+    // Progress bar runs for 3 s, then curtain reveals
+    initProgressBarEngine(() => {
         triggerCurtainReveal(() => runOdometerAnimation());
-    }, 100);
+    });
 }
 
 function animateParticlesOnce() {

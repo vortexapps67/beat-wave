@@ -371,22 +371,29 @@
 
         <!-- Hero -->
         <section class="hero reveal active">
-            <div class="hero-logo-wrapper">
+            <!-- Ambient video background -->
+            <div class="hero-video-bg" aria-hidden="true">
+                <video autoplay muted loop playsinline poster="">
+                    <!-- Drop a hero.mp4 / hero.webm here to replace the CSS animation -->
+                </video>
+            </div>
+
+            <div class="hero-logo-wrapper" data-ag="0.18">
                 <div class="hero-logo-glow"></div>
                 <img src="beatwave%20new%20new.png" alt="BeatWave Main Logo" class="hero-logo" width="150" height="150">
             </div>
 
-            <div>
+            <div data-ag="0.10">
                 <div class="hero-badge">
                     <span class="live-dot" style="margin:0;"></span>
                     <span>v5.0.0 · 100% Ad-Free · FOSS</span>
                 </div>
             </div>
 
-            <h1>BeatWave</h1>
-            <div class="scramble-title" id="scramble-target">Made With ❤️ By Vortex Apps.</div>
+            <h1 data-ag="0.12">BeatWave</h1>
+            <div class="scramble-title" id="scramble-target" data-ag="0.08">Made With ❤️ By Vortex Apps.</div>
 
-            <div class="hero-buttons">
+            <div class="hero-buttons" data-ag="0.06">
                 <a href="https://github.com/beatlabs790/beatwave" target="_blank" rel="noopener" class="btn-github"><i class="fab fa-github"></i> VIEW ON GITHUB</a>
                 <a href="https://discord.gg/spbuDTePSR" target="_blank" rel="noopener" class="btn-discord"><i class="fab fa-discord"></i> JOIN DISCORD</a>
             </div>
@@ -728,7 +735,7 @@
         </footer>
     </div>
 
-    <script src="landing.js?v=6"></script>
+    <script src="landing.js?v=8"></script>
     <script src="ai-assistant.js"></script>
 </body>
 </html>
