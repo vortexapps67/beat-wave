@@ -738,6 +738,36 @@ body.light-theme .live-dot {
 /* ============================================================
    Mobile Dock — Tap-Optimised Black & White
    ============================================================ */
+.dock-progressive-blur {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: calc(120px + env(safe-area-inset-bottom, 0px));
+    pointer-events: none;
+    z-index: 6100;
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    mask-image: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0.88) 32%,
+        rgba(0, 0, 0, 0.52) 64%,
+        rgba(0, 0, 0, 0.18) 84%,
+        rgba(0, 0, 0, 0) 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0.88) 32%,
+        rgba(0, 0, 0, 0.52) 64%,
+        rgba(0, 0, 0, 0.18) 84%,
+        rgba(0, 0, 0, 0) 100%
+    );
+}
+@media (max-width: 768px) {
+    .dock-progressive-blur { display: block; }
+}
+
 .mobile-dock {
     display: none;
     position: fixed;
@@ -1107,13 +1137,28 @@ body.light-theme .btn-chroma-download:hover {
 
 .hero-progressive-blur {
     position: absolute;
-    bottom: -20px; left: 0; right: 0;
-    height: 70px;
+    bottom: -1px; left: 0; right: 0;
+    height: 96px;
     pointer-events: none;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
+    z-index: 2;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.2) 30%,
+        rgba(0, 0, 0, 0.58) 65%,
+        rgba(0, 0, 0, 0.88) 85%,
+        rgba(0, 0, 0, 1) 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.2) 30%,
+        rgba(0, 0, 0, 0.58) 65%,
+        rgba(0, 0, 0, 0.88) 85%,
+        rgba(0, 0, 0, 1) 100%
+    );
 }
 
 .static-counter-badge {
