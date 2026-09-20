@@ -263,7 +263,9 @@
 
     <!-- Loading Screen — curtain reveal -->
     <div id="loading-screen">
-        <div id="curtain-container" aria-hidden="true"></div>
+        <div id="curtain-container" aria-hidden="true">
+            <div class="curtain-panel"><div class="curtain-panel-inner"></div></div>
+        </div>
         <div class="curtain-logo-overlay">
             <!-- Centred: logo + brand name + tagline -->
             <div class="loader-main-content">
@@ -330,6 +332,7 @@
     </div>
 
     <!-- Mobile bottom dock -->
+    <div class="dock-progressive-blur" aria-hidden="true"></div>
     <nav class="mobile-dock" aria-label="Mobile Bottom Navigation">
         <a href="#" class="dock-item active" aria-label="Home">
             <i class="fa-solid fa-house"></i><span>Home</span>

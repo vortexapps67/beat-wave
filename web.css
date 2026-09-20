@@ -123,13 +123,18 @@ body {
     justify-content: center;
     align-items: center;
     gap: 20px;
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0.5s;
 }
 
 #loading-screen.fade-out {
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transform: scale(1.02);
+    transform: scale(0.97);
+    filter: blur(14px);
 }
 
 .matrix-bar {

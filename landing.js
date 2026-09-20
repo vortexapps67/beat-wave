@@ -1076,33 +1076,96 @@ function initAntigravity() {
     }, { passive: true });
 }
 
+/* ── Progressive text blur on scroll ────────────────────── */
+function initScrollTextBlur() {
+    if (prefersReducedMotion) return;
+
+    const heroTitle = document.querySelector('.hero-title-container');
+    const heroBadge = document.querySelector('.hero-badge');
+    const heroLogo  = document.querySelector('.hero-logo-wrapper');
+    const headings  = document.querySelectorAll('.section-title, .section-sub, .team-heading, .credits-tribute-banner');
+
+    let ticking = false;
+
+    function onScroll() {
+        const sy = window.scrollY;
+
+        // 1. Hero text progressive blur as user scrolls down
+        if (heroTitle) {
+            const progress = Math.min(1, Math.max(0, (sy - 20) / 380));
+            const blur = Math.pow(progress, 1.15) * 16;
+            const opacity = Math.max(0.04, 1 - Math.pow(progress, 1.3) * 0.96);
+            const yOffset = -progress * 26;
+            heroTitle.style.filter = blur > 0.15 ? `blur(${blur.toFixed(2)}px)` : '';
+            heroTitle.style.opacity = opacity.toFixed(3);
+            heroTitle.style.transform = `translate3d(0, ${yOffset.toFixed(1)}px, 0)`;
+        }
+
+        if (heroBadge) {
+            const progress = Math.min(1, Math.max(0, (sy - 15) / 320));
+            const blur = Math.pow(progress, 1.2) * 12;
+            const opacity = Math.max(0.06, 1 - progress * 0.94);
+            heroBadge.style.filter = blur > 0.15 ? `blur(${blur.toFixed(2)}px)` : '';
+            heroBadge.style.opacity = opacity.toFixed(3);
+        }
+
+        if (heroLogo) {
+            const progress = Math.min(1, Math.max(0, sy / 440));
+            const blur = Math.pow(progress, 1.2) * 14;
+            const opacity = Math.max(0.05, 1 - Math.pow(progress, 1.4) * 0.9);
+            heroLogo.style.filter = blur > 0.2 ? `blur(${blur.toFixed(2)}px)` : '';
+            heroLogo.style.opacity = opacity.toFixed(3);
+        }
+
+        // 2. Section headings progressive blur as they scroll toward the sticky nav
+        headings.forEach(h => {
+            const rect = h.getBoundingClientRect();
+            // Approaching the top 180px of viewport
+            if (rect.top < 180 && rect.bottom > 0) {
+                const topDist = rect.top - 62;
+                if (topDist < 120) {
+                    const ratio = 1 - Math.max(0, Math.min(1, topDist / 120));
+                    const blur = Math.pow(ratio, 1.2) * 12;
+                    const opacity = Math.max(0.12, 1 - ratio * 0.88);
+                    h.style.filter = blur > 0.2 ? `blur(${blur.toFixed(2)}px)` : '';
+                    h.style.opacity = opacity.toFixed(3);
+                    return;
+                }
+            }
+            if (h.style.filter && h.style.filter !== '') {
+                h.style.filter = '';
+                h.style.opacity = '';
+            }
+        });
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(onScroll);
+            ticking = true;
+        }
+    }, { passive: true });
+
+    onScroll();
+}
+
 /* ── Curtain reveal ─────────────────────────────────────── */
 function buildCurtainPanels() {
     const screen = document.getElementById('loading-screen');
     const container = document.getElementById('curtain-container');
     if (!container) return;
-    const isSmall = window.innerWidth <= 640;
-    const count = isSmall ? 5 : 8;
-    container.innerHTML = '';
-    for (let i = 0; i < count; i++) {
-        const panel = document.createElement('div');
-        panel.className = 'curtain-panel';
-        const inner = document.createElement('div');
-        inner.className = 'curtain-panel-inner';
-        panel.appendChild(inner);
-        container.appendChild(panel);
-    }
-    // Once opaque panels are attached, ensure screen background is transparent so curtain lifts reveal the site
+    container.innerHTML = '<div class="curtain-panel"><div class="curtain-panel-inner"></div></div>';
     if (screen) screen.style.background = 'transparent';
 }
 
 function triggerCurtainReveal(onDone) {
     const screen = document.getElementById('loading-screen');
     const overlay = screen ? screen.querySelector('.curtain-logo-overlay') : null;
-    const panels  = screen ? screen.querySelectorAll('.curtain-panel-inner') : [];
+    const inner = screen ? screen.querySelector('.curtain-panel-inner') : null;
 
-    if (!screen || !panels.length) {
-        if (screen) screen.style.display = 'none';
+    if (!screen) {
         if (onDone) onDone();
         return;
     }
@@ -1114,28 +1177,21 @@ function triggerCurtainReveal(onDone) {
     // 2. Fade & progressively blur out the logo overlay smoothly
     if (overlay) overlay.classList.add('fade-out-logo');
 
-    const isSmall = window.innerWidth <= 640;
-    const STAGGER = isSmall ? 38 : 50;
-    const DURATION = 820;
-
-    // 3. Lift panels upward in silky staggered cascade
+    // 3. Lift the seamless curtain upward like a luxury stage reveal (zero lines, zero slices)
     setTimeout(() => {
-        panels.forEach((inner, i) => {
-            setTimeout(() => {
-                inner.style.transform = 'translateY(-100%)';
-            }, i * STAGGER);
-        });
+        if (inner) {
+            inner.style.transform = 'translateY(-100%)';
+        }
 
-        // 4. Smoothly fade out screen container after all panels complete their sweep
-        const totalMs = (panels.length - 1) * STAGGER + DURATION + 40;
+        // 4. Smoothly hide screen container after curtain completes its sweep
         setTimeout(() => {
             screen.classList.add('fade-out');
             setTimeout(() => {
                 screen.style.display = 'none';
                 if (onDone) onDone();
-            }, 350);
-        }, totalMs);
-    }, 280);
+            }, 300);
+        }, 860);
+    }, 240);
 }
 
 function startApp() {
@@ -1154,6 +1210,7 @@ function startApp() {
     initSmoothScroll();
     buildCurtainPanels();
     initAntigravity();
+    initScrollTextBlur();
 
     // Progress bar runs for 3 s, then curtain reveals
     initProgressBarEngine(() => {
