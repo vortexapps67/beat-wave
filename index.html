@@ -263,15 +263,24 @@
 
     <!-- Loading Screen — curtain reveal -->
     <div id="loading-screen">
-        <!-- Curtain strip panels (injected by JS) -->
         <div id="curtain-container" aria-hidden="true"></div>
-        <!-- Logo overlay sits above the panels -->
         <div class="curtain-logo-overlay">
-            <div class="curtain-logo-glow"></div>
-            <img src="beatwave%20new%20new.png" alt="BeatWave Logo" class="loader-logo" width="130" height="130">
-            <div class="wavy-text-container" id="wavy-text-anchor"></div>
-            <div class="loader-progress-matrix-bar">
-                <div class="loader-progress-matrix-fill" id="loaderMatrixProgressBarNode"></div>
+            <!-- Centred: logo + brand name + tagline -->
+            <div class="loader-main-content">
+                <img src="beatwave%20new%20new.png" alt="BeatWave Logo" class="loader-logo" width="110" height="110">
+                <div class="loader-brand-name">BEATWAVE</div>
+                <div class="loader-brand-sub">FREE MUSIC · ZERO ADS</div>
+            </div>
+            <!-- Bottom-right: big % counter -->
+            <div class="loader-corner-pct" aria-hidden="true">
+                <span id="loaderProgressPct">0</span><span class="loader-pct-sign">%</span>
+            </div>
+            <!-- Bottom: label + full-width progress bar -->
+            <div class="loader-bottom-bar">
+                <div class="loader-bottom-label">LOADING THE EXPERIENCE</div>
+                <div class="loader-progress-line">
+                    <div class="loader-progress-fill" id="loaderMatrixProgressBarNode"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -703,6 +712,9 @@
             </div>
         </section>
 
+        <!-- Big bottom wordmark -->
+        <div class="site-bottom-wordmark" aria-hidden="true">BEATWAVE</div>
+
         <footer>
             <p>&copy; 2026 Vortex Apps.</p>
             <div class="credits-tag">Based On <a href="https://github.com/cosmictaserdev-creator/Convx/" target="_blank" rel="noopener">ConvX</a> FOSS app · @cosmictaserdev-creator</div>
@@ -716,7 +728,7 @@
         </footer>
     </div>
 
-    <script src="landing.js?v=4"></script>
+    <script src="landing.js?v=6"></script>
     <script src="ai-assistant.js"></script>
 </body>
 </html>

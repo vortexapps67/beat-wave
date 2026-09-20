@@ -55,12 +55,14 @@ initWavyLoader();
 
 function initProgressBarEngine() {
     const barFill = document.getElementById('loaderMatrixProgressBarNode');
+    const pctLabel = document.getElementById('loaderProgressPct');
     if (!barFill) return;
     let p = 0;
     const timer = setInterval(() => {
-        p += 5; // 20 steps × 20ms = 500ms
+        p += 5;
         if (p >= 100) { p = 100; clearInterval(timer); }
         barFill.style.width = p + '%';
+        if (pctLabel) pctLabel.textContent = p;
     }, 20);
 }
 
