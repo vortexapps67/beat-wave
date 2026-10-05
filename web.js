@@ -430,8 +430,16 @@ function setupAdminModalHandlers() {
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     document.querySelector('.admin-modal-backdrop').addEventListener('click', closeModal);
 
-    const handleLogin = () => {
-        if (passInput.value === 'admin00') {
+    const hashText = async (str) => {
+        const buf = new TextEncoder().encode(str);
+        const digest = await crypto.subtle.digest('SHA-256', buf);
+        return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+    };
+
+    const handleLogin = async () => {
+        const inputHash = await hashText(passInput.value.trim());
+        // Cryptographic one-way hash: plaintext password is never revealed in frontend code
+        if (inputHash === '006657998771eb1ef75d0a26f8824af99da8bf4f7261d3a4d896708286a618eb') {
             loginView.classList.add('admin-step-hidden');
             dashboardView.classList.remove('admin-step-hidden');
             document.getElementById('admin-tabs').classList.remove('admin-tab-hidden');

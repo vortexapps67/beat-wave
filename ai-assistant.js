@@ -7,7 +7,7 @@
             bottom: 30px;
             right: 30px;
             z-index: 99999;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
         }
         #beatwave-ai-btn {
             width: 56px;

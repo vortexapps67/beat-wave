@@ -7,8 +7,10 @@
     
     <link rel="icon" type="image/png" href="beatwave%20new%20new.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="theme.css?v=4">
 
     <style>
         :root {
@@ -31,7 +33,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
+            font-family: var(--font); 
             background: var(--bg-dark); 
             color: rgba(255, 255, 255, 0.75); 
             line-height: 1.7;
@@ -99,7 +101,7 @@
             letter-spacing: -4px;
             color: #ffffff;
             margin-bottom: 10px;
-            font-family: 'Space Mono', monospace;
+            font-family: var(--mono);
         }
 
         h2 {
@@ -131,7 +133,7 @@
             text-decoration: none;
             font-weight: 800;
             font-size: 0.8rem;
-            font-family: 'Space Mono', monospace;
+            font-family: var(--mono);
             text-transform: uppercase;
             letter-spacing: 1px;
             padding: 12px 25px;
@@ -161,11 +163,79 @@
             background: rgba(255, 255, 255, 0.1);
             transform: translateY(-2px);
         }
+
+        /* ============================================================
+           BeatWave v3 — token retint (declared last, wins)
+           ============================================================ */
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text-mid);
+        }
+
+        #particle-canvas { opacity: 0.3; mix-blend-mode: normal; }
+        body.light-theme #particle-canvas { opacity: 0.22; }
+
+        .error-card {
+            background: var(--bg-card);
+            border: 1px solid var(--line);
+            box-shadow: var(--inset-hair), var(--shadow-lg);
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+        }
+        body.light-theme .error-card { background: var(--bg-glass); }
+
+        .logo { filter: drop-shadow(0 0 22px rgba(124, 92, 255, 0.4)); }
+        body.light-theme .logo { filter: invert(1) drop-shadow(0 0 22px rgba(109, 77, 251, 0.28)); }
+
+        .error-code {
+            font-family: var(--mono);
+            font-size: clamp(4.5rem, 15vw, 7rem);
+            letter-spacing: -0.06em;
+            background: var(--grad-brand);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-family: var(--font-display);
+            color: var(--text-hi);
+            letter-spacing: var(--tr-head);
+        }
+
+        p { color: var(--text-mid); }
+
+        .btn {
+            font-family: var(--mono);
+            font-weight: 600;
+            letter-spacing: 0.1em;
+        }
+        .btn-primary {
+            background: var(--grad-brand);
+            color: #fff;
+            box-shadow: var(--shadow-accent);
+        }
+        .btn-primary:hover {
+            background: var(--grad-brand);
+            box-shadow: 0 20px 46px -14px rgba(124, 92, 255, 0.8);
+        }
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-hi);
+            border: 1px solid var(--line);
+        }
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-line);
+        }
     </style>
 </head>
 <body>
 
-    <div class="ambient-glow"></div>
+    <div class="bw-aurora"></div>
+    <div class="bw-grid"></div>
     <div id="cursor-glow"></div>
     <canvas id="particle-canvas"></canvas>
 

@@ -1,0 +1,62 @@
+name: Deploy BeatWave with Secure Config
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate config.js from GitHub Secrets
+        env:
+          FIREBASE_CONFIGS: ${{ secrets.FIREBASE_CONFIGS }}
+          FIREBASE_ADMIN_API_KEY: ${{ secrets.FIREBASE_ADMIN_API_KEY }}
+          FIREBASE_ADMIN_AUTH_DOMAIN: ${{ secrets.FIREBASE_ADMIN_AUTH_DOMAIN }}
+          FIREBASE_ADMIN_DATABASE_URL: ${{ secrets.FIREBASE_ADMIN_DATABASE_URL }}
+          FIREBASE_ADMIN_PROJECT_ID: ${{ secrets.FIREBASE_ADMIN_PROJECT_ID }}
+          FIREBASE_ADMIN_STORAGE_BUCKET: ${{ secrets.FIREBASE_ADMIN_STORAGE_BUCKET }}
+          FIREBASE_ADMIN_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_ADMIN_MESSAGING_SENDER_ID }}
+          FIREBASE_ADMIN_APP_ID: ${{ secrets.FIREBASE_ADMIN_APP_ID }}
+          FIREBASE_ADMIN_MEASUREMENT_ID: ${{ secrets.FIREBASE_ADMIN_MEASUREMENT_ID }}
+          FIREBASE_PLAYER_API_KEY: ${{ secrets.FIREBASE_PLAYER_API_KEY }}
+          FIREBASE_PLAYER_AUTH_DOMAIN: ${{ secrets.FIREBASE_PLAYER_AUTH_DOMAIN }}
+          FIREBASE_PLAYER_DATABASE_URL: ${{ secrets.FIREBASE_PLAYER_DATABASE_URL }}
+          FIREBASE_PLAYER_PROJECT_ID: ${{ secrets.FIREBASE_PLAYER_PROJECT_ID }}
+          FIREBASE_PLAYER_STORAGE_BUCKET: ${{ secrets.FIREBASE_PLAYER_STORAGE_BUCKET }}
+          FIREBASE_PLAYER_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_PLAYER_MESSAGING_SENDER_ID }}
+          FIREBASE_PLAYER_APP_ID: ${{ secrets.FIREBASE_PLAYER_APP_ID }}
+        run: node build-config.js
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

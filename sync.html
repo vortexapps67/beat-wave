@@ -24,21 +24,48 @@
 
     <!-- Stylesheets & CDNs -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Map Tailwind's legacy cyan/emerald ramps onto the BeatWave accent.
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyan: {
+                            50: '#f3f1ff', 100: '#e9e5ff', 200: '#d5ccff', 300: '#b7a6ff',
+                            400: '#a78bfa', 500: '#7c5cff', 600: '#6d4dfb', 700: '#5b3ff0',
+                            800: '#4b32c4', 900: '#3a2798', 950: '#221656'
+                        },
+                        emerald: {
+                            50: '#ecfeff', 100: '#cffafe', 200: '#a5f3fc', 300: '#67e8f9',
+                            400: '#22d3ee', 500: '#0ea5c9', 600: '#0891b2', 700: '#0e7490',
+                            800: '#155e75', 900: '#164e63', 950: '#083344'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Instrument Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        display: ['Instrument Serif', 'Georgia', 'serif'],
+                        mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
+                    }
+                }
+            }
+        };
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="theme.css?v=4">
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
     <style>
         :root {
-            --bg-color: #050608;
-            --accent-cyan: #00e5f2;
-            --accent-magenta: #ff2e88;
-            --accent-purple: #8a2be2;
-            --glass-bg: rgba(12, 14, 22, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            --bg-color: var(--bg);
+            --accent-cyan: var(--cyan);
+            --accent-magenta: var(--violet);
+            --accent-purple: var(--violet-deep);
+            --glass-bg: var(--bg-glass);
+            --glass-border: var(--line);
+            --transition: all 0.3s var(--ease);
         }
 
         * {
@@ -49,9 +76,9 @@
         }
 
         body {
-            background-color: var(--bg-color);
-            color: #f8fafc;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: transparent;
+            color: var(--text-hi);
+            font-family: var(--font);
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
@@ -60,66 +87,63 @@
             justify-content: space-between;
         }
 
-        /* Ambient Glow Backdrop — Zero Gradients */
-        .ambient-glow {
-            display: none;
-        }
-
         .glass-card {
-            background: var(--glass-bg);
+            background: var(--bg-glass);
             backdrop-filter: blur(24px) saturate(180%);
             -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--line);
+            box-shadow: var(--inset-hair), var(--shadow-lg);
         }
 
         .brand-gradient-text {
-            color: #ffffff;
-            font-weight: 800;
+            background: var(--grad-brand);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
         }
 
         .btn-app-open {
-            background: #ffffff;
-            color: #000000;
-            font-weight: 800;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            background: var(--grad-brand);
+            color: #ffffff;
+            font-weight: 700;
+            box-shadow: var(--shadow-accent);
             transition: var(--transition);
         }
 
         .btn-app-open:hover {
             transform: translateY(-2px);
-            background: #e4e4e7;
-            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 46px -14px rgba(124, 92, 255, 0.8);
         }
 
         .btn-web-player {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
+            background: var(--bg-card);
+            border: 1px solid var(--line);
+            color: var(--text-hi);
             transition: var(--transition);
         }
 
         .btn-web-player:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.25);
+            background: var(--bg-card-hover);
+            border-color: var(--accent-line);
             transform: translateY(-2px);
         }
 
         .room-code-badge {
-            font-family: 'Space Mono', monospace;
-            background: rgba(0, 242, 254, 0.08);
-            border: 1px solid rgba(0, 242, 254, 0.25);
-            color: var(--accent-cyan);
+            font-family: var(--mono);
+            background: rgba(124, 92, 255, 0.09);
+            border: 1px solid var(--accent-line);
+            color: var(--violet-soft);
             letter-spacing: 3px;
-            text-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+            text-shadow: 0 0 16px rgba(124, 92, 255, 0.45);
         }
 
         .qr-wrapper {
             background: #ffffff;
             padding: 14px;
-            border-radius: 18px;
+            border-radius: var(--r-lg);
             display: inline-block;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow-lg);
         }
 
         .qr-wrapper img, .qr-wrapper canvas {
@@ -130,10 +154,10 @@
         .pulse-dot {
             width: 10px;
             height: 10px;
-            background: #00ff66;
+            background: var(--cyan);
             border-radius: 50%;
             display: inline-block;
-            box-shadow: 0 0 12px #00ff66;
+            box-shadow: 0 0 12px var(--cyan);
             animation: livePulse 1.8s infinite;
         }
 
@@ -148,14 +172,16 @@
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: rgba(12, 15, 24, 0.95);
-            border: 1px solid rgba(0, 242, 254, 0.3);
-            color: #fff;
+            background: var(--bg-glass);
+            border: 1px solid var(--accent-line);
+            color: var(--text-hi);
             padding: 12px 24px;
-            border-radius: 50px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.2);
+            border-radius: 9999px;
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             font-size: 0.85rem;
-            font-weight: 700;
+            font-weight: 600;
             z-index: 100;
             display: flex;
             align-items: center;
@@ -174,7 +200,8 @@
 </head>
 <body class="p-4 sm:p-6 md:p-8">
 
-    <div class="ambient-glow"></div>
+    <div class="bw-aurora"></div>
+    <div class="bw-grid"></div>
 
     <!-- Navigation Header -->
     <header class="relative z-10 max-w-4xl mx-auto w-full flex items-center justify-between py-4">

@@ -1,0 +1,15 @@
+# Environment and Secret Variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Generated Local Configuration (contains real Firebase keys)
+config.js
+config.json
+
+# Dependency & System files
+node_modules/
+.DS_Store
+Thumbs.db
+*.log

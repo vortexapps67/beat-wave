@@ -69,7 +69,7 @@
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Firebase -->
@@ -77,7 +77,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="config.js"></script>
 
-    <link rel="stylesheet" href="landing.css">
+    <link rel="stylesheet" href="theme.css?v=4">
+    <link rel="stylesheet" href="landing.css?v=4">
 </head>
 <body>
     <!-- Maintenance Countdown Banner -->
@@ -299,10 +300,11 @@
         </div>
     </div>
 
-    <div id="scroll-tracker"></div>
-    <div class="ambient-glow"></div>
-    <div id="cursor-glow"></div>
+    <!-- Ambient backdrop -->
+    <div class="bw-aurora" aria-hidden="true"></div>
+    <div class="bw-grid" aria-hidden="true"></div>
     <canvas id="particle-canvas"></canvas>
+    <div id="scroll-tracker" aria-hidden="true"></div>
 
     <!-- Floating action rail (desktop) -->
     <div class="floating-nav">
@@ -394,31 +396,42 @@
 
         <!-- Hero -->
         <section class="hero reveal active">
-            <!-- Ambient video background -->
-            <div class="hero-video-bg" aria-hidden="true">
-                <video autoplay muted loop playsinline poster="">
-                    <!-- Drop a hero.mp4 / hero.webm here to replace the CSS animation -->
-                </video>
-            </div>
+            <!-- Stage -->
+            <div class="hero-stage">
+                <div class="hero-ring" aria-hidden="true">
+                    <span class="hero-ring-1"></span>
+                    <span class="hero-ring-2"></span>
+                </div>
 
-            <div class="hero-logo-wrapper">
-                <div class="hero-logo-glow"></div>
-                <img src="beatwave%20new%20new.png" alt="BeatWave Main Logo" class="hero-logo" width="260" height="260">
-            </div>
+                <div class="hero-logo-wrapper">
+                    <div class="hero-logo-glow"></div>
+                    <img src="beatwave%20new%20new.png" alt="BeatWave" class="hero-logo" width="260" height="260">
+                </div>
 
-            <div>
-                <div class="hero-badge">
-                    <span class="live-dot" style="margin:0;"></span>
-                    <span>v5.0.0 · 100% Ad-Free · FOSS</span>
+                <!-- Equaliser visual -->
+                <div class="hero-eq" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
                 </div>
             </div>
 
+            <div class="hero-badge">
+                <span class="live-dot" style="margin:0;"></span>
+                <span>v5.0.0 &middot; 100% Ad-Free &middot; FOSS</span>
+            </div>
+
             <div class="hero-title-container">
-                <h1>BeatWave</h1>
+                <h1>Music that moves<br><span class="bw-grad-text--brand">without ads.</span></h1>
+                <p class="hero-lede">
+                    BeatWave is an open-source audio player built for pure playback &mdash;
+                    no ad breaks, no tracking, no account. Just your library, in sync with whoever you listen with.
+                </p>
                 <div class="scramble-title" id="scramble-target">Engineered For Pure Audio By Vortex Apps.</div>
             </div>
 
-            <!-- Primary CTA: download first -->
+            <!-- CTAs -->
             <div class="hero-download-primary">
                 <a href="https://github.com/beatlabs790/beatwave/releases/tag/v4.0" target="_blank" rel="noopener" class="btn-chroma-download" id="downloadButtonMain">
                     <i class="fas fa-cloud-arrow-down"></i>
@@ -426,22 +439,21 @@
                 </a>
             </div>
 
-            <!-- Secondary CTAs -->
             <div class="hero-buttons">
                 <a href="https://github.com/beatlabs790/beatwave" target="_blank" rel="noopener" class="btn-github"><i class="fab fa-github"></i> View on GitHub</a>
                 <a href="https://discord.gg/spbuDTePSR" target="_blank" rel="noopener" class="btn-discord"><i class="fab fa-discord"></i> Join Discord</a>
+                <a href="web.html" class="btn-github"><i class="fas fa-play"></i> Open Web Player</a>
+            </div>
+
+            <div class="hero-trust">
+                <span><i class="fas fa-shield-halved"></i> Play Protect cleared</span>
+                <span class="hero-trust-sep"></span>
+                <span><i class="fas fa-code"></i> GPL-3.0 open source</span>
+                <span class="hero-trust-sep"></span>
+                <span><i class="fas fa-ban"></i> Zero telemetry</span>
             </div>
 
             <div id="download-container-context">
-                <div class="download-explainer-card">
-                    <p class="download-btn-caption"><strong>Package Information:</strong> BeatWave is a secure, free, ad-free music player and FOSS music app, engineered natively by Vortex Apps. We are recognized as the best open source music app for local audio library rendering on Android environments.</p>
-                    <p class="download-verification-instructions">To verify installation safety, inspect our open repository assets and cross-check your runtime signatures with our explicit manifest targets below.</p>
-                </div>
-
-                <div class="security-audit-advisory">
-                    <span>Package Manifest Trace:</span> Navigating through our official release tags redirects to our cryptographic FOSS validation manifest assets.
-                </div>
-
                 <!-- Download stat card -->
                 <div class="dl-stat-block">
                     <div class="dl-stat-orb" aria-hidden="true">
@@ -459,12 +471,23 @@
                         <span class="dl-tag dl-tag--purple"><i class="fas fa-ban"></i> Zero Ads</span>
                     </div>
                 </div>
+
+                <div class="download-explainer-card">
+                    <p class="download-btn-caption"><strong>Package Information:</strong> BeatWave is a secure, free, ad-free music player and FOSS music app, engineered natively by Vortex Apps. We are recognized as the best open source music app for local audio library rendering on Android environments.</p>
+                    <p class="download-verification-instructions">To verify installation safety, inspect our open repository assets and cross-check your runtime signatures with our explicit manifest targets below.</p>
+                </div>
+
+                <div class="security-audit-advisory">
+                    <span>Package Manifest Trace:</span> Navigating through our official release tags redirects to our cryptographic FOSS validation manifest assets.
+                </div>
             </div>
-            <div class="hero-progressive-blur" aria-hidden="true"></div>
         </section>
 
         <!-- Interface marquee -->
-        <h2 class="section-title reveal" style="margin-top:24px;">Interface System Preview</h2>
+        <div class="gallery-head reveal">
+            <span class="bw-chip"><i class="fas fa-mobile-screen"></i> In&nbsp;App</span>
+            <h2 class="section-title">Interface System Preview</h2>
+        </div>
         <section class="gallery-section reveal" aria-label="App screenshots">
             <div class="workspace-gallery-hub">
                 <div class="screenshot-strip">
@@ -484,72 +507,81 @@
 
         <!-- Features -->
         <section class="bento-section container reveal" id="features">
+            <span class="section-label"><i class="fas fa-layer-group"></i> The Engine</span>
             <h2 class="section-title">Engineered for Effortless Audio</h2>
             <p class="section-sub">Every layer of BeatWave is tuned for speed, privacy, and a beautiful listening flow.</p>
             <div class="bento-grid">
-                <div class="bento-card wide">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
-                        <div style="flex:1; min-width:0;">
-                            <i class="fas fa-tower-broadcast"></i>
-                            <h3>BeatWave Sync · Listen Together</h3>
-                            <p>Host collaborative live rooms, synchronize playback (Play, Pause, and Seek) in real time across the BeatWave Android app and Web Player, share a collaborative queue, and chat live with friends.</p>
-                        </div>
-                        <a href="sync.html" class="bento-cta"><i class="fas fa-tower-broadcast"></i> Join Live Sync</a>
+                <div class="bento-card bento-card--hero">
+                    <div class="bento-card-inner">
+                        <span class="bento-icon bento-icon--accent"><i class="fas fa-tower-broadcast"></i></span>
+                        <h3>BeatWave Sync &middot; Listen Together</h3>
+                        <p>Host collaborative live rooms, synchronize playback (Play, Pause, and Seek) in real time across the BeatWave Android app and Web Player, share a collaborative queue, and chat live with friends.</p>
+                    </div>
+                    <a href="sync.html" class="bento-cta"><i class="fas fa-tower-broadcast"></i> Join Live Sync</a>
+                </div>
+                <div class="bento-card">
+                    <div class="bento-card-inner">
+                        <span class="bento-icon"><i class="fas fa-bolt"></i></span>
+                        <h3>Responsive Playback Architecture</h3>
+                        <p>Optimized audio processing runs separate from interface calculation cycles &mdash; stable, low-latency playback that never triggers app lag spikes.</p>
                     </div>
                 </div>
-                <div class="bento-card wide">
-                    <i class="fas fa-bolt"></i>
-                    <h3>Responsive Playback Architecture</h3>
-                    <p>Features an optimized processing configuration running separate from interface calculation cycles. This approach keeps audio timeline processing stable, low-latency, and fluid across device transitions without causing application lag spikes.</p>
+                <div class="bento-card">
+                    <div class="bento-card-inner">
+                        <span class="bento-icon"><i class="fas fa-sliders-h"></i></span>
+                        <h3>Track Transition Management</h3>
+                        <p>Standard gapless mixing parameters move playback across loaded playlists continuously, with tunable crossfade.</p>
+                    </div>
                 </div>
                 <div class="bento-card">
-                    <i class="fas fa-sliders-h"></i>
-                    <h3>Track Transition Management</h3>
-                    <p>Designed with standard gapless mixing parameters to transition playback across loaded playlists continuously.</p>
+                    <div class="bento-card-inner">
+                        <span class="bento-icon"><i class="fas fa-layer-group"></i></span>
+                        <h3>Dynamic View Properties</h3>
+                        <p>Hardware-accelerated canvas styling adapts viewport colour schemes dynamically to your local track artwork.</p>
+                    </div>
                 </div>
                 <div class="bento-card">
-                    <i class="fas fa-layer-group"></i>
-                    <h3>Dynamic View Properties</h3>
-                    <p>Utilizes hardware-accelerated canvas styling to adapt underlying viewport color schemes dynamically to your local track artwork variables.</p>
-                </div>
-                <div class="bento-card wide">
-                    <i class="fas fa-shield-halved"></i>
-                    <h3>Local Sandbox Processing</h3>
-                    <p>Built exclusively around local device constraints to read and parse assets offline. The system relies entirely on standard filesystem calls, meaning user configuration logs and playback statistics remain securely constrained within storage sandboxes.</p>
+                    <div class="bento-card-inner">
+                        <span class="bento-icon"><i class="fas fa-shield-halved"></i></span>
+                        <h3>Local Sandbox Processing</h3>
+                        <p>Built around local device constraints using standard filesystem calls. Your configuration logs and playback stats stay inside storage sandboxes.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Origin story -->
-        <h2 class="section-title reveal" id="origin">Our Origin Story</h2>
-        <section class="container reveal">
+        <section class="container reveal story-section">
+            <span class="section-label" id="origin"><i class="fas fa-book-open"></i> Our Origin</span>
+            <h2 class="section-title">It Started With a 2 AM Group Call</h2>
             <div class="story-section-box">
                 <div class="story-text-layout">
-                    <p>BeatWave wasn’t mapped out in a corporate boardroom or born from a commercial business plan. It started exactly how the best open-source ideas do: out of complete frustration between close friends trying to listen to music together.</p>
-                    <div class="story-quote-block">
-                        "It was past 2:00 AM on a standard weekday. We were on an endless group call studying, working on code arrays, and every second song on our shared stream kept getting interrupted by disruptive, high-volume tracking ads."
-                    </div>
-                    <p>That specific late-night call sparked a long discussion about digital privacy footprint control and audio platform saturation. Instead of just muting the audio feeds, we decided to construct an independent baseline. We wanted a media canvas completely decoupled from third-party advertising tracking matrices—a client focused entirely on clean local file decoding and seamless user interface feedback layouts.</p>
-                    <p>Over the next few weeks, those casual group conversations turned into a dedicated private development workflow. Vortex Apps was established as an open team environment to build an audio engine centered purely on local files, fast processing loops, and modern glass interface themes.</p>
+                    <p class="story-lead">BeatWave wasn’t mapped out in a corporate boardroom or born from a commercial business plan. It started exactly how the best open-source ideas do: out of complete frustration between close friends trying to listen to music together.</p>
+                    <blockquote class="story-quote-block">
+                        &ldquo;It was past 2:00 AM on a standard weekday. We were on an endless group call studying, working on code arrays, and every second song on our shared stream kept getting interrupted by disruptive, high-volume tracking ads.&rdquo;
+                    </blockquote>
+                    <p>That specific late-night call sparked a long discussion about digital privacy footprint control and audio platform saturation. Instead of just muting the audio feeds, we decided to construct an independent baseline. We wanted a media canvas completely decoupled from third-party advertising tracking matrices&mdash;a client focused entirely on clean local file decoding and seamless interface feedback.</p>
+                    <p>Over the next few weeks, those casual group conversations turned into a dedicated private development workflow. Vortex Apps was established as an open team environment to build an audio engine centred purely on local files, fast processing loops, and modern glass interface themes.</p>
                 </div>
             </div>
         </section>
 
-        <section class="container reveal" style="padding:26px var(--gutter);">
+        <section class="container reveal">
             <div class="credits-tribute-banner">
                 <div class="tribute-icon-box">
                     <i class="fas fa-heart-pulse"></i>
                 </div>
                 <div class="tribute-info">
                     <h3>Special Thanks to ConvX</h3>
-                    <p>BeatWave stands proudly on the shoulders of the open-source community layout maps. Our production framework is fork-engineered and heavily based on the beautiful <a href="https://github.com/cosmictaserdev-creator/Convx/" target="_blank" rel="noopener">ConvX repo</a> developed by <strong>@cosmictaserdev-creator</strong>. We want to express our immense gratitude to the original project maintainers for providing an incredibly clean, accessible Free and Open-Source Software (FOSS) baseline that continues to inspire transparent application engineering worldwide.</p>
+                    <p>BeatWave stands proudly on the shoulders of the open-source community. Our production framework is fork-engineered and heavily based on the beautiful <a href="https://github.com/cosmictaserdev-creator/Convx/" target="_blank" rel="noopener">ConvX repo</a> developed by <strong>@cosmictaserdev-creator</strong>. We owe the original maintainers immense gratitude for providing a clean, accessible FOSS baseline.</p>
                 </div>
             </div>
         </section>
 
         <!-- Security registry -->
-        <h2 class="section-title reveal">Security &amp; Verification Registry</h2>
-        <section class="container reveal">
+        <section class="container reveal registry-section">
+            <span class="section-label"><i class="fas fa-shield-halved"></i> Transparency</span>
+            <h2 class="section-title">Security &amp; Verification Registry</h2>
             <div class="security-registry-card">
                 <h3>Package Transparency Manifest</h3>
                 <p>BeatWave enforces absolute hardware safety. Our standalone binary distributions are verified locally against common mobile permission vulnerabilities.</p>
@@ -576,8 +608,9 @@
         </section>
 
         <!-- FAQ -->
-        <h2 class="section-title reveal" id="faq">Frequently Asked Questions</h2>
-        <section class="container reveal">
+        <section class="container reveal faq-section">
+            <span class="section-label" id="faq"><i class="fas fa-circle-question"></i> FAQ</span>
+            <h2 class="section-title">Frequently Asked Questions</h2>
             <div class="faq-container-block">
                 <div class="faq-wrapper-node">
                     <button class="faq-trigger-tab">
@@ -688,8 +721,9 @@
         </section>
 
         <!-- Walkthrough -->
-        <h2 class="section-title reveal" style="margin-top:64px;">Documentation Walkthrough</h2>
-        <section class="container reveal">
+        <section class="container reveal walkthrough-section">
+            <span class="section-label"><i class="fas fa-list-check"></i> Get Started</span>
+            <h2 class="section-title">Documentation Walkthrough</h2>
             <div class="walkthrough-box">
                 <div class="step-row">
                     <div class="step-num">01</div>
@@ -716,21 +750,24 @@
         </section>
 
         <!-- Team -->
-        <h2 class="team-heading reveal">DEVELOPED BY</h2>
-        <section class="team-grid container reveal">
-            <div class="card-wrapper lead-wrapper">
-                <div class="card">
-                    <img src="logo.png" alt="Vortex Apps Logo" width="76" height="76">
-                    <div class="name lead-name">Vortex Apps</div>
-                    <div class="role-tag">Core Software Studio</div>
-                    <p class="card-desc">Vortex Apps is a forward-thinking digital creation studio dedicated to engineering sleek, high-performance, and privacy-first open-source utility ecosystems.</p>
-                    <div class="team-links">
-                        <a href="https://vortexapps.vercel.app" target="_blank" rel="noopener" class="dev-insta">
-                            <i class="fa-solid fa-globe"></i> vortexapps.vercel.app
-                        </a>
-                        <a href="https://instagram.com/vortex.apps" target="_blank" rel="noopener" class="dev-insta">
-                            <i class="fab fa-instagram"></i> @vortex.apps
-                        </a>
+        <section class="container reveal team-section">
+            <span class="section-label"><i class="fas fa-users"></i> The Team</span>
+            <h2 class="team-heading">Developed by</h2>
+            <div class="team-grid">
+                <div class="card-wrapper lead-wrapper">
+                    <div class="card">
+                        <img src="logo.png" alt="Vortex Apps Logo" width="76" height="76">
+                        <div class="name lead-name">Vortex Apps</div>
+                        <div class="role-tag">Core Software Studio</div>
+                        <p class="card-desc">Vortex Apps is a forward-thinking digital creation studio dedicated to engineering sleek, high-performance, and privacy-first open-source utility ecosystems.</p>
+                        <div class="team-links">
+                            <a href="https://vortexapps.vercel.app" target="_blank" rel="noopener" class="dev-insta">
+                                <i class="fa-solid fa-globe"></i> vortexapps.vercel.app
+                            </a>
+                            <a href="https://instagram.com/vortex.apps" target="_blank" rel="noopener" class="dev-insta">
+                                <i class="fab fa-instagram"></i> @vortex.apps
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

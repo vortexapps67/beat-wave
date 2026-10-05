@@ -27,7 +27,13 @@
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <script src="config.js"></script>
-    <link rel="stylesheet" href="web.css">
+
+    <!-- Design system + typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="theme.css?v=4">
+    <link rel="stylesheet" href="web.css?v=4">
 </head>
 <body class="h-screen flex flex-col mode-audio select-none">
 
@@ -478,7 +484,7 @@
             <span id="progressTimeDuration" class="text-[10px] font-mono font-bold text-zinc-500 w-8">0:00</span>
         </div>
 
-        <div class="flex items-center justify-between w-full">
+        <div id="playerFooterRow" class="flex items-center justify-between w-full">
             <div class="flex items-center gap-4 w-1/3">                        
                 <img id="nowArt" src="beatwave%20new%20new.png" class="w-12 h-14 rounded-xl object-cover bg-zinc-900 border border-white/5" alt="Now Playing Album Art">                        
                 <div class="truncate">
@@ -486,7 +492,7 @@
                     <div id="nowArtistLabel" class="text-[10px] text-zinc-500 font-medium truncate mt-0.5"></div>
                 </div>                
             </div>                
-            <div class="flex items-center gap-4">                        
+            <div id="playerControls" class="flex items-center gap-4">                        
                 <button id="videoToggle" onclick="toggleVideoMode()" class="px-4 py-1.5 rounded-full glass-btn text-[10px] font-bold uppercase tracking-widest">Video: Off</button>                        
                 <button onclick="toggleLocalPlay()" class="w-12 h-12 rounded-full flex items-center justify-center glass-btn text-lg"><i id="playIcon" class="fa-solid fa-play ml-0.5"></i></button>                
                 <button onclick="advanceQueueNext()" class="w-10 h-10 rounded-full flex items-center justify-center glass-btn text-sm" title="Skip Track"><i class="fa-solid fa-forward-step"></i></button>

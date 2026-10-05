@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
+/* Fonts are loaded from web.html; colour + type tokens come from theme.css. */
 
 :root {
-    --bg-color: #08090c;
-    --accent: #ffffff;
-    --accent-glow: rgba(255, 255, 255, 0.25);
-    --glass-bg: rgba(10, 11, 15, 0.55);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --bg-color: var(--bg);
+    --accent: var(--violet);
+    --accent-glow: var(--accent-soft);
+    --glass-bg: var(--bg-glass);
+    --glass-border: var(--line);
 }
 
 /* Background video container */
@@ -42,8 +42,8 @@
 
 body {
     background-color: var(--bg-color);
-    color: #fff;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--text-hi);
+    font-family: var(--font);
     overflow: hidden;
     position: relative;
 }
@@ -534,33 +534,27 @@ body.light-theme .admin-input-group input {
 }
 
 .admin-primary-btn {
-    background: #ffffff;
-    color: #000000;
     border: none;
     padding: 14px;
     border-radius: 14px;
-    font-weight: 800;
-    font-family: inherit;
+    font-weight: 700;
+    font-family: var(--font);
     font-size: 0.95rem;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    transition: all 0.2s;
-}
-
-.admin-primary-btn:hover {
-    background: #e4e4e7;
-    transform: translateY(-1px);
-}
+    color: #fff;
+    background: var(--grad-brand);
     text-align: center;
+    box-shadow: var(--shadow-accent);
+    transition: transform var(--t-fast), box-shadow var(--t-med);
 }
 
 .admin-primary-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 15px 30px rgba(0, 210, 255, 0.4);
+    box-shadow: 0 18px 40px -12px rgba(124, 92, 255, 0.8);
 }
 
 .admin-primary-btn:active {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.99);
 }
 
 .admin-error-msg {
@@ -1422,4 +1416,286 @@ body.light-theme .apple-footer {
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
     z-index: 10;
 }
+
+/* ==========================================================================
+   BEATWAVE v3 — "Obsidian" retint
+   Maps the legacy monochrome / neon-cyan player chrome onto the shared
+   violet -> cyan design tokens. Declared last, so it wins at equal
+   specificity; every var re-resolves under body.light-theme.
+   ========================================================================== */
+
+/* ---- Ambient backdrop ---- */
+html { overflow-x: hidden; }
+#video-background-container { background-color: var(--bg); }
+#bg-video { opacity: 0.2; }
+
+/* ---- Glass surfaces ---- */
+.glass,
+.apple-glass,
+.apple-aside,
+.apple-footer,
+.sync-modal-content,
+.admin-modal-content,
+.maintenance-box,
+.admin-float-btn {
+    background: var(--bg-glass) !important;
+    border-color: var(--line) !important;
+}
+.apple-glass,
+.apple-aside,
+.apple-footer,
+.sync-modal-content,
+.admin-modal-content {
+    box-shadow: var(--inset-hair), var(--shadow-lg) !important;
+}
+@media (max-width: 768px) {
+    .glass { background: var(--bg-glass) !important; }
+}
+
+.hover-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--accent-line);
+}
+body.light-theme .hover-card { background: var(--bg-raised); }
+body.light-theme .hover-card:hover {
+    background: var(--bg-raised);
+    border-color: var(--accent-line);
+    box-shadow: var(--shadow-md);
+}
+
+/* ---- Loader curtain ---- */
+#loading-screen { background: var(--bg-deep); }
+.matrix-bar {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+}
+.matrix-fill {
+    background: var(--grad-brand);
+    box-shadow: 0 0 12px rgba(124, 92, 255, 0.75);
+}
+
+/* ---- Announcement / countdown banners ---- */
+#announcement-banner,
+#countdown-banner {
+    background: var(--bg-raised);
+    border-bottom: 1px solid var(--accent-line);
+    color: var(--text-hi);
+    box-shadow: var(--shadow-md);
+}
+.announcement-pulse-dot,
+.toast-indicator {
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+}
+@keyframes livePulse {
+    0%   { transform: scale(1);   opacity: 1;   box-shadow: 0 0 10px var(--cyan); }
+    50%  { transform: scale(1.2); opacity: 0.7; box-shadow: 0 0 20px var(--cyan); }
+    100% { transform: scale(1);   opacity: 1;   box-shadow: 0 0 10px var(--cyan); }
+}
+
+/* ---- Maintenance ---- */
+#maintenance-screen { background: var(--bg-deep); }
+.maintenance-icon { color: var(--violet-soft); }
+#maintenance-screen h1 { font-family: var(--font-display); letter-spacing: -0.02em; }
+#maintenance-screen p { color: var(--text-mid); opacity: 1; }
+.maintenance-loader span { background: var(--violet); }
+.maintenance-loader span:nth-child(2) { background: var(--violet-soft); }
+.maintenance-loader span:nth-child(3) { background: var(--cyan); }
+
+/* ---- Admin panel ---- */
+.admin-modal-backdrop { background: rgba(3, 4, 9, 0.72); }
+.admin-modal-header h2 { font-family: var(--font-display); letter-spacing: -0.025em; }
+.admin-input-group input:focus,
+.admin-sub-input:focus { border-color: var(--accent-line) !important; }
+.admin-tab-btn.active,
+body.light-theme .admin-tab-btn.active {
+    color: var(--violet-soft);
+    background: var(--accent-soft);
+}
+.admin-float-btn { color: var(--cyan); }
+.admin-float-btn:hover { background: var(--violet) !important; color: #fff; }
+.admin-list-item button:hover { background: var(--violet); color: #fff; }
+.admin-switch-label input:checked + .admin-slider { background: var(--violet); }
+.admin-switch-label input:checked + .admin-slider::before { background: #fff; }
+.admin-list-container { background: var(--bg-inset); border-color: var(--line); }
+body.light-theme .admin-list-container { background: var(--bg-inset); border-color: var(--line); }
+
+/* ---- Broadcast toast ---- */
+.live-broadcast-toast {
+    background: var(--bg-glass);
+    border: 1px solid var(--accent-line);
+    color: var(--text-hi);
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+}
+
+/* ---- iOS-style control-centre buttons ---- */
+.glass-btn {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--line) !important;
+    color: var(--text-hi) !important;
+    box-shadow: var(--inset-hair), var(--shadow-sm) !important;
+}
+.glass-btn:hover {
+    background: var(--bg-card-hover) !important;
+    border-color: var(--accent-line) !important;
+}
+body.light-theme .glass-btn {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--line) !important;
+    color: var(--text-hi) !important;
+}
+body.light-theme .glass-btn:hover { background: var(--bg-card-hover) !important; }
+
+/* ---- Apple-like navigation ---- */
+.apple-nav-btn.active { background: var(--accent-soft); color: var(--text-hi) !important; }
+body.light-theme .apple-nav-btn.active { background: var(--accent-soft); color: var(--text-hi) !important; }
+
+/* ---- Liquid-glass gooey switch ---- */
+.liquid-glass-toggle-container {
+    background: var(--bg-inset);
+    border: 1px solid var(--line-soft);
+}
+.liquid-glass-switch.active,
+body.light-theme .liquid-glass-switch.active {
+    background: var(--accent-soft);
+    border-color: var(--accent-line);
+}
+.liquid-glass-switch.active .liquid-glass-knob,
+body.light-theme .liquid-glass-switch.active .liquid-glass-knob {
+    background: var(--violet);
+    box-shadow: 0 0 10px rgba(124, 92, 255, 0.6);
+}
+
+/* ---- Sync chrome ---- */
+.sync-status-pill {
+    background: var(--bg-glass);
+    border: 1px solid var(--accent-line);
+    color: var(--text-hi);
+    box-shadow: var(--shadow-sm), 0 0 18px rgba(34, 211, 238, 0.14);
+}
+.sync-status-pill:hover {
+    border-color: var(--cyan);
+    box-shadow: var(--shadow-md), 0 0 24px rgba(34, 211, 238, 0.24);
+}
+.sync-pulse-dot {
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+}
+.sync-role-host {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-line);
+    color: var(--violet-soft);
+}
+.sync-role-guest {
+    background: rgba(34, 211, 238, 0.14);
+    border: 1px solid rgba(34, 211, 238, 0.34);
+    color: var(--cyan);
+}
+.sync-chat-trigger-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    color: var(--text-hi);
+}
+.sync-chat-trigger-btn:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--cyan);
+    color: var(--cyan);
+}
+.sync-unread-badge {
+    background: var(--violet);
+    box-shadow: 0 0 10px rgba(124, 92, 255, 0.65);
+}
+
+/* ---- Sync chat drawer ---- */
+#syncChatDrawer {
+    background: var(--bg-glass);
+    border-left: 1px solid var(--line);
+    box-shadow: var(--shadow-lg);
+}
+.sync-chat-header,
+.sync-chat-input-wrapper { border-color: var(--line-soft); }
+.sync-chat-input-wrapper { background: var(--bg-deep); }
+.sync-chat-messages-container::-webkit-scrollbar-thumb { background: var(--line-hi); }
+.chat-msg-meta { color: var(--text-lo); }
+.chat-msg-self .chat-bubble {
+    background: var(--grad-brand);
+    color: #fff;
+    font-weight: 500;
+}
+.chat-msg-peer .chat-bubble {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    color: var(--text-hi);
+}
+.chat-msg-system .chat-bubble {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-line);
+    color: var(--violet-soft);
+}
+.sync-chat-input {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    color: var(--text-hi);
+}
+.sync-chat-input:focus { border-color: var(--cyan); }
+.sync-chat-send-btn {
+    background: var(--grad-brand);
+    color: #fff;
+    box-shadow: var(--shadow-accent);
+}
+.sync-chat-send-btn:hover { background: var(--grad-brand); filter: brightness(1.08); }
+
+/* ---- TV / theatre ---- */
+#tvMode.active { background: var(--bg-deep); }
+
+/* ---- Player typography ---- */
+#nowTitle {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.022em;
+}
+#nowArtistLabel {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+.featured-title,
+.trending-title {
+    font-family: var(--font-display);
+    letter-spacing: -0.018em;
+}
+.admin-tab-btn,
+.admin-field label,
+.toggle-label { letter-spacing: 0.01em; }
+
+/* ---- Mobile: stack the player footer so its controls never overflow ---- */
+@media (max-width: 640px) {
+    .apple-footer {
+        height: auto;
+        padding: 16px 14px;
+    }
+    #playerFooterRow {
+        flex-wrap: wrap;
+        row-gap: 12px;
+    }
+    #playerFooterRow > div:first-child {
+        order: 1;
+        flex: 1 1 55%;
+        width: auto;
+    }
+    #playerFooterRow > div:last-child {
+        order: 2;
+        flex: 0 0 auto;
+        width: auto;
+    }
+    #playerControls {
+        order: 3;
+        flex: 1 1 100%;
+        justify-content: center;
+    }
+}
+
 

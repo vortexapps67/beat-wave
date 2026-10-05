@@ -1,0 +1,9 @@
+{
+  "name": "beatwave",
+  "version": "5.0.0",
+  "description": "BeatWave — Best Ad-Free Music Streaming",
+  "scripts": {
+    "build": "node build-config.js",
+    "config": "node build-config.js"
+  }
+}

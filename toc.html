@@ -11,8 +11,10 @@
     <meta property="og:image" content="og%20img.png">
     <meta name="twitter:image" content="og%20img.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="theme.css?v=4">
 
     <style>
         :root {
@@ -50,7 +52,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
+            font-family: var(--font); 
             background: var(--bg-dark); 
             color: rgba(255, 255, 255, 0.75); 
             line-height: 1.7;
@@ -132,7 +134,7 @@
         }
 
         .last-updated {
-            font-family: 'Space Mono', monospace;
+            font-family: var(--mono);
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 3px;
@@ -194,7 +196,7 @@
         
         .banner-text p {
             color: #a1a1aa;
-            font-family: 'Space Mono', monospace;
+            font-family: var(--mono);
             font-size: 0.85rem;
             font-weight: 700;
             letter-spacing: 1px;
@@ -258,7 +260,7 @@
             font-weight: 800;
             margin-bottom: 40px;
             font-size: 0.8rem;
-            font-family: 'Space Mono', monospace;
+            font-family: var(--mono);
             transition: var(--transition);
             opacity: 0.5;
             text-transform: uppercase;
@@ -276,7 +278,7 @@
             text-align: center;
             margin-top: 80px;
             padding-bottom: 60px;
-            font-family: 'Space Mono', monospace;
+            font-family: var(--mono);
             font-size: 0.75rem;
             font-weight: 700;
             opacity: 0.3;
@@ -289,12 +291,121 @@
             .banner-text h3 { font-size: 1.4rem; }
             .banner-text { left: 20px; bottom: 20px; }
         }
+
+        /* ============================================================
+           BeatWave v3 — token retint (declared last, wins)
+           ============================================================ */
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text-mid);
+            line-height: var(--lh-body);
+        }
+
+        #scroll-tracker {
+            background: var(--grad-brand);
+            box-shadow: 0 0 12px rgba(124, 92, 255, 0.55);
+        }
+
+        #particle-canvas { opacity: 0.5; }
+        body.light-theme #particle-canvas { opacity: 0.32; }
+
+        .container {
+            max-width: 850px;
+            margin: 72px auto;
+            padding: 0 var(--gutter);
+        }
+
+        .logo { filter: drop-shadow(0 0 22px rgba(124, 92, 255, 0.45)); }
+        .logo:hover { filter: drop-shadow(0 0 30px rgba(34, 211, 238, 0.55)); }
+        body.light-theme .logo { filter: invert(1) drop-shadow(0 0 22px rgba(109, 77, 251, 0.3)); }
+
+        h1 {
+            font-size: var(--fs-h1);
+            font-weight: 700;
+            letter-spacing: var(--tr-display);
+            color: var(--text-hi);
+        }
+
+        .last-updated {
+            font-family: var(--mono);
+            font-size: var(--fs-eyebrow);
+            letter-spacing: var(--tr-eyebrow);
+            color: var(--text-lo);
+            font-weight: 600;
+        }
+
+        .happiness-banner {
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-lg);
+            background: var(--bg-deep);
+        }
+        .happiness-banner::after {
+            background: linear-gradient(180deg, rgba(4, 5, 10, 0) 32%, rgba(4, 5, 10, 0.85) 100%);
+        }
+        body.light-theme .happiness-banner::after {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0) 32%, rgba(0, 0, 0, 0.6) 100%);
+        }
+        .banner-text h3 {
+            font-family: var(--font-display);
+            letter-spacing: var(--tr-head);
+        }
+        .banner-text p {
+            font-family: var(--mono);
+            color: #cbd5e1;
+            letter-spacing: 0.08em;
+        }
+
+        .content-box {
+            background: var(--bg-card);
+            border: 1px solid var(--line);
+            box-shadow: var(--inset-hair);
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+        }
+        .content-box:hover { box-shadow: var(--inset-hair), var(--shadow-lg); }
+        body.light-theme .content-box { box-shadow: var(--inset-hair), var(--shadow-md); }
+
+        h2 {
+            font-family: var(--font-display);
+            font-size: var(--fs-h4);
+            color: var(--text-hi);
+            letter-spacing: var(--tr-head);
+        }
+        h2::before {
+            width: 3px;
+            height: 20px;
+            background: var(--grad-brand);
+        }
+        body.light-theme h1,
+        body.light-theme h2,
+        body.light-theme .back-btn { color: var(--text-hi); }
+
+        p { color: var(--text-mid); }
+
+        .back-btn {
+            font-family: var(--mono);
+            color: var(--text-mid);
+            letter-spacing: 0.1em;
+        }
+        .back-btn:hover {
+            color: var(--violet-soft);
+            text-shadow: 0 0 16px rgba(124, 92, 255, 0.5);
+        }
+
+        footer {
+            font-family: var(--mono);
+            letter-spacing: 0.14em;
+            color: var(--text-lo);
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
 
     <div id="scroll-tracker"></div>
-    <div class="ambient-glow"></div>
+    <div class="bw-aurora"></div>
+    <div class="bw-grid"></div>
     <div id="cursor-glow"></div>
     <canvas id="particle-canvas"></canvas>
 
@@ -343,7 +454,7 @@
         <footer class="fade-up delay-3" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
             <p>&copy; 2026 VORTEX APPS INFRASTRUCTURE.</p>
             <div style="display: flex; align-items: center; gap: 8px; opacity: 0.4;">
-                <span style="font-size: 0.7rem; font-family: 'Space Mono', monospace; font-weight: 700;">SECURED BY</span>
+                <span style="font-size: 0.7rem; font-family: var(--mono); font-weight: 700;">SECURED BY</span>
                 <img src="upi logo.png" alt="UPI" style="height: 16px; object-fit: contain; filter: grayscale(1) brightness(1.5);">
             </div>
         </footer>
