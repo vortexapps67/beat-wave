@@ -63,6 +63,14 @@ if (!configs) {
 }
 
 // 3. Write config.js and config.json
+// Safety guard: never clobber an existing config.js with placeholder values.
+// Only rewrite when real Firebase config was actually provided via env.
+const hasEnvConfig = Boolean(env.FIREBASE_CONFIGS || env.FIREBASE_ADMIN_API_KEY || env.FIREBASE_PLAYER_API_KEY);
+if (!hasEnvConfig && fs.existsSync(path.join(__dirname, 'config.js'))) {
+  console.warn('⚠️ No Firebase env vars found — keeping existing config.js untouched.');
+  process.exit(0);
+}
+
 const configJsContent = `const firebaseConfigs = ${JSON.stringify(configs, null, 2)};\n`;
 fs.writeFileSync(path.join(__dirname, 'config.js'), configJsContent, 'utf8');
 fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(configs, null, 2) + '\n', 'utf8');
