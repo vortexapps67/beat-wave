@@ -15,13 +15,13 @@
 }
 
 html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     overflow-x: hidden;
     max-width: 100%;
 }
 
 body {
-    line-height: 1.65;
+    line-height: 1.7;
     min-height: 100svh;
     overflow-x: hidden;
 }

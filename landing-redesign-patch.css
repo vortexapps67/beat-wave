@@ -1,0 +1,91 @@
+/* ============================================================
+   BeatWave — redesign patch
+   ============================================================ */
+
+/* ---------- Section headers ---------- */
+.section-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: clamp(10px, 2vw, 14px);
+    margin-bottom: clamp(40px, 7vw, 64px);
+}
+.section-header .section-sub {
+    margin-bottom: 0;
+}
+
+/* ---------- Card / hero polish ---------- */
+.bento-card {
+    transition: transform var(--t-med), border-color var(--t-med), background var(--t-med), box-shadow var(--t-med);
+    will-change: transform;
+}
+.bento-card:hover {
+    transform: translateY(-4px);
+}
+
+.hero h1 {
+    text-wrap: balance;
+}
+.hero-lede {
+    text-wrap: pretty;
+}
+
+.screenshot-strip img {
+    border-radius: calc(var(--r-lg) - 4px);
+    border: 1px solid var(--line-soft);
+    box-shadow: var(--shadow-md);
+}
+
+/* ============================================================
+   Theme toggle — circular ripple (cosmictaser-style)
+   Old snapshot sits under, new snapshot wipes in as an
+   expanding circle from the exact click point.
+   ============================================================ */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+html.theme-ripple::view-transition-old(root) {
+    z-index: 1;
+}
+html.theme-ripple::view-transition-new(root) {
+    z-index: 2;
+}
+html.theme-ripple::view-transition-group(*) {
+    animation: none;
+}
+
+/* Graceful fallback for browsers without View Transitions */
+@supports not (view-transition-name: root) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation: none;
+    }
+}
+
+/* Toggle icon spin on theme change */
+@keyframes themeSpin {
+    0%   { transform: rotate(0deg) scale(1); }
+    55%  { transform: rotate(190deg) scale(0.75); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+.theme-toggle-btn i.theme-spin,
+#themeToggleBtn i.theme-spin {
+    animation: themeSpin 0.75s cubic-bezier(0.65, 0, 0.35, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+    .theme-toggle-btn i.theme-spin,
+    #themeToggleBtn i.theme-spin {
+        animation: none;
+    }
+}
+
+/* Keep view transitions quiet under reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation-duration: 0.01ms !important;
+    }
+}

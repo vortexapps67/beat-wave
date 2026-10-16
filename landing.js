@@ -552,6 +552,9 @@ function applyTheme(theme, persist) {
         document.body.classList.remove('light-theme');
     }
 
+    // Keep native UI (scrollbars, form controls, caret) in sync with the theme
+    document.documentElement.style.colorScheme = isLight ? 'light' : 'dark';
+
     if (persist) {
         try {
             localStorage.setItem('beatwave-theme', isLight ? 'light' : 'dark');
@@ -564,6 +567,17 @@ function applyTheme(theme, persist) {
         if (icon) {
             icon.className = isLight ? 'fas fa-sun' : 'fas fa-moon';
         }
+        btn.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+        btn.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+        btn.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+        // Kick a quick icon spin so the toggle feels physical (only on user toggle)
+        if (icon) {
+            icon.classList.remove('theme-spin');
+            if (persist) {
+                void icon.offsetWidth; // restart animation
+                icon.classList.add('theme-spin');
+            }
+        }
     });
 
     // Sync browser theme-color meta tag for mobile status bars
@@ -573,9 +587,60 @@ function applyTheme(theme, persist) {
     }
 }
 
+// Circular ripple reveal from the clicked toggle button — mirrors cosmictaser.de5.net
+function toggleThemeWithRipple(event) {
+    const currentIsLight = document.body.classList.contains('light-theme') ||
+                           document.documentElement.classList.contains('light-theme');
+    const nextTheme = currentIsLight ? 'dark' : 'light';
+
+    const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (typeof document.startViewTransition !== 'function' || reducedMotion) {
+        applyTheme(nextTheme, true);
+        return;
+    }
+
+    const x = (event && event.clientX) || window.innerWidth - 48;
+    const y = (event && event.clientY) || 48;
+    const root = document.documentElement;
+
+    root.classList.add('theme-ripple');
+    let transition;
+    try {
+        transition = document.startViewTransition(() => applyTheme(nextTheme, true));
+    } catch (e) {
+        root.classList.remove('theme-ripple');
+        applyTheme(nextTheme, true);
+        return;
+    }
+
+    const cleanup = () => root.classList.remove('theme-ripple');
+    transition.ready
+        .then(() => {
+            const maxRadius = Math.hypot(
+                Math.max(x, window.innerWidth - x),
+                Math.max(y, window.innerHeight - y)
+            );
+            root.animate(
+                [
+                    { clipPath: 'circle(0px at ' + x + 'px ' + y + 'px)' },
+                    { clipPath: 'circle(' + maxRadius + 'px at ' + x + 'px ' + y + 'px)' }
+                ],
+                {
+                    duration: 850,
+                    easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+                    fill: 'forwards',
+                    pseudoElement: '::view-transition-new(root)'
+                }
+            );
+        })
+        .catch(() => {})
+        .then(() => transition.finished.catch(() => {}))
+        .then(cleanup, cleanup);
+}
+
 function initThemeSystem() {
     // Read saved theme or detect from document element (set by head script)
-    const savedTheme = localStorage.getItem('beatwave-theme') || 
+    const savedTheme = localStorage.getItem('beatwave-theme') ||
         (document.documentElement.classList.contains('light-theme') ? 'light' : 'dark');
     applyTheme(savedTheme, false);
 
@@ -584,10 +649,7 @@ function initThemeSystem() {
         const toggleBtn = e.target.closest('.theme-toggle-btn, #themeToggleBtn');
         if (toggleBtn) {
             e.preventDefault();
-            const currentIsLight = document.body.classList.contains('light-theme') || 
-                                   document.documentElement.classList.contains('light-theme');
-            const nextTheme = currentIsLight ? 'dark' : 'light';
-            applyTheme(nextTheme, true);
+            toggleThemeWithRipple(e);
         }
     });
 }
@@ -1078,19 +1140,38 @@ function refreshRenderObservers() {
 
 // ---------- Boot ----------
 /* ── Smooth scroll — JS with nav offset ─────────────────── */
+let lenis = null;
+
 function initSmoothScroll() {
     const nav = document.querySelector('nav:not(.mobile-dock)');
+    if (window.Lenis && !lenis) {
+        lenis = new Lenis({
+            duration: 1.1,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true,
+            smoothTouch: false
+        });
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+    }
     document.querySelectorAll('a[href^="#"]').forEach(a => {
         a.addEventListener('click', e => {
             const hash = a.getAttribute('href');
-            if (hash === '#') { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+            if (hash === '#') { e.preventDefault(); if (lenis) lenis.scrollTo(0, { offset: 0 }); else window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
             const id = hash.slice(1);
             const target = document.getElementById(id);
             if (!target) return;
             e.preventDefault();
             const offset = (nav ? nav.offsetHeight : 64) + 20;
-            const top = target.getBoundingClientRect().top + window.scrollY - offset;
-            window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+            if (lenis) {
+                lenis.scrollTo(target, { offset: -offset });
+            } else {
+                const top = target.getBoundingClientRect().top + window.scrollY - offset;
+                window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+            }
             // update mobile dock active state
             document.querySelectorAll('.dock-item').forEach(d => d.classList.remove('active'));
             const dockMatch = document.querySelector(`.dock-item[href="${hash}"]`);

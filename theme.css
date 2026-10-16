@@ -9,18 +9,19 @@
    ============================================================ */
 :root {
     /* Canvas — blue-black, never pure #000 */
-    --bg:            #06070d;
-    --bg-deep:       #04050a;
-    --bg-raised:     #0b0d16;
-    --bg-card:       rgba(255, 255, 255, 0.045);
-    --bg-card-hover: rgba(255, 255, 255, 0.075);
-    --bg-glass:      rgba(8, 9, 17, 0.82);
-    --bg-inset:      rgba(255, 255, 255, 0.025);
+    color-scheme: dark;
+    --bg:            #05060b;
+    --bg-deep:       #030408;
+    --bg-raised:     #0c1020;
+    --bg-card:       rgba(255, 255, 255, 0.05);
+    --bg-card-hover: rgba(255, 255, 255, 0.08);
+    --bg-glass:      rgba(8, 10, 20, 0.85);
+    --bg-inset:      rgba(255, 255, 255, 0.03);
 
     /* Text */
     --text-hi:  #f5f6fb;
-    --text-mid: #a2a6bd;
-    --text-lo:  #5d6178;
+    --text-mid: #b3b8d2;
+    --text-lo:  #6f7595;
 
     /* Lines / borders */
     --line:      rgba(255, 255, 255, 0.10);
@@ -28,9 +29,9 @@
     --line-hi:   rgba(255, 255, 255, 0.22);
 
     /* Single signature accent — electric violet */
-    --accent:       #7c5cff;
-    --accent-soft:  rgba(124, 92, 255, 0.16);
-    --accent-line:  rgba(124, 92, 255, 0.42);
+    --accent:       #8b7bff;
+    --accent-soft:  rgba(139, 123, 255, 0.18);
+    --accent-line:  rgba(139, 123, 255, 0.48);
     --accent-contrast: #ffffff;
 
     /* Legacy aliases — kept so existing rules keep resolving */
@@ -73,8 +74,9 @@
     --t-slow: 0.6s var(--ease);
 
     /* Type — display / text / mono trio (premium editorial pairing) */
-    --font:         'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-    --font-display: 'Instrument Serif', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    --font:         'Plus Jakarta Sans', 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Instrument Serif', 'Plus Jakarta Sans', Georgia, serif;
+    --font-body:    'Plus Jakarta Sans', 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
     --mono:         'JetBrains Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
 
     /* Fluid type scale */
@@ -95,7 +97,7 @@
     /* Leading + tracking (tuned for a serif display face) */
     --lh-display: 1.06;
     --lh-head:    1.16;
-    --lh-body:    1.65;
+    --lh-body:    1.75;
     --tr-display: -0.02em;
     --tr-head:    -0.012em;
     --tr-eyebrow:  0.16em;
@@ -111,13 +113,14 @@
    ============================================================ */
 html.light-theme,
 body.light-theme {
-    --bg:            #f5f6fa;
-    --bg-deep:       #eceef5;
+    color-scheme: light;
+    --bg:            #f8f9fd;
+    --bg-deep:       #eef1fa;
     --bg-raised:     #ffffff;
-    --bg-card:       rgba(9, 10, 20, 0.028);
-    --bg-card-hover: rgba(9, 10, 20, 0.05);
-    --bg-glass:      rgba(255, 255, 255, 0.82);
-    --bg-inset:      rgba(9, 10, 20, 0.022);
+    --bg-card:       rgba(9, 10, 20, 0.035);
+    --bg-card-hover: rgba(9, 10, 20, 0.055);
+    --bg-glass:      rgba(255, 255, 255, 0.88);
+    --bg-inset:      rgba(9, 10, 20, 0.025);
 
     --text-hi:  #0a0b14;
     --text-mid: #4d5165;
@@ -127,9 +130,9 @@ body.light-theme {
     --line-soft: rgba(9, 10, 20, 0.06);
     --line-hi:   rgba(9, 10, 20, 0.24);
 
-    --accent:       #6d4dfb;
-    --accent-soft:  rgba(109, 77, 251, 0.11);
-    --accent-line:  rgba(109, 77, 251, 0.34);
+    --accent:       #7c5cff;
+    --accent-soft:  rgba(124, 92, 255, 0.14);
+    --accent-line:  rgba(124, 92, 255, 0.38);
 
     --violet:       #6d4dfb;
     --violet-soft:  #8b6dff;
