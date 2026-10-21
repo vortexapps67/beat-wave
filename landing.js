@@ -1364,6 +1364,40 @@ function animateParticlesOnce() {
     }
 }
 
+/* ── Nav ground state (OpenTune restyle) ─────────────────────
+   Paints the sticky nav in three states, purely via classes:
+     · (none)   solid tint — seamless with the tint hero
+     · raised   frosted tint — scrolling within the hero
+     · solid    dark (light theme: frosted white) — past the hero
+   Complements the ripple theme toggle; no styles are set inline. */
+(function initNavGroundState() {
+    const navEl = document.querySelector('nav:not(.mobile-dock)');
+    const heroEl = document.querySelector('.hero');
+    if (!navEl || !heroEl) return;
+
+    let navTicking = false;
+
+    function updateNavGround() {
+        navTicking = false;
+        const y = window.scrollY || document.documentElement.scrollTop || 0;
+        // Hero bottom edge in viewport space — robust against transforms
+        const heroBottom = heroEl.getBoundingClientRect().bottom;
+        const navH = navEl.offsetHeight;
+        const pastHero = heroBottom <= navH;
+        navEl.classList.toggle('raised', !pastHero && y > 4);
+        navEl.classList.toggle('solid', pastHero);
+    }
+
+    window.addEventListener('scroll', function () {
+        if (!navTicking) {
+            navTicking = true;
+            requestAnimationFrame(updateNavGround);
+        }
+    }, { passive: true });
+    window.addEventListener('resize', updateNavGround, { passive: true });
+    updateNavGround();
+})();
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', startApp);
 } else {

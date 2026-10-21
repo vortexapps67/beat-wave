@@ -69,7 +69,7 @@
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Lenis -->
@@ -83,6 +83,7 @@
     <link rel="stylesheet" href="theme.css?v=6">
     <link rel="stylesheet" href="landing.css?v=5">
     <link rel="stylesheet" href="landing-redesign-patch.css?v=3">
+    <link rel="stylesheet" href="opentune.css?v=1">
 </head>
 <body>
     <!-- Maintenance Countdown Banner -->
@@ -399,7 +400,7 @@
         </nav>
 
         <!-- Hero -->
-        <section class="hero reveal active">
+        <section class="hero reveal active t-tint">
             <!-- Stage -->
             <div class="hero-stage">
                 <div class="hero-ring" aria-hidden="true">
@@ -487,12 +488,34 @@
             </div>
         </section>
 
+        <!-- Fact ticker -->
+        <div class="ticker reveal" aria-hidden="true">
+            <div class="ticker-track">
+                <ul class="ticker-list">
+                    <li><b>0</b> ads, ever</li>
+                    <li><b>0</b> trackers or telemetry</li>
+                    <li><b>GPL-3.0</b> open source</li>
+                    <li><b>2</b> platforms &mdash; Android + Web</li>
+                    <li><b>100%</b> free, no account</li>
+                    <li><b>2 AM</b> where it started</li>
+                </ul>
+                <ul class="ticker-list" aria-hidden="true">
+                    <li><b>0</b> ads, ever</li>
+                    <li><b>0</b> trackers or telemetry</li>
+                    <li><b>GPL-3.0</b> open source</li>
+                    <li><b>2</b> platforms &mdash; Android + Web</li>
+                    <li><b>100%</b> free, no account</li>
+                    <li><b>2 AM</b> where it started</li>
+                </ul>
+            </div>
+        </div>
+
         <!-- Interface marquee -->
-        <div class="gallery-head reveal">
+        <div class="gallery-head reveal t-light">
             <span class="bw-chip"><i class="fas fa-mobile-screen"></i> In&nbsp;App</span>
             <h2 class="section-title">Interface System Preview</h2>
         </div>
-        <section class="gallery-section reveal" aria-label="App screenshots">
+        <section class="gallery-section reveal t-light" aria-label="App screenshots">
             <div class="workspace-gallery-hub">
                 <div class="screenshot-strip">
                     <img src="beatwave%20home-portrait.png" alt="BeatWave Home UI" width="200" height="429" decoding="async" loading="lazy">
@@ -510,7 +533,7 @@
         </section>
 
         <!-- Features -->
-        <section class="bento-section container reveal" id="features">
+        <section class="bento-section container reveal t-night" id="features">
             <div class="section-header">
                 <span class="section-label"><i class="fas fa-layer-group"></i> The Engine</span>
                 <h2 class="section-title">Engineered for effortless audio</h2>
@@ -557,7 +580,7 @@
         </section>
 
         <!-- Origin story -->
-        <section class="container reveal story-section">
+        <section class="container reveal story-section t-light">
             <div class="section-header">
                 <span class="section-label" id="origin"><i class="fas fa-book-open"></i> Our Origin</span>
                 <h2 class="section-title">It started with a 2 AM group call</h2>
@@ -575,7 +598,7 @@
             </div>
         </section>
 
-        <section class="container reveal">
+        <section class="container reveal t-light tribute-section">
             <div class="credits-tribute-banner">
                 <div class="tribute-icon-box">
                     <i class="fas fa-heart-pulse"></i>
@@ -588,7 +611,7 @@
         </section>
 
         <!-- Security registry -->
-        <section class="container reveal registry-section">
+        <section class="container reveal registry-section t-night">
             <div class="section-header">
                 <span class="section-label"><i class="fas fa-shield-halved"></i> Transparency</span>
                 <h2 class="section-title">Security &amp; verification</h2>
@@ -620,7 +643,7 @@
         </section>
 
         <!-- FAQ -->
-        <section class="container reveal faq-section">
+        <section class="container reveal faq-section t-light">
             <div class="section-header">
                 <span class="section-label" id="faq"><i class="fas fa-circle-question"></i> FAQ</span>
                 <h2 class="section-title">Frequently asked questions</h2>
@@ -714,7 +737,7 @@
         </section>
 
         <!-- Support -->
-        <section class="support-container reveal" style="padding:0 var(--gutter);">
+        <section class="support-container reveal t-light" style="padding-inline: var(--gutter);">
             <div class="support-card">
                 <div class="upi-logo-wrapper">
                     <img src="upi logo.png" alt="UPI Logo" width="60" height="60">
@@ -736,7 +759,7 @@
         </section>
 
         <!-- Walkthrough -->
-        <section class="container reveal walkthrough-section">
+        <section class="container reveal walkthrough-section t-tint">
             <span class="section-label"><i class="fas fa-list-check"></i> Get Started</span>
             <h2 class="section-title">Documentation Walkthrough</h2>
             <div class="walkthrough-box">
@@ -765,7 +788,7 @@
         </section>
 
         <!-- Team -->
-        <section class="container reveal team-section">
+        <section class="container reveal team-section t-night">
             <span class="section-label"><i class="fas fa-users"></i> The Team</span>
             <h2 class="team-heading">Developed by</h2>
             <div class="team-grid">
@@ -789,7 +812,7 @@
         </section>
 
         <!-- Terminal -->
-        <section class="terminal-container container reveal">
+        <section class="terminal-container container reveal t-night">
             <div class="terminal-window">
                 <div class="terminal-header">
                     <div class="tl r"></div>
@@ -802,9 +825,9 @@
         </section>
 
         <!-- Big bottom wordmark -->
-        <div class="site-bottom-wordmark" aria-hidden="true">BEATWAVE</div>
+        <div class="site-bottom-wordmark t-night" aria-hidden="true">BEATWAVE</div>
 
-        <footer>
+        <footer class="t-night">
             <p>&copy; 2026 Vortex Apps.</p>
             <div class="credits-tag">Based On <a href="https://github.com/cosmictaserdev-creator/Convx/" target="_blank" rel="noopener">ConvX</a> FOSS app · @cosmictaserdev-creator</div>
             <div class="footer-mii">
@@ -818,7 +841,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.16/dist/lenis.min.js"></script>
-    <script src="landing.js?v=13"></script>
-    <script src="ai-assistant.js"></script>
+    <script src="landing.js?v=14"></script>
+    <script src="ai-assistant.js?v=2"></script>
 </body>
 </html>

@@ -1,0 +1,936 @@
+/* ============================================================
+   BeatWave × OpenTune — landing art direction
+   ============================================================
+   Loaded LAST on index.html (after landing.css and
+   landing-redesign-patch.css). Pure restyle layer:
+
+   · Archivo variable type — condensed heavy display headings
+   · Painted section grounds: .t-tint (violet) / .t-night / .t-light
+   · Hero: copy left, stage right, ink install block
+   · Ticker marquee, border-row features, split FAQ,
+     giant condensed outro wordmark, flat pill buttons
+
+   DOM ids/classes, JS hooks (loader curtain, FAQ accordion,
+   mobile dock, terminal, scramble, counters) and the
+   View-Transitions ripple theme toggle are untouched —
+   only their paint changes.
+   ============================================================ */
+
+/* ============================================================
+   1. Tokens
+   ============================================================ */
+:root {
+    /* BeatWave violet at "cover-art" strength — the single loud color */
+    --tint: #7d68ff;
+    --ot-ink: #0d0919;      /* near-black used on the violet ground     */
+    --ot-ink-soft: #1a1440;
+    --ot-snow: #f4f4f9;     /* light ground, dark theme                 */
+    --ot-night: #0c0a16;    /* dark ground                              */
+
+    /* One typeface does everything — wdth 62–125, wght 100–900 */
+    --font: 'Archivo', 'Helvetica Neue', Arial, ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Archivo', 'Helvetica Neue', Arial, ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Archivo', 'Helvetica Neue', Arial, ui-sans-serif, system-ui, sans-serif;
+
+    /* --grad-brand was left undefined after the "no gradients"
+       flattening, so every CTA using it (loader fill, dock player,
+       donate, primary download) rendered transparent. Resolve it
+       to flat tint so they read as solid pills. */
+    --grad-brand: var(--tint);
+}
+
+html, body { background: var(--ot-night); }
+html.light-theme, body.light-theme { background: #fafbfe; }
+
+body {
+    font-family: var(--font);
+    font-size: 17px;
+    line-height: 1.62;
+    letter-spacing: -0.004em;
+}
+
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); font-stretch: 74%; }
+h1, h2 { font-weight: 800; letter-spacing: -0.022em; line-height: 0.96; }
+h3, h4 { font-weight: 750; letter-spacing: -0.008em; line-height: 1.22; }
+
+/* ============================================================
+   2. Painted grounds
+   ------------------------------------------------------------
+   Sections are centered boxes (.container), so each ground
+   paints through a full-bleed ::before — container-scoped
+   sections still read as edge-to-edge bands. The ::before is
+   z-index -1 inside the section's stacking context, which keeps
+   it above the body background but below the section content.
+   ============================================================ */
+.t-tint, .t-night, .t-light {
+    position: relative;
+    z-index: 0;
+    padding-block: clamp(64px, 8.5vw, 124px);
+}
+.t-tint::before,
+.t-night::before,
+.t-light::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -50vw;
+    width: 100vw;
+    z-index: -1;
+    pointer-events: none;
+}
+.t-tint::before  { background: var(--tint); }
+.t-night::before { background: var(--ot-night); }
+.t-light::before { background: var(--ot-snow); }
+
+html.light-theme .t-night::before,
+body.light-theme .t-night::before { background: #fafbfe; }
+html.light-theme .t-light::before,
+body.light-theme .t-light::before { background: #eef0f6; }
+
+/* ---- Violet ground: ink type, identical in both themes ---- */
+.t-tint {
+    --text-hi: #0d0919;
+    --text-mid: #150f34;
+    --text-lo: #1e1747;
+    --line: rgba(13, 9, 25, 0.20);
+    --line-soft: rgba(13, 9, 25, 0.13);
+    --line-hi: rgba(13, 9, 25, 0.34);
+    --bg-card: rgba(13, 9, 25, 0.06);
+    --bg-card-hover: rgba(13, 9, 25, 0.10);
+    --bg-inset: rgba(13, 9, 25, 0.05);
+    --bg-raised: rgba(13, 9, 25, 0.04);
+    --accent-soft: rgba(13, 9, 25, 0.10);
+    --accent-line: rgba(13, 9, 25, 0.32);
+    --violet: #3a26a8;
+    --violet-soft: #2d1c7a;
+    --cyan-soft: #14384a;
+    --shadow-accent: 0 16px 40px -18px rgba(13, 9, 25, 0.6);
+    --inset-hair: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    color: var(--text-hi);
+}
+
+/* ---- Snow ground (and night-ground flipped to day in light mode) ----
+   Every glass/line/text token is re-based to ink so the existing
+   card components restyle automatically. ---- */
+.t-light,
+html.light-theme .t-night,
+body.light-theme .t-night {
+    --text-hi: #130f28;
+    --text-mid: #474169;
+    --text-lo: #6a648d;
+    --line: rgba(13, 9, 25, 0.12);
+    --line-soft: rgba(13, 9, 25, 0.07);
+    --line-hi: rgba(13, 9, 25, 0.26);
+    --bg-card: rgba(13, 9, 25, 0.04);
+    --bg-card-hover: rgba(13, 9, 25, 0.065);
+    --bg-inset: rgba(13, 9, 25, 0.03);
+    --bg-raised: #ffffff;
+    --accent-soft: rgba(109, 77, 251, 0.10);
+    --accent-line: rgba(109, 77, 251, 0.38);
+    --violet: #6d4dfb;
+    --violet-soft: #6d4dfb;
+    --cyan-soft: #0b7f9b;
+    --shadow-accent: 0 14px 36px -16px rgba(109, 77, 251, 0.45);
+    --inset-hair: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    color: var(--text-hi);
+}
+.t-night { color: var(--text-hi); }
+
+/* ---- Ground rhythm: same-colour neighbours lose one padded side ---- */
+.hero.t-tint {
+    padding-block: clamp(40px, 6vw, 72px) clamp(56px, 8vw, 104px);
+}
+.gallery-head.t-light {
+    margin-top: 0;
+    padding-block: clamp(56px, 7vw, 100px) clamp(16px, 2.5vw, 28px);
+}
+.gallery-section.t-light { padding-block: 0 clamp(64px, 8vw, 116px); }
+.tribute-section.t-light { padding-top: 0; }
+.support-container.t-light { padding-top: 0; }
+.terminal-container.t-night { margin-top: 0; padding-block: 0 clamp(40px, 5vw, 72px); }
+.site-bottom-wordmark.t-night { padding-block: clamp(30px, 4vw, 64px) clamp(24px, 3vw, 48px); }
+footer.t-night {
+    padding-block: clamp(40px, 5vw, 60px) calc(44px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ============================================================
+   3. Split section heads (OpenTune "head.split")
+   ============================================================ */
+.section-header {
+    align-items: flex-start;
+    text-align: left;
+    gap: clamp(8px, 1.4vw, 12px);
+    margin-bottom: clamp(44px, 6vw, 72px);
+}
+.section-header .section-sub { margin-bottom: 0; }
+
+.section-label {
+    width: auto;
+    margin: 0 0 2px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-stretch: 100%;
+    letter-spacing: 0.17em;
+    color: var(--violet-soft);
+}
+.section-label i { color: currentColor; font-size: 0.78rem; }
+
+.section-title {
+    text-align: left;
+    font-family: var(--font-display);
+    font-stretch: 72%;
+    font-weight: 800;
+    font-size: clamp(38px, 5.6vw, 72px);
+    line-height: 0.96;
+    letter-spacing: -0.028em;
+    margin-bottom: clamp(14px, 1.8vw, 18px);
+    max-width: 15ch;
+    text-wrap: balance;
+}
+.section-sub {
+    text-align: left;
+    margin-inline: 0;
+    margin-bottom: 0;
+    max-width: 56ch;
+    font-size: clamp(1rem, 1.4vw, 1.08rem);
+    line-height: 1.62;
+    color: var(--text-mid);
+}
+
+/* ============================================================
+   4. Nav — tint at rest → frosted tint (raised) → solid (past hero)
+   ============================================================ */
+nav:not(.mobile-dock) {
+    --text-hi: #0d0919;
+    --text-mid: #171040;
+    --text-lo: #2a2155;
+    --line: rgba(13, 9, 25, 0.16);
+    --line-soft: rgba(13, 9, 25, 0.10);
+    --line-hi: rgba(13, 9, 25, 0.30);
+    --bg-card: rgba(13, 9, 25, 0.07);
+    --bg-card-hover: rgba(13, 9, 25, 0.13);
+    --accent-soft: rgba(13, 9, 25, 0.10);
+    --accent-line: rgba(13, 9, 25, 0.32);
+    --violet-soft: #2d1c7a;
+    --cyan-soft: #1a1440;
+    --inset-hair: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    background: var(--tint);
+    border-bottom-color: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    color: var(--text-hi);
+}
+nav:not(.mobile-dock).raised {
+    background: rgba(125, 104, 255, 0.94);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+}
+nav:not(.mobile-dock).solid {
+    --text-hi: #f4f3fb;
+    --text-mid: #b5b1cb;
+    --text-lo: #8d88ad;
+    --line: rgba(255, 255, 255, 0.12);
+    --line-soft: rgba(255, 255, 255, 0.07);
+    --line-hi: rgba(255, 255, 255, 0.26);
+    --bg-card: rgba(255, 255, 255, 0.06);
+    --bg-card-hover: rgba(255, 255, 255, 0.10);
+    --accent-soft: rgba(125, 104, 255, 0.18);
+    --accent-line: rgba(125, 104, 255, 0.45);
+    --violet-soft: #a78bfa;
+    --cyan-soft: #67e8f9;
+    --inset-hair: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    background: rgba(9, 8, 18, 0.88);
+    border-bottom-color: rgba(255, 255, 255, 0.07);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    backdrop-filter: blur(16px) saturate(160%);
+    color: var(--text-hi);
+}
+html.light-theme nav:not(.mobile-dock).solid,
+body.light-theme nav:not(.mobile-dock).solid {
+    --text-hi: #141026;
+    --text-mid: #4a4468;
+    --text-lo: #6b6590;
+    --line: rgba(13, 9, 25, 0.12);
+    --line-soft: rgba(13, 9, 25, 0.07);
+    --line-hi: rgba(13, 9, 25, 0.26);
+    --bg-card: rgba(13, 9, 25, 0.05);
+    --bg-card-hover: rgba(13, 9, 25, 0.08);
+    --accent-soft: rgba(109, 77, 251, 0.10);
+    --accent-line: rgba(109, 77, 251, 0.38);
+    --violet-soft: #6d4dfb;
+    --cyan-soft: #0b7f9b;
+    --inset-hair: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    background: rgba(250, 251, 255, 0.9);
+    border-bottom-color: rgba(13, 9, 25, 0.09);
+    color: var(--text-hi);
+}
+
+.nav-progressive-blur { display: none; }
+.nav-brand { font-weight: 800; font-stretch: 76%; letter-spacing: -0.012em; }
+nav:not(.mobile-dock):not(.solid) .nav-logo { mix-blend-mode: normal; filter: none; }
+
+nav:not(.mobile-dock) .nav-links-desktop a.nav-sync:hover {
+    color: var(--text-hi);
+    background: var(--bg-card);
+}
+
+/* Web Player CTA — ink pill on tint / tint pill on dark.
+   Beats the .nav-cta !important gradient rules. */
+nav:not(.mobile-dock) .nav-cta {
+    background: var(--ot-ink) !important;
+    color: var(--tint) !important;
+    border-color: transparent !important;
+    font-weight: 650 !important;
+    letter-spacing: 0.005em;
+}
+nav:not(.mobile-dock).solid .nav-cta {
+    background: var(--tint) !important;
+    color: var(--ot-ink) !important;
+}
+html.light-theme nav:not(.mobile-dock).solid .nav-cta,
+body.light-theme nav:not(.mobile-dock).solid .nav-cta {
+    background: var(--violet-deep) !important;
+    color: #ffffff !important;
+}
+
+/* Readline — flat violet progress line, no glow */
+#scroll-tracker {
+    background: var(--violet-deep);
+    box-shadow: none;
+}
+
+/* ============================================================
+   5. Hero — copy left, stage right, ink install block
+   ============================================================ */
+.hero.t-tint {
+    max-width: var(--container);
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    grid-template-areas:
+        "badge stage"
+        "title stage"
+        "cta1  stage"
+        "cta2  stage"
+        "trust stage"
+        "ctx   ctx";
+    column-gap: clamp(24px, 4vw, 60px);
+    row-gap: 0;
+    justify-items: start;
+    text-align: left;
+}
+.hero-stage {
+    grid-area: stage;
+    justify-self: center;
+    align-self: center;
+    margin-bottom: 0;
+    min-height: clamp(300px, 38vw, 460px);
+}
+.hero-badge {
+    grid-area: badge;
+    justify-self: start;
+    margin-bottom: clamp(16px, 2vw, 24px);
+}
+.hero-title-container {
+    grid-area: title;
+    align-items: flex-start;
+}
+.hero-download-primary {
+    grid-area: cta1;
+    justify-content: flex-start;
+    margin-bottom: 12px;
+}
+.hero-buttons {
+    grid-area: cta2;
+    justify-content: flex-start;
+}
+.hero-trust {
+    grid-area: trust;
+    justify-content: flex-start;
+    margin-top: clamp(16px, 2vw, 24px);
+}
+#download-container-context { grid-area: ctx; }
+
+.hero.t-tint h1 {
+    font-size: clamp(44px, 6.6vw, 90px);
+    font-stretch: 72%;
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.032em;
+    margin-bottom: clamp(16px, 2vw, 24px);
+}
+.hero h1 .bw-grad-text--brand {
+    display: inline;
+    background: var(--ot-ink);
+    background-clip: border-box;
+    -webkit-background-clip: border-box;
+    color: var(--tint);
+    -webkit-text-fill-color: var(--tint);
+    padding: 0.02em 0.16em 0.06em;
+    margin-left: -0.04em;
+    border-radius: 0.06em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    text-shadow: none;
+}
+.hero .hero-lede {
+    margin: 0 0 clamp(16px, 2vw, 22px);
+    max-width: 54ch;
+    font-size: clamp(1rem, 1.4vw, 1.12rem);
+    line-height: 1.66;
+    color: var(--text-mid);
+}
+.scramble-title {
+    color: var(--text-lo);
+    margin-bottom: clamp(24px, 3vw, 34px);
+}
+.t-tint .scramble-title::before {
+    background: var(--ot-ink);
+    box-shadow: 0 0 8px rgba(13, 9, 25, 0.5);
+}
+
+/* Stage paint */
+.hero.t-tint .hero-logo { mix-blend-mode: normal; filter: none; }
+.hero.t-tint .hero-logo-glow {
+    background: radial-gradient(circle at center,
+        rgba(255, 255, 255, 0.55) 0%,
+        rgba(255, 255, 255, 0.18) 45%,
+        transparent 72%);
+}
+.hero.t-tint .hero-eq span {
+    background: linear-gradient(to top, rgba(13, 9, 25, 0.92), rgba(13, 9, 25, 0.38));
+}
+
+/* CTAs — flat ink pill + outlined pills (OpenTune btn-ink / btn-line) */
+.t-tint .btn-chroma-download {
+    background: var(--ot-ink);
+    color: var(--tint);
+    font-weight: 650;
+    letter-spacing: 0.005em;
+    box-shadow: 0 18px 44px -18px rgba(13, 9, 25, 0.75), var(--inset-hair);
+}
+.t-tint .btn-chroma-download:hover {
+    background: var(--ot-ink-soft);
+    box-shadow: 0 24px 54px -16px rgba(13, 9, 25, 0.85), var(--inset-hair);
+}
+.t-tint .btn-github,
+.t-tint .btn-discord {
+    background: transparent;
+    border: 1.5px solid rgba(13, 9, 25, 0.34);
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    color: var(--ot-ink);
+    font-weight: 600;
+}
+.t-tint .btn-github:hover,
+.t-tint .btn-discord:hover {
+    background: rgba(13, 9, 25, 0.07);
+    border-color: rgba(13, 9, 25, 0.7);
+    box-shadow: none;
+}
+
+/* Install block — one ink well instead of three glass cards */
+.t-tint #download-container-context {
+    background: var(--ot-ink);
+    border-radius: 30px;
+    padding: clamp(24px, 3.5vw, 42px);
+    align-items: stretch;
+    gap: clamp(16px, 2vw, 22px);
+    max-width: 780px;
+    text-align: left;
+    box-shadow: 0 30px 60px -30px rgba(13, 9, 25, 0.8);
+    color: var(--text-hi);
+    --text-hi: #f5f3ff;
+    --text-mid: #c4bfe2;
+    --text-lo: #9791bc;
+    --line: rgba(255, 255, 255, 0.13);
+    --line-soft: rgba(255, 255, 255, 0.08);
+    --line-hi: rgba(255, 255, 255, 0.26);
+    --bg-card: rgba(255, 255, 255, 0.05);
+    --bg-card-hover: rgba(255, 255, 255, 0.08);
+    --bg-inset: rgba(255, 255, 255, 0.055);
+    --accent-soft: rgba(125, 104, 255, 0.18);
+    --accent-line: rgba(125, 104, 255, 0.45);
+    --violet-soft: #a78bfa;
+    --cyan-soft: #67e8f9;
+    --inset-hair: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+.t-tint #download-container-context .dl-stat-block {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    max-width: none;
+    padding: 0;
+}
+.t-tint #download-container-context .dl-stat-block::before { display: none; }
+.t-tint #download-container-context .download-explainer-card {
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    max-width: none;
+    padding: clamp(16px, 2vw, 20px) 0 0;
+}
+.t-tint #download-container-context .security-audit-advisory {
+    max-width: none;
+}
+
+/* ============================================================
+   6. Fact ticker
+   ============================================================ */
+.ticker {
+    position: relative;
+    z-index: 0;
+    background: var(--ot-night);
+    color: var(--text-mid);
+    padding-block: clamp(16px, 2.4vw, 26px);
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+}
+html.light-theme .ticker,
+body.light-theme .ticker {
+    background: #fafbfe;
+    border-top-color: rgba(13, 9, 25, 0.10);
+    border-bottom-color: rgba(13, 9, 25, 0.10);
+}
+.ticker-track {
+    display: flex;
+    align-items: baseline;
+    gap: clamp(28px, 4vw, 56px);
+    width: max-content;
+    animation: otTicker 46s linear infinite;
+}
+.ticker-list {
+    display: flex;
+    align-items: baseline;
+    gap: clamp(28px, 4vw, 56px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: none;
+}
+.ticker-list li {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    white-space: nowrap;
+    font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+}
+.ticker-list b {
+    font-family: var(--font-display);
+    font-stretch: 68%;
+    font-weight: 800;
+    font-size: clamp(1.6rem, 3vw, 2.3rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--tint);
+    font-variant-numeric: tabular-nums;
+}
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes otTicker {
+    to { transform: translateX(calc(-50% - clamp(14px, 2vw, 28px))); }
+}
+
+/* ============================================================
+   7. Gallery head + chip
+   ============================================================ */
+.gallery-head {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+}
+.bw-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--violet-soft);
+}
+.gallery-head .section-title { max-width: 15ch; }
+
+/* ============================================================
+   8. Features — border-top rows, flat icons, no card lift
+   ============================================================ */
+.bento-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: clamp(24px, 3.5vw, 56px);
+    row-gap: 0;
+}
+.bento-card {
+    grid-column: span 6;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    padding: clamp(30px, 3.6vw, 46px) 0;
+    gap: 20px;
+    justify-content: flex-start;
+    transition: border-color 0.3s ease;
+}
+.bento-card::before { display: none; }
+.bento-card--hero,
+.bento-card.bento-card--hero {
+    grid-column: span 12;
+    background: transparent;
+    box-shadow: none;
+    border-color: var(--line);
+}
+.bento-card:hover,
+.bento-card.bento-card--hero:hover {
+    background: transparent;
+    box-shadow: none;
+    border-color: var(--line);
+    border-top-color: var(--tint);
+    transform: none;
+}
+.bento-card:nth-last-child(-n + 2) { border-bottom: 1px solid var(--line); }
+
+.bento-icon {
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin-bottom: 16px;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    color: var(--tint);
+    font-size: 1.3rem;
+    transition: color 0.3s ease;
+}
+.bento-icon--accent { background: none; border: 0; color: var(--tint); }
+.bento-card:hover .bento-icon {
+    color: var(--tint);
+    border-color: transparent;
+    transform: none;
+}
+.bento-card h3 {
+    font-stretch: 76%;
+    font-weight: 750;
+    font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+    letter-spacing: -0.015em;
+    line-height: 1.18;
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
+}
+.bento-card p {
+    font-size: 0.95rem;
+    line-height: 1.68;
+    color: var(--text-mid);
+    max-width: 62ch;
+}
+.bento-card--hero h3 { font-size: clamp(1.35rem, 2.2vw, 1.75rem); }
+.bento-cta {
+    background: var(--tint);
+    color: var(--ot-ink);
+    font-weight: 650;
+    letter-spacing: 0.005em;
+    min-height: 46px;
+    box-shadow: none;
+}
+.bento-cta:hover {
+    background: #8f7cff;
+    filter: none;
+    box-shadow: 0 14px 30px -14px rgba(125, 104, 255, 0.8);
+}
+
+/* ============================================================
+   9. Story + tribute
+   ============================================================ */
+.story-section-box {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    padding: 0;
+}
+.story-section-box::before { display: none; }
+.story-text-layout p { font-size: 1.02rem; line-height: 1.8; max-width: 72ch; }
+.story-text-layout .story-lead {
+    font-size: clamp(1.1rem, 1.6vw, 1.28rem);
+    font-weight: 500;
+    color: var(--text-hi);
+}
+.story-quote-block {
+    margin: clamp(26px, 3vw, 36px) 0;
+    padding: 4px 0 4px clamp(18px, 2.4vw, 28px);
+    border: 0;
+    border-left: 4px solid var(--violet);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    font-family: var(--font);
+    font-stretch: 84%;
+    font-weight: 600;
+    font-size: clamp(1.12rem, 1.9vw, 1.4rem);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    color: var(--text-hi);
+}
+
+/* ============================================================
+   10. FAQ — sticky split head, border rows, plus marker
+   ============================================================ */
+.faq-section {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    column-gap: clamp(32px, 5vw, 80px);
+    align-items: start;
+}
+.faq-section .section-header {
+    position: sticky;
+    top: 92px;
+    margin-bottom: 0;
+}
+.faq-container-block { max-width: none; margin-inline: 0; gap: 0; }
+.faq-wrapper-node {
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
+}
+.faq-wrapper-node:last-child { border-bottom: 1px solid var(--line); }
+.faq-wrapper-node.active {
+    background: transparent;
+    border-color: var(--line);
+    border-top-color: var(--violet);
+}
+.faq-trigger-tab {
+    padding: clamp(18px, 2.2vw, 24px) 0;
+    min-height: 0;
+    font-family: var(--font);
+    font-stretch: 86%;
+    font-weight: 650;
+    font-size: clamp(1.02rem, 1.5vw, 1.18rem);
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+}
+.faq-trigger-tab:hover { color: var(--violet); }
+.faq-icon-marker {
+    font-size: 1rem;
+    color: var(--violet);
+}
+.faq-trigger-tab .faq-icon-marker::before {
+    content: '\2b';
+    font-weight: 900;
+}
+.faq-wrapper-node.active .faq-icon-marker {
+    transform: rotate(45deg);
+    color: var(--violet);
+}
+.faq-content-inner {
+    padding: 0 0 clamp(20px, 2.4vw, 26px);
+    font-size: 0.98rem;
+    line-height: 1.72;
+    max-width: 62ch;
+    color: var(--text-mid);
+}
+
+/* ============================================================
+   11. Support
+   ============================================================ */
+.donate-btn {
+    background: var(--tint);
+    color: var(--ot-ink);
+    font-weight: 650;
+    box-shadow: none;
+}
+.donate-btn:hover {
+    background: #8f7cff;
+    filter: none;
+    box-shadow: 0 14px 30px -14px rgba(125, 104, 255, 0.7);
+}
+
+/* ============================================================
+   12. Walkthrough — giant step numerals on the violet ground
+   ============================================================ */
+.walkthrough-section > .section-title { margin-bottom: clamp(30px, 4vw, 52px); }
+.walkthrough-box {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    padding: 0;
+}
+.step-row {
+    gap: clamp(20px, 3vw, 36px);
+    padding: clamp(22px, 3vw, 30px) 0;
+    border-top: 2px solid rgba(13, 9, 25, 0.4);
+}
+.step-row + .step-row { border-top: 2px solid rgba(13, 9, 25, 0.4); }
+.step-row:last-child { border-bottom: 2px solid rgba(13, 9, 25, 0.4); }
+.step-num {
+    width: auto;
+    height: auto;
+    min-width: clamp(72px, 8vw, 124px);
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: rgba(13, 9, 25, 0.5);
+    font-family: var(--font);
+    font-stretch: 62%;
+    font-weight: 800;
+    font-size: clamp(54px, 6.5vw, 92px);
+    line-height: 0.82;
+    letter-spacing: -0.03em;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-top: 4px;
+}
+.step-info h4 {
+    font-stretch: 78%;
+    font-weight: 750;
+    font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+    margin-bottom: 8px;
+}
+.step-info p {
+    font-size: 0.95rem;
+    color: var(--text-mid);
+    max-width: 66ch;
+}
+
+/* ============================================================
+   13. Team
+   ============================================================ */
+.team-section > .section-label { margin-bottom: 8px; }
+.team-heading {
+    text-align: left;
+    font-stretch: 74%;
+    font-weight: 800;
+    font-size: clamp(34px, 4.6vw, 60px);
+    letter-spacing: -0.026em;
+    line-height: 0.95;
+    margin-bottom: clamp(30px, 4vw, 46px);
+}
+
+/* ============================================================
+   14. Outro wordmark + footer
+   ============================================================ */
+.site-bottom-wordmark {
+    font-family: var(--font);
+    font-stretch: 66%;
+    font-weight: 800;
+    font-size: clamp(72px, 25vw, 330px) !important;
+    letter-spacing: -0.02em !important;
+    line-height: 0.86;
+    color: var(--tint);
+    -webkit-text-stroke: 0;
+    text-align: center;
+}
+/* The light-theme night-ground token block sets `color` directly on the
+   section at (0,2,1) — re-assert the flat tint for the wordmark there. */
+html.light-theme .site-bottom-wordmark,
+body.light-theme .site-bottom-wordmark { color: var(--tint); }
+footer.t-night {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px 24px;
+    text-align: left;
+}
+footer.t-night > p { margin: 0; font-size: 0.8rem; color: var(--text-lo); }
+.credits-tag { margin-top: 0; }
+.footer-mii { margin: 0; }
+.footer-actions { justify-content: flex-end; }
+
+/* ============================================================
+   15. Responsive
+   ============================================================ */
+@media (max-width: 1020px) {
+    .faq-section { grid-template-columns: minmax(0, 1fr); }
+    .faq-section .section-header {
+        position: static;
+        margin-bottom: clamp(30px, 5vw, 44px);
+    }
+}
+
+@media (max-width: 940px) {
+    .hero.t-tint {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "stage"
+            "badge"
+            "title"
+            "cta1"
+            "cta2"
+            "trust"
+            "ctx";
+        justify-items: center;
+        text-align: center;
+    }
+    .hero-stage { width: 100%; min-height: clamp(240px, 44vw, 340px); }
+    .hero-badge { justify-self: center; }
+    .hero-title-container { align-items: center; }
+    .hero .hero-lede { margin: 0 auto clamp(16px, 2vw, 22px); }
+    .hero-download-primary,
+    .hero-buttons,
+    .hero-trust { justify-content: center; }
+    .hero.t-tint h1 { font-size: clamp(42px, 8.5vw, 64px); }
+    #download-container-context {
+        justify-self: center;
+        margin-inline: auto;
+        max-width: 660px;
+    }
+}
+
+@media (max-width: 860px) {
+    .bento-card,
+    .bento-card.bento-card--hero { grid-column: span 12; }
+    .bento-card:nth-last-child(-n + 2) { border-bottom: 0; }
+    .bento-card:last-child { border-bottom: 1px solid var(--line); }
+}
+
+@media (max-width: 768px) {
+    .section-title { max-width: 18ch; }
+    footer.t-night { flex-direction: column; align-items: flex-start; text-align: left; }
+    .footer-actions { justify-content: flex-start; }
+}
+
+/* ============================================================
+   16. Reduced motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    .ticker { overflow-x: auto; }
+    .ticker-track {
+        animation: none;
+        flex-wrap: wrap;
+        width: auto;
+        justify-content: center;
+        row-gap: 14px;
+        padding-inline: var(--gutter);
+    }
+    .ticker-list[aria-hidden="true"] { display: none; }
+}
