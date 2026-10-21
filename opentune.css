@@ -1241,25 +1241,54 @@ footer.t-night > p { margin: 0; font-size: 0.8rem; color: var(--text-lo); }
 }
 .cardx:nth-child(3) { transform: translate(17%, 13%) scale(0.89) rotate(6.5deg); }
 .cardx:nth-child(4) { transform: translate(23%, 18%) scale(0.84) rotate(9.5deg); }
+.cardx:nth-child(5) { transform: translate(29%, 23%) scale(0.79) rotate(12.5deg); }
+/* Bottom scrim so the meta line stays legible over any artwork */
+.cardx::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 42%;
+    z-index: 2;
+    background: linear-gradient(to top, rgba(8, 6, 16, 0.78), rgba(8, 6, 16, 0));
+    pointer-events: none;
+}
 .cardx.past { opacity: 0; transform: translate(-8%, -7%) scale(0.95) rotate(-4deg); }
 .cardx.on { opacity: 1; z-index: 5; transform: none; }
 
+/* Cover layers: gradient fallback (z0) → artwork (z1) → scrim (z2) → text (z3) */
 .cover {
     position: absolute;
     inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: clamp(18px, 2vw, 26px);
+    z-index: 0;
+}
+.cover-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
 }
 .cover-brand {
-    align-self: flex-end;
+    position: absolute;
+    top: clamp(16px, 1.8vw, 24px);
+    right: clamp(18px, 2vw, 26px);
+    z-index: 3;
     font-size: 0.66rem;
     font-weight: 800;
     letter-spacing: 0.26em;
     color: rgba(255, 255, 255, 0.7);
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
 }
-.cover-meta { display: grid; gap: 5px; }
+.cover-meta {
+    position: absolute;
+    left: clamp(18px, 2vw, 26px);
+    bottom: clamp(18px, 2vw, 26px);
+    z-index: 3;
+    display: grid;
+    gap: 5px;
+    max-width: 86%;
+}
 .cover-meta b {
     font-size: clamp(1.7rem, 2.7vw, 2.4rem);
     font-stretch: 70%;
@@ -1267,6 +1296,11 @@ footer.t-night > p { margin: 0; font-size: 0.8rem; color: var(--text-lo); }
     line-height: 0.98;
     letter-spacing: -0.02em;
     color: #fff;
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 .cover-meta i {
     font-style: normal;
@@ -1275,6 +1309,12 @@ footer.t-night > p { margin: 0; font-size: 0.8rem; color: var(--text-lo); }
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: rgba(255, 255, 255, 0.75);
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+}
+.cover--rose {
+    background:
+        radial-gradient(115% 90% at 30% 15%, #ff8a9b, transparent 55%),
+        linear-gradient(165deg, #d2536b 0%, #47101f 92%);
 }
 .cover--violet {
     background:

@@ -1344,7 +1344,7 @@ function animateParticlesOnce() {
     const navEl = document.querySelector('nav:not(.mobile-dock)');
     const dockEl = document.querySelector('.mobile-dock');
     // Cover washes — must match the .sw swatches in the markup
-    const TINTS = ['#7d68ff', '#17a2c6', '#e0447f', '#f0a13c'];
+    const TINTS = ['#d2536b', '#7d68ff', '#17a2c6', '#e0447f', '#f0a13c'];
     if (!hub && !crate) return;
 
     let navH = 72;
