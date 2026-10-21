@@ -47,6 +47,7 @@ jobs:
           FIREBASE_PLAYER_STORAGE_BUCKET: ${{ secrets.FIREBASE_PLAYER_STORAGE_BUCKET }}
           FIREBASE_PLAYER_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_PLAYER_MESSAGING_SENDER_ID }}
           FIREBASE_PLAYER_APP_ID: ${{ secrets.FIREBASE_PLAYER_APP_ID }}
+          YOUTUBE_API_KEYS: ${{ secrets.YOUTUBE_API_KEYS }}
         run: node build-config.js
 
       - name: Setup Pages

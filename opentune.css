@@ -1340,13 +1340,21 @@ footer.t-night > p { margin: 0; font-size: 0.8rem; color: var(--text-lo); }
 /* ============================================================
    22. Phone preview — single device, crossfading screens
    ============================================================ */
+/* Scroll-locked track: the phone stays pinned while the section scrolls */
+.gallery-section {
+    min-height: 520vh;
+}
 .phone-showcase {
+    position: sticky;
+    top: var(--ot-nav-h, 72px);
+    height: calc(100svh - var(--ot-nav-h, 72px));
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 360px);
     align-items: center;
     gap: clamp(32px, 6vw, 80px);
     max-width: 1080px;
     margin-inline: auto;
+    padding-block: clamp(16px, 3vh, 32px);
 }
 .phone-showcase { perspective: 1200px; }
 .phone {
@@ -1478,6 +1486,8 @@ footer.t-night > p { margin: 0; font-size: 0.8rem; color: var(--text-lo); }
 }
 @media (prefers-reduced-motion: reduce) {
     .phone, .phone-shot, .phone-dot, .phone-arrow { transition: none !important; }
+    .gallery-section { min-height: auto !important; }
+    .phone-showcase { position: static !important; height: auto !important; }
 }
 
 /* ============================================================

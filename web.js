@@ -1,9 +1,8 @@
 // BeatWave Cloud Connect Web Player Controller
-let keys = [
-    'AIzaSyCFLTX60NK5Se541Wc2teszaOQBWtisZ30',
-    'AIzaSyAP6UP1GmMgE71FSHlRtpO9rLghpnoOt_4',
-    'AIzaSyABN_mfpf5kK7g68OhNx5c6pJuL4NMzitg'
-];
+// YouTube API keys are injected at build time via config.js (from env). Never hardcode.
+let keys = (typeof firebaseConfigs !== 'undefined' && Array.isArray(firebaseConfigs.youtubeApiKeys))
+    ? firebaseConfigs.youtubeApiKeys.slice()
+    : [];
 let keyIndex = 0;
 
 let db = null;

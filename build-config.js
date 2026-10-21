@@ -38,6 +38,11 @@ if (env.FIREBASE_CONFIGS) {
   }
 }
 
+// Ensure youtubeApiKeys is always populated from env (even when FIREBASE_CONFIGS is used)
+if (configs && typeof configs === 'object') {
+  configs.youtubeApiKeys = (env.YOUTUBE_API_KEYS || "").split(",").map(function (k) { return k.trim(); }).filter(Boolean);
+}
+
 if (!configs) {
   configs = {
     adminConfig: {
@@ -58,17 +63,18 @@ if (!configs) {
       storageBucket: env.FIREBASE_PLAYER_STORAGE_BUCKET || "waveweb-4e8b0.firebasestorage.app",
       messagingSenderId: env.FIREBASE_PLAYER_MESSAGING_SENDER_ID || "774049527208",
       appId: env.FIREBASE_PLAYER_APP_ID || "1:774049527208:web:3f93dbdf4984d58ad6599d"
-    }
+    },
+    youtubeApiKeys: (env.YOUTUBE_API_KEYS || "").split(",").map(function (k) { return k.trim(); }).filter(Boolean)
   };
 }
 
 // 3. Write config.js and config.json
-// Safety guard: never clobber an existing config.js with placeholder values.
-// Only rewrite when real Firebase config was actually provided via env.
+// Require real Firebase config from environment variables. Never ship
+// placeholder or stale credentials: fail the build if they are missing.
 const hasEnvConfig = Boolean(env.FIREBASE_CONFIGS || env.FIREBASE_ADMIN_API_KEY || env.FIREBASE_PLAYER_API_KEY);
-if (!hasEnvConfig && fs.existsSync(path.join(__dirname, 'config.js'))) {
-  console.warn('⚠️ No Firebase env vars found — keeping existing config.js untouched.');
-  process.exit(0);
+if (!hasEnvConfig) {
+  console.error('❌ No Firebase env vars found (FIREBASE_CONFIGS or FIREBASE_ADMIN_API_KEY/FIREBASE_PLAYER_API_KEY). Aborting build.');
+  process.exit(1);
 }
 
 const configJsContent = `const firebaseConfigs = ${JSON.stringify(configs, null, 2)};\n`;
