@@ -1401,10 +1401,7 @@ function animateParticlesOnce() {
     }
 
     function onScroll() {
-        if (!ticking) {
-            ticking = true;
-            requestAnimationFrame(function () { ticking = false; update(); });
-        }
+        update();
     }
 
     function layout() { setChrome(); layoutRail(); update(); }
@@ -1527,13 +1524,16 @@ function animateParticlesOnce() {
     })(performance.now());
 })();
 
-/* ── Phone preview showcase ─────────────────────────────────
-   One device, five screens. Crossfades on a timer while on
-   screen, advances on click, tilts toward the cursor on hover. */
+/* ── Phone preview showcase (scroll-locked) ─────────────────
+   One device, five screens. The phone stays pinned while the
+   section scrolls; scroll progress drives the active screen.
+   Click a dot/arrow to jump (and scroll to that screen's
+   position). Hover tilts the device toward the cursor. */
 (function initPhoneShowcase() {
     const root = document.getElementById('phone-showcase');
     const phone = document.getElementById('phone');
-    if (!root || !phone) return;
+    const section = document.querySelector('.gallery-section');
+    if (!root || !phone || !section) return;
 
     const SHOTS = [
         { src: 'beatwave%20home-portrait.png', name: 'Home', desc: 'Your library, up front' },
@@ -1549,46 +1549,62 @@ function animateParticlesOnce() {
     const dots = Array.prototype.slice.call(root.querySelectorAll('.phone-dot'));
     const prevBtn = document.getElementById('phone-prev');
     const nextBtn = document.getElementById('phone-next');
+    const navEl = document.querySelector('nav:not(.mobile-dock)');
 
     const reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const n = SHOTS.length;
     let idx = 0;
-    let timer = null;
-    let hovering = false;
-    let visible = false;
+    let manualUntil = 0;
 
     function show(i) {
-        idx = (i + SHOTS.length) % SHOTS.length;
+        i = (i + n) % n;
+        if (i === idx && shots[idx].classList.contains('on')) return;
+        idx = i;
         shots.forEach(function (el, k) { el.classList.toggle('on', k === idx); });
         dots.forEach(function (el, k) { el.classList.toggle('on', k === idx); });
         if (nameEl) nameEl.textContent = SHOTS[idx].name;
         if (descEl) descEl.textContent = SHOTS[idx].desc;
     }
 
-    function advance(dir) { show(idx + (dir || 1)); resetTimer(); }
+    function navH() { return (navEl && navEl.offsetHeight) ? navEl.offsetHeight : 72; }
 
-    function resetTimer() {
-        if (timer) { clearInterval(timer); timer = null; }
-        if (reduced || hovering || !visible) return;
-        timer = setInterval(function () { show(idx + 1); }, 3800);
+    function updateFromScroll() {
+        if (reduced) return;
+        if (Date.now() < manualUntil) return;
+        const rect = section.getBoundingClientRect();
+        const stageH = root.offsetHeight || (window.innerHeight - navH());
+        const range = section.offsetHeight - stageH;
+        if (range <= 0) { show(0); return; }
+        const p = Math.min(1, Math.max(0, (navH() - rect.top) / range));
+        const i = Math.min(n - 1, Math.floor(p * n));
+        if (i !== idx) show(i);
     }
 
-    // Click controls
-    if (prevBtn) prevBtn.addEventListener('click', function () { advance(-1); });
-    if (nextBtn) nextBtn.addEventListener('click', function () { advance(1); });
+    function scrollToScreen(i) {
+        i = (i + n) % n;
+        show(i);
+        manualUntil = Date.now() + 900;
+        const stageH = root.offsetHeight || (window.innerHeight - navH());
+        const range = section.offsetHeight - stageH;
+        if (range <= 0) return;
+        const p = Math.min(1, Math.max(0, (i + 0.5) / n));
+        const docTop = section.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({ top: docTop + p * range, behavior: reduced ? 'auto' : 'smooth' });
+    }
+
+    // Click controls — jump and scroll to that screen's position
+    if (prevBtn) prevBtn.addEventListener('click', function () { scrollToScreen((idx - 1 + n) % n); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { scrollToScreen((idx + 1) % n); });
     dots.forEach(function (d) {
         d.addEventListener('click', function () {
             const i = parseInt(d.getAttribute('data-i'), 10);
-            if (!isNaN(i)) { show(i); resetTimer(); }
+            if (!isNaN(i)) scrollToScreen(i);
         });
     });
 
-    // Hover pause + 3D tilt
-    phone.addEventListener('pointerenter', function () { hovering = true; resetTimer(); });
-    phone.addEventListener('pointerleave', function () {
-        hovering = false;
-        phone.style.transform = '';
-        resetTimer();
-    });
+    // Hover tilt
+    phone.addEventListener('pointerenter', function () {});
+    phone.addEventListener('pointerleave', function () { phone.style.transform = ''; });
     phone.addEventListener('pointermove', function (e) {
         if (reduced || e.pointerType !== 'mouse') return;
         const r = phone.getBoundingClientRect();
@@ -1600,27 +1616,19 @@ function animateParticlesOnce() {
     // Keyboard
     root.setAttribute('tabindex', '0');
     root.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowLeft') { advance(-1); e.preventDefault(); }
-        else if (e.key === 'ArrowRight') { advance(1); e.preventDefault(); }
+        if (e.key === 'ArrowLeft') { scrollToScreen((idx - 1 + n) % n); e.preventDefault(); }
+        else if (e.key === 'ArrowRight') { scrollToScreen((idx + 1) % n); e.preventDefault(); }
     });
 
-    // Auto-advance only while in view
-    if ('IntersectionObserver' in window) {
-        const io = new IntersectionObserver(function (entries) {
-            entries.forEach(function (en) {
-                visible = en.isIntersecting;
-                if (visible) resetTimer();
-                else { if (timer) { clearInterval(timer); timer = null; } }
-            });
-        }, { rootMargin: '120px 0px' });
-        io.observe(root);
-    } else {
-        visible = true;
-        resetTimer();
+    if (!reduced) {
+        window.__phonePoll = setInterval(updateFromScroll, 120);
+        window.addEventListener('resize', updateFromScroll, { passive: true });
+        updateFromScroll();
     }
 
     show(0);
 })();
+
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', startApp);
