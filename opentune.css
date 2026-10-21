@@ -1510,6 +1510,15 @@ footer.t-night > p { margin: 0; font-size: 0.8rem; color: var(--text-lo); }
 }
 
 @media (max-width: 768px) {
+    .gallery-section { min-height: 320vh !important; }
+    .phone-showcase { height: calc(100svh - var(--ot-nav-h, 61px)) !important; gap: 18px; padding-block: 12px; }
+    .phone { width: min(62vw, 220px); border-radius: 34px; padding: 9px; }
+    .phone-screen { border-radius: 26px; }
+    .phone-notch { top: 12px; height: 20px; border-radius: 0 0 14px 14px; }
+    .phone-caption b { font-size: clamp(1.4rem, 6vw, 1.9rem); }
+    .phone-arrow { width: 40px; height: 40px; }
+    .phone-dot { width: 8px; height: 8px; }
+    .phone-dot.on { width: 22px; }
     .crate-section { height: 280vh; }
     .crate-copy .section-sub { display: none; }
     .crate-copy .section-title { font-size: clamp(34px, 9vw, 46px); max-width: 14ch; }

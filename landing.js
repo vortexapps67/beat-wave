@@ -1630,6 +1630,46 @@ function animateParticlesOnce() {
 })();
 
 
+/* ── GitHub downloads sync ──────────────────────────────────
+   Keeps the landing-page download counter in sync with the
+   GitHub release download counts (same source as web.js). */
+(function initGithubDownloads() {
+    async function fetchGithubDownloads() {
+        try {
+            const response = await fetch('https://api.github.com/repos/beatlabs790/beatwave/releases');
+            if (!response.ok) return;
+            const releases = await response.json();
+            let totalDownloads = 0;
+            releases.forEach(function (release) {
+                if (release.assets) {
+                    release.assets.forEach(function (asset) {
+                        if (asset.download_count) totalDownloads += asset.download_count;
+                    });
+                }
+            });
+            if (totalDownloads > 0) {
+                const counterNode = document.getElementById('animatedCounterNode');
+                if (counterNode) {
+                    counterNode.setAttribute('data-target-value', totalDownloads);
+                    const current = parseInt(counterNode.getAttribute('data-current')) || 0;
+                    if (current > 0 && typeof runOdometerAnimation === 'function') runOdometerAnimation();
+                    counterNode.setAttribute('data-current', totalDownloads);
+                }
+                if (typeof adminDb !== 'undefined' && adminDb) {
+                    try { adminDb.ref('downloads').set(totalDownloads); } catch (e) {}
+                }
+            }
+        } catch (e) {
+            console.error('Error fetching GitHub downloads:', e);
+        }
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fetchGithubDownloads);
+    } else {
+        fetchGithubDownloads();
+    }
+})();
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', startApp);
 } else {
