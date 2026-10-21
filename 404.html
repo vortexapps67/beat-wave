@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Lost in the Static | BeatWave</title>
-    
+    <title>404 — Lost in the Static | BeatWave</title>
+
     <link rel="icon" type="image/png" href="beatwave%20new%20new.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,115 +13,130 @@
     <link rel="stylesheet" href="theme.css?v=4">
 
     <style>
-        :root {
-            --bg-dark: #030305;
-            --bg-panel: rgba(10, 10, 15, 0.5);
-            --accent-blue: #00e5f2;
-            --accent-red: #ff3b3b;
-            --accent-purple: #8a2be2;
-            --glass-border: rgba(255, 255, 255, 0.06);
-            --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        body.light-theme {
-            --bg-dark: #f5f6fa;
-            --bg-panel: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(0, 0, 0, 0.08);
-            color: #1d212a;
-        }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            font-family: var(--font); 
-            background: var(--bg-dark); 
-            color: rgba(255, 255, 255, 0.75); 
-            line-height: 1.7;
+
+        html, body { height: 100%; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text-mid);
+            line-height: 1.6;
             overflow: hidden;
-            height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
         }
 
-        /* --- AMBIENT LIGHTING ENGINE (Zero Gradients) --- */
-        .ambient-glow {
-            display: none;
-        }
-
-        #cursor-glow {
-            display: none;
-        }
-
-        #particle-canvas {
+        /* ── Ambient background ── */
+        .bw-aurora {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
+            inset: 0;
+            z-index: 0;
             pointer-events: none;
-            opacity: 0.35;
+            background:
+                radial-gradient(60% 50% at 20% 30%, rgba(124, 92, 255, 0.22), transparent 60%),
+                radial-gradient(50% 45% at 80% 70%, rgba(0, 229, 242, 0.14), transparent 60%),
+                radial-gradient(40% 40% at 50% 50%, rgba(255, 59, 59, 0.08), transparent 70%);
+            filter: blur(40px);
+            animation: aurora 18s ease-in-out infinite alternate;
+        }
+        body.light-theme .bw-aurora {
+            background:
+                radial-gradient(60% 50% at 20% 30%, rgba(109, 77, 251, 0.12), transparent 60%),
+                radial-gradient(50% 45% at 80% 70%, rgba(0, 180, 195, 0.10), transparent 60%);
+            filter: blur(50px);
+        }
+        @keyframes aurora {
+            0%   { transform: translate3d(0, 0, 0) scale(1); }
+            50%  { transform: translate3d(-2%, 1%, 0) scale(1.05); }
+            100% { transform: translate3d(2%, -1%, 0) scale(1.02); }
         }
 
-        /* --- 404 CARD CONTAINER --- */
+        .bw-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(to right, var(--line) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+            background-size: 64px 64px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 85%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 85%);
+            opacity: 0.5;
+        }
+
+        /* ── Card ── */
         .error-card {
-            background: #09090b;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            padding: 50px 40px;
-            border-radius: 28px;
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
             position: relative;
             z-index: 10;
+            width: min(92vw, 520px);
+            padding: clamp(32px, 6vw, 56px) clamp(24px, 5vw, 48px);
+            text-align: center;
+            background: var(--bg-card);
+            border: 1px solid var(--line);
+            border-radius: var(--r-xl, 24px);
+            box-shadow: var(--shadow-lg), var(--inset-hair);
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+            animation: cardIn 0.8s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+        }
+        body.light-theme .error-card { background: var(--bg-glass); }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(24px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        .error-card::before {
-            display: none;
+        .logo {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 24px;
+            display: block;
+            filter: drop-shadow(0 0 22px rgba(124, 92, 255, 0.4));
+            transition: transform 0.4s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
         }
-
-        .error-card > * { position: relative; z-index: 1; }
-
-        .logo { 
-            width: 65px; 
-            margin-bottom: 25px; 
-            filter: grayscale(1);
-            transition: var(--transition); 
-        }
-        .logo:hover { 
-            transform: scale(1.08); 
-        }
+        .logo:hover { transform: scale(1.06) rotate(-4deg); }
+        body.light-theme .logo { filter: invert(1) drop-shadow(0 0 22px rgba(109, 77, 251, 0.28)); }
 
         .error-code {
-            font-size: 6.5rem;
-            font-weight: 900;
-            line-height: 1;
-            letter-spacing: -4px;
-            color: #ffffff;
-            margin-bottom: 10px;
             font-family: var(--mono);
+            font-size: clamp(5rem, 18vw, 8.5rem);
+            font-weight: 700;
+            line-height: 0.9;
+            letter-spacing: -0.06em;
+            background: var(--grad-brand);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
         }
 
-        h2 {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 15px;
-            letter-spacing: -0.5px;
+        h1 {
+            font-family: var(--font-display, 'Instrument Serif', serif);
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 400;
+            color: var(--text-hi);
+            letter-spacing: var(--tr-head, -0.01em);
+            margin-bottom: 12px;
         }
 
         p {
             font-size: 0.95rem;
-            color: #a1a1aa;
-            margin-bottom: 30px;
+            color: var(--text-mid);
+            margin-bottom: 32px;
+            max-width: 36ch;
+            margin-inline: auto;
         }
 
-        /* --- BUTTONS --- */
+        /* ── Buttons ── */
         .btn-container {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             justify-content: center;
             flex-wrap: wrap;
         }
@@ -131,373 +146,151 @@
             align-items: center;
             gap: 10px;
             text-decoration: none;
-            font-weight: 800;
-            font-size: 0.8rem;
-            font-family: var(--mono);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 12px 25px;
-            border-radius: 999px;
-            transition: var(--transition);
-        }
-
-        .btn-primary {
-            background: #ffffff;
-            color: #000000;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            background: #e4e4e7;
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-            border: 1px solid var(--glass-border);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        /* ============================================================
-           BeatWave v3 — token retint (declared last, wins)
-           ============================================================ */
-        body {
-            font-family: var(--font);
-            background: var(--bg);
-            color: var(--text-mid);
-        }
-
-        #particle-canvas { opacity: 0.3; mix-blend-mode: normal; }
-        body.light-theme #particle-canvas { opacity: 0.22; }
-
-        .error-card {
-            background: var(--bg-card);
-            border: 1px solid var(--line);
-            box-shadow: var(--inset-hair), var(--shadow-lg);
-            backdrop-filter: blur(24px) saturate(150%);
-            -webkit-backdrop-filter: blur(24px) saturate(150%);
-        }
-        body.light-theme .error-card { background: var(--bg-glass); }
-
-        .logo { filter: drop-shadow(0 0 22px rgba(124, 92, 255, 0.4)); }
-        body.light-theme .logo { filter: invert(1) drop-shadow(0 0 22px rgba(109, 77, 251, 0.28)); }
-
-        .error-code {
-            font-family: var(--mono);
-            font-size: clamp(4.5rem, 15vw, 7rem);
-            letter-spacing: -0.06em;
-            background: var(--grad-brand);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            -webkit-text-fill-color: transparent;
-        }
-
-        h2 {
-            font-family: var(--font-display);
-            color: var(--text-hi);
-            letter-spacing: var(--tr-head);
-        }
-
-        p { color: var(--text-mid); }
-
-        .btn {
             font-family: var(--mono);
             font-weight: 600;
+            font-size: 0.78rem;
             letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 13px 24px;
+            border-radius: 999px;
+            transition: transform 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+                        background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
         }
+        .btn:active { transform: translateY(0) scale(0.98); }
+
         .btn-primary {
             background: var(--grad-brand);
             color: #fff;
             box-shadow: var(--shadow-accent);
         }
         .btn-primary:hover {
-            background: var(--grad-brand);
+            transform: translateY(-2px);
             box-shadow: 0 20px 46px -14px rgba(124, 92, 255, 0.8);
         }
+
         .btn-secondary {
             background: var(--bg-card);
             color: var(--text-hi);
             border: 1px solid var(--line);
         }
         .btn-secondary:hover {
+            transform: translateY(-2px);
             background: var(--bg-card-hover);
-            border-color: var(--accent-line);
+            border-color: var(--accent-line, var(--line-hi));
+        }
+
+        /* ── Theme toggle ── */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 20;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: var(--bg-card);
+            border: 1px solid var(--line);
+            color: var(--text-hi);
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: transform 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)), background 0.25s ease;
+        }
+        .theme-toggle:hover { transform: translateY(-2px); background: var(--bg-card-hover); }
+        .theme-toggle i { font-size: 0.95rem; }
+
+        /* ── Reduced motion ── */
+        @media (prefers-reduced-motion: reduce) {
+            .bw-aurora { animation: none; }
+            .error-card { animation: none; }
+            .btn, .logo, .theme-toggle { transition: none; }
+        }
+
+        /* ── Mobile ── */
+        @media (max-width: 480px) {
+            .error-card { padding: 28px 20px; }
+            .btn { width: 100%; justify-content: center; }
+            .btn-container { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
-    <div class="bw-aurora"></div>
-    <div class="bw-grid"></div>
-    <div id="cursor-glow"></div>
-    <canvas id="particle-canvas"></canvas>
+    <div class="bw-aurora" aria-hidden="true"></div>
+    <div class="bw-grid" aria-hidden="true"></div>
 
-    <div class="error-card">
-        <a href="index.html">
-            <img src="beatwave%20new%20new.png" alt="BeatWave Logo" class="logo">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </button>
+
+    <main class="error-card">
+        <a href="index.html" aria-label="BeatWave home">
+            <img src="beatwave%20new%20new.png" alt="BeatWave" class="logo">
         </a>
-        <div class="error-code">404</div>
-        <h2>Lost in the Static</h2>
+        <div class="error-code" aria-hidden="true">404</div>
+        <h1>Lost in the static</h1>
         <p>This track doesn't exist or has been removed from the playlist queue.</p>
-        
+
         <div class="btn-container">
             <a href="index.html" class="btn btn-primary"><i class="fas fa-home"></i> Return Home</a>
             <a href="web.html" class="btn btn-secondary"><i class="fas fa-play"></i> Web Player</a>
         </div>
-    </div>
+    </main>
 
     <script>
-        // Theme Sync
-        if (localStorage.getItem('beatwave-theme') === 'light') {
-            document.body.classList.add('light-theme');
-        }
+        (function () {
+            const root = document.documentElement;
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+            const toggle = document.getElementById('themeToggle');
 
-        // Smooth Cursor Spotlight Logic
-        const cursorGlow = document.getElementById('cursor-glow');
-        window.addEventListener('mousemove', (e) => { 
-            requestAnimationFrame(() => {
-                if (cursorGlow) cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-            });
-        });
-        
-        window.addEventListener('mouseout', () => { 
-            if (cursorGlow) cursorGlow.style.transform = `translate(-1000px, -1000px)`; 
-        });
-
-        // Simplex Noise Waves Background
-        function buildPermutationTable(seed) {
-            const table = new Uint8Array(256);
-            for (let i = 0; i < 256; i++) table[i] = i;
-            let s = seed * 65536;
-            for (let i = 255; i > 0; i--) {
-                s = (s * 16807) % 2147483647;
-                const n = Math.floor((s / 2147483647) * (i + 1));
-                const q = table[i];
-                table[i] = table[n];
-                table[n] = q;
+            function isLight() {
+                return body.classList.contains('light-theme') || root.classList.contains('light-theme');
             }
-            return table;
-        }
-
-        function createNoise2D(seed = Math.random()) {
-            const p = buildPermutationTable(seed);
-            const perm = new Uint8Array(512);
-            const permMod12 = new Uint8Array(512);
-            for (let i = 0; i < 512; i++) {
-                perm[i] = p[i & 255];
-                permMod12[i] = perm[i] % 12;
+            function applyTheme(light) {
+                if (light) { root.classList.add('light-theme'); body.classList.add('light-theme'); }
+                else { root.classList.remove('light-theme'); body.classList.remove('light-theme'); }
+                root.style.colorScheme = light ? 'light' : 'dark';
+                if (icon) icon.className = light ? 'fas fa-sun' : 'fas fa-moon';
             }
-            const grad2 = [
-                [1, 1], [-1, 1], [1, -1], [-1, -1],
-                [1, 0], [-1, 0], [1, 0], [-1, 0],
-                [0, 1], [-0, 1], [0, 1], [-0, 1]
-            ];
-            const F2 = 0.5 * (Math.sqrt(3) - 1);
-            const G2 = (3 - Math.sqrt(3)) / 6;
 
-            return function noise2D(x, y) {
-                let n0 = 0, n1 = 0, n2 = 0;
-                const s = (x + y) * F2;
-                const i = Math.floor(x + s);
-                const j = Math.floor(y + s);
-                const t = (i + j) * G2;
-                const X0 = i - t;
-                const Y0 = j - t;
-                const x0 = x - X0;
-                const y0 = y - Y0;
-                let i1, j1;
-                if (x0 > y0) { i1 = 1; j1 = 0; } else { i1 = 0; j1 = 1; }
-                const x1 = x0 - i1 + G2;
-                const y1 = y0 - j1 + G2;
-                const x2 = x0 - 1 + 2 * G2;
-                const y2 = y0 - 1 + 2 * G2;
-                const ii = i & 255;
-                const jj = j & 255;
-                let t0 = 0.5 - x0 * x0 - y0 * y0;
-                if (t0 >= 0) {
-                    t0 *= t0;
-                    const gi0 = permMod12[ii + perm[jj]];
-                    n0 = t0 * t0 * (grad2[gi0][0] * x0 + grad2[gi0][1] * y0);
-                }
-                let t1 = 0.5 - x1 * x1 - y1 * y1;
-                if (t1 >= 0) {
-                    t1 *= t1;
-                    const gi1 = permMod12[ii + i1 + perm[jj + j1]];
-                    n1 = t1 * t1 * (grad2[gi1][0] * x1 + grad2[gi1][1] * y1);
-                }
-                let t2 = 0.5 - x2 * x2 - y2 * y2;
-                if (t2 >= 0) {
-                    t2 *= t2;
-                    const gi2 = permMod12[ii + 1 + perm[jj + 1]];
-                    n2 = t2 * t2 * (grad2[gi2][0] * x2 + grad2[gi2][1] * y2);
-                }
-                return 70 * (n0 + n1 + n2);
-            };
-        }
+            // Read saved / system preference
+            let saved = null;
+            try { saved = localStorage.getItem('beatwave-theme'); } catch (e) {}
+            const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+            applyTheme(saved ? saved === 'light' : prefersLight);
 
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas ? canvas.getContext('2d') : null;
-        let mouse = { x: -100, y: -100, sx: -100, sy: -100, lx: -100, ly: -100, vs: 0, a: 0, set: false };
-        let isMobile = window.innerWidth <= 768;
-        let lines = [];
-        let noise2D = createNoise2D();
-        let animationFrameId = null;
-
-        function initParticles() {
-            if (!canvas) return;
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            isMobile = window.innerWidth <= 768;
-
-            lines = [];
-            const spacing = isMobile ? 18 : 10;
-            const xGap = spacing;
-            const yGap = spacing;
-            
-            const totalLines = Math.ceil(canvas.width / xGap) + 4;
-            const totalPoints = Math.ceil(canvas.height / yGap) + 4;
-            
-            const xStart = -20;
-            const yStart = -20;
-
-            for (let i = 0; i < totalLines; i++) {
-                const points = [];
-                for (let j = 0; j < totalPoints; j++) {
-                    points.push({
-                        baseX: xStart + xGap * i,
-                        baseY: yStart + yGap * j,
-                        x: xStart + xGap * i,
-                        y: yStart + yGap * j,
-                        waveX: 0,
-                        waveY: 0,
-                        cx: 0,
-                        cy: 0,
-                        vx: 0,
-                        vy: 0
-                    });
-                }
-                lines.push(points);
-            }
-        }
-
-        function animateParticles(time = 0) {
-            if (!ctx || !canvas) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Interpolate mouse movement
-            mouse.sx += (mouse.x - mouse.sx) * 0.1;
-            mouse.sy += (mouse.y - mouse.sy) * 0.1;
-            const dx = mouse.x - mouse.lx;
-            const dy = mouse.y - mouse.ly;
-            const d = Math.hypot(dx, dy);
-            mouse.vs += (d - mouse.vs) * 0.1;
-            mouse.vs = Math.min(100, mouse.vs);
-            mouse.lx = mouse.x;
-            mouse.ly = mouse.y;
-            mouse.a = Math.atan2(dy, dx);
-
-            const isLight = document.body.classList.contains('light-theme');
-            ctx.strokeStyle = isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.12)';
-            ctx.lineWidth = 1;
-
-            const t = time;
-            const mSize = Math.max(175, mouse.vs);
-
-            for (let i = 0; i < lines.length; i++) {
-                const points = lines[i];
-                ctx.beginPath();
-                for (let j = 0; j < points.length; j++) {
-                    const p = points[j];
-
-                    // Noise wave calculation
-                    const move = noise2D((p.baseX + t * 0.008) * 0.003, (p.baseY + t * 0.003) * 0.002) * 8;
-                    p.waveX = Math.cos(move) * 12;
-                    p.waveY = Math.sin(move) * 6;
-
-                    // Mouse reaction
-                    const mdx = p.baseX - mouse.sx;
-                    const mdy = p.baseY - mouse.sy;
-                    const md = Math.hypot(mdx, mdy);
-                    
-                    if (md < mSize) {
-                        const s = 1 - md / mSize;
-                        const f = Math.cos(md * 0.001) * s;
-                        p.vx += Math.cos(mouse.a) * f * mSize * mouse.vs * 0.00035;
-                        p.vy += Math.sin(mouse.a) * f * mSize * mouse.vs * 0.00035;
-                    }
-
-                    // Drag back forces (spring)
-                    p.vx += (0 - p.cx) * 0.01;
-                    p.vy += (0 - p.cy) * 0.01;
-                    p.vx *= 0.95;
-                    p.vy *= 0.95;
-                    p.cx += p.vx;
-                    p.cy += p.vy;
-
-                    p.cx = Math.min(50, Math.max(-50, p.cx));
-                    p.cy = Math.min(50, Math.max(-50, p.cy));
-
-                    const drawX = p.baseX + p.waveX + p.cx;
-                    const drawY = p.baseY + p.waveY + p.cy;
-
-                    if (j === 0) {
-                        ctx.moveTo(drawX, drawY);
+            if (toggle) {
+                toggle.addEventListener('click', () => {
+                    const next = !isLight();
+                    try { localStorage.setItem('beatwave-theme', next ? 'light' : 'dark'); } catch (e) {}
+                    // Ripple if supported
+                    if (typeof document.startViewTransition === 'function' &&
+                        !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+                        const x = toggle.getBoundingClientRect().left + toggle.offsetWidth / 2;
+                        const y = toggle.getBoundingClientRect().top + toggle.offsetHeight / 2;
+                        root.classList.add('theme-ripple');
+                        const t = document.startViewTransition(() => applyTheme(next));
+                        const cleanup = () => root.classList.remove('theme-ripple');
+                        t.ready.then(() => {
+                            const maxR = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+                            root.animate(
+                                [{ clipPath: `circle(0px at ${x}px ${y}px)` },
+                                 { clipPath: `circle(${maxR}px at ${x}px ${y}px)` }],
+                                { duration: 850, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', fill: 'forwards', pseudoElement: '::view-transition-new(root)' }
+                            );
+                        }).catch(() => {}).then(() => t.finished.catch(() => {})).then(cleanup, cleanup);
                     } else {
-                        ctx.lineTo(drawX, drawY);
+                        applyTheme(next);
                     }
-                }
-                ctx.stroke();
+                });
             }
-
-            animationFrameId = requestAnimationFrame(animateParticles);
-        }
-
-        window.addEventListener('mousemove', (e) => {
-            if (!canvas) return;
-            const rect = canvas.getBoundingClientRect();
-            mouse.x = e.clientX - rect.left;
-            mouse.y = e.clientY - rect.top;
-            
-            if (!mouse.set) {
-                mouse.sx = mouse.x;
-                mouse.sy = mouse.y;
-                mouse.lx = mouse.x;
-                mouse.ly = mouse.y;
-                mouse.set = true;
-            }
-        });
-
-        window.addEventListener('mouseout', () => {
-            mouse.x = -100;
-            mouse.y = -100;
-        });
-
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                initParticles();
-            }, 500);
-        });
-
-        function startApp() {
-            initParticles();
-            animateParticles();
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', startApp);
-        } else {
-            startApp();
-        }
+        })();
     </script>
-    <script src="ai-assistant.js"></script>
 </body>
 </html>
