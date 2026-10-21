@@ -42,6 +42,14 @@
 html, body { background: var(--ot-night); }
 html.light-theme, body.light-theme { background: #fafbfe; }
 
+/* overflow-x: hidden on body/#app-dynamic-render turns them into
+   scroll containers (overflow-y computes to auto) and silently
+   breaks every position:sticky descendant — nav, split FAQ head,
+   pinned showcase stages. clip makes the same horizontal cut for
+   the full-bleed grounds without creating a scrollport. */
+body,
+#app-dynamic-render { overflow-x: clip; }
+
 body {
     font-family: var(--font);
     font-size: 17px;
@@ -90,7 +98,8 @@ html.light-theme .t-light::before,
 body.light-theme .t-light::before { background: #eef0f6; }
 
 /* ---- Violet ground: ink type, identical in both themes ---- */
-.t-tint {
+.t-tint,
+.crate-section {
     --text-hi: #0d0919;
     --text-mid: #150f34;
     --text-lo: #1e1747;
@@ -275,7 +284,6 @@ body.light-theme nav:not(.mobile-dock).solid {
     color: var(--text-hi);
 }
 
-.nav-progressive-blur { display: none; }
 .nav-brand { font-weight: 800; font-stretch: 76%; letter-spacing: -0.012em; }
 nav:not(.mobile-dock):not(.solid) .nav-logo { mix-blend-mode: normal; filter: none; }
 
@@ -933,4 +941,417 @@ footer.t-night > p { margin: 0; font-size: 0.8rem; color: var(--text-lo); }
         padding-inline: var(--gutter);
     }
     .ticker-list[aria-hidden="true"] { display: none; }
+}
+
+/* ============================================================
+   17. Pinned screenshot rail — scroll-locked horizontal strip
+   ------------------------------------------------------------
+   Default state is a swipe rail (also the no-JS / tiny-travel
+   fallback). JS adds .pinned to the hub, gives it the scroll
+   runway and drives rail translateX from its own progress.
+   ============================================================ */
+:target { scroll-margin-top: calc(var(--ot-nav-h, 72px) + 12px); }
+
+.gallery-section .workspace-gallery-hub {
+    overflow: visible;
+    padding: 0;
+    mask-image: none;
+    -webkit-mask-image: none;
+}
+.gallery-section .pin-stage {
+    display: block;
+    overflow: visible;
+}
+.gallery-section .rail-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+}
+.gallery-section .rail-wrap::-webkit-scrollbar { display: none; }
+.gallery-section .rail {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(16px, 2vw, 26px);
+    padding-inline: var(--gutter);
+    width: max-content;
+}
+.gallery-section .rail-item {
+    flex: none;
+    margin: 0;
+    scroll-snap-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.gallery-section .rail-item:last-child { margin-right: var(--gutter); }
+.gallery-section .rail-item img {
+    display: block;
+    height: clamp(240px, 54svh, 620px);
+    width: auto;
+    border-radius: 22px;
+    border: 1px solid var(--line);
+    box-shadow: 0 34px 64px -34px rgba(13, 9, 25, 0.5);
+    background: var(--bg-raised);
+}
+.gallery-section .rail-item figcaption {
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.gallery-section .rail-item figcaption b {
+    font-size: 0.95rem;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+    color: var(--text-hi);
+}
+.gallery-section .rail-item figcaption span {
+    font-size: 0.78rem;
+    color: var(--text-lo);
+}
+
+/* Locked mode — stage sticks under the nav, scroll slides the rail */
+.gallery-section .workspace-gallery-hub.pinned .pin-stage {
+    position: sticky;
+    top: var(--ot-nav-h, 72px);
+    height: calc(100svh - var(--ot-nav-h, 72px) - var(--ot-dock-h, 0px));
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+.gallery-section .workspace-gallery-hub.pinned .rail-wrap {
+    width: 100%;
+    overflow: hidden;
+    scroll-snap-type: none;
+}
+.gallery-section .workspace-gallery-hub.pinned .rail { will-change: transform; }
+
+/* ============================================================
+   18. Lyrics showcase — word-synced karaoke well + style pills
+   ============================================================ */
+.bento-card--lyrics {
+    grid-column: span 12;
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    column-gap: clamp(28px, 4vw, 64px);
+    row-gap: 22px;
+    align-items: center;
+}
+.lyrics-copy { justify-content: center; }
+.lyrics-copy h3 { margin-bottom: 12px; }
+.lyrics-copy > p { margin-bottom: 18px; }
+.lyrics-copy .pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
+.lyrics-copy .lyrics-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0 0;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--text-lo);
+}
+.lyrics-note i { font-size: 0.72rem; }
+
+.pill {
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 650;
+    letter-spacing: 0.03em;
+    padding: 9px 17px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+.pill:hover { color: var(--text-hi); border-color: var(--tint); }
+.pill.on { background: var(--tint); border-color: var(--tint); color: var(--ot-ink); }
+.pill:focus-visible { outline: 2px solid var(--tint); outline-offset: 2px; }
+
+/* The well stays a dark player panel in both themes */
+.well.lyr {
+    position: relative;
+    display: grid;
+    align-content: center;
+    min-height: clamp(260px, 34vw, 380px);
+    padding: clamp(30px, 3.6vw, 46px) clamp(22px, 3vw, 42px);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: var(--r-xl, 24px);
+    overflow: hidden;
+    background:
+        radial-gradient(130% 150% at 88% -25%, rgba(125, 104, 255, 0.42), transparent 58%),
+        linear-gradient(165deg, #17113a 0%, #0b0916 72%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+.well.lyr::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 4px);
+    pointer-events: none;
+}
+.karaoke {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: clamp(8px, 1.1vw, 14px);
+    text-align: center;
+    font-family: var(--font-display);
+    font-stretch: 78%;
+    font-weight: 750;
+    font-size: clamp(1.2rem, 2.4vw, 1.95rem);
+    line-height: 1.26;
+    letter-spacing: -0.012em;
+}
+.k-line {
+    display: block;
+    transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.k-line.next { opacity: 0.24; transform: scale(0.985); }
+.k-line.now { opacity: 1; transform: none; }
+.k-line.past { opacity: 0.5; transform: none; }
+.wrd { display: inline-block; white-space: nowrap; }
+.ch {
+    display: inline-block;
+    background-image: linear-gradient(90deg, #fff 0 44%, rgba(255, 255, 255, 0.72) 52%, rgba(255, 255, 255, 0.32) 62%, rgba(255, 255, 255, 0.32) 100%);
+    background-size: 200% 100%;
+    background-position: calc(100% - var(--p, 0) * 100%) 0;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.style-reveal .ch,
+.style-bounce .ch {
+    background-image: linear-gradient(90deg, #fff 0 50%, rgba(255, 255, 255, 0.32) 50% 100%);
+}
+.style-fluid .ch { transform: translateY(calc((1 - var(--p, 0)) * 0.3em)); }
+.style-bounce .wrd.sung { animation: otHop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes otHop {
+    0% { transform: translateY(0) scale(1); }
+    35% { transform: translateY(-0.16em) scale(1.07); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+/* ============================================================
+   19. Artwork colour chapter — 320vh pinned cover deck
+   ------------------------------------------------------------
+   The section paints itself with --wash (registered so it can
+   transition); JS swaps the wash + deck classes per scroll step.
+   Shares the violet-ground ink tokens with .t-tint.
+   ============================================================ */
+@property --wash {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #7d68ff;
+}
+
+.crate-section {
+    position: relative;
+    z-index: 0;
+    height: 320vh;
+    --wash: var(--tint);
+    transition: --wash 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-hi);
+}
+.crate-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -50vw;
+    width: 100vw;
+    background: var(--wash);
+    z-index: -1;
+    pointer-events: none;
+}
+.crate-stage {
+    position: sticky;
+    top: var(--ot-nav-h, 72px);
+    height: calc(100svh - var(--ot-nav-h, 72px) - var(--ot-dock-h, 0px));
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+.crate-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+    align-items: center;
+    gap: clamp(30px, 5vw, 72px);
+    width: 100%;
+}
+.crate-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.crate-copy .section-label { margin-bottom: 10px; }
+.crate-steps {
+    list-style: none;
+    margin: clamp(26px, 3vw, 40px) 0 0;
+    padding: 0;
+    width: 100%;
+    max-width: 430px;
+    display: grid;
+}
+.crate-steps li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 0;
+    border-top: 1px solid var(--line);
+    opacity: 0.45;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.crate-steps li:last-child { border-bottom: 1px solid var(--line); }
+.crate-steps li.on { opacity: 1; transform: translateX(6px); }
+.crate-steps .sw {
+    flex: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+    background: var(--sw);
+    box-shadow: 0 0 0 1px rgba(13, 9, 25, 0.2);
+}
+.crate-steps .stxt { display: grid; gap: 1px; }
+.crate-steps b { font-size: 0.95rem; font-weight: 750; letter-spacing: -0.005em; }
+.crate-steps .stxt span { font-size: 0.78rem; color: var(--text-mid); }
+
+.stack {
+    position: relative;
+    justify-self: end;
+    width: min(100%, clamp(300px, 32vw, 430px));
+    aspect-ratio: 1;
+}
+.cardx {
+    position: absolute;
+    inset: 0;
+    border-radius: clamp(16px, 1.8vw, 24px);
+    overflow: hidden;
+    opacity: 0;
+    z-index: 1;
+    transform: translate(11%, 8%) scale(0.94) rotate(3.5deg);
+    box-shadow: 0 36px 72px -30px rgba(13, 9, 25, 0.65);
+    transition: transform 0.75s var(--ease-out), opacity 0.55s ease;
+}
+.cardx:nth-child(3) { transform: translate(17%, 13%) scale(0.89) rotate(6.5deg); }
+.cardx:nth-child(4) { transform: translate(23%, 18%) scale(0.84) rotate(9.5deg); }
+.cardx.past { opacity: 0; transform: translate(-8%, -7%) scale(0.95) rotate(-4deg); }
+.cardx.on { opacity: 1; z-index: 5; transform: none; }
+
+.cover {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(18px, 2vw, 26px);
+}
+.cover-brand {
+    align-self: flex-end;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.26em;
+    color: rgba(255, 255, 255, 0.7);
+}
+.cover-meta { display: grid; gap: 5px; }
+.cover-meta b {
+    font-size: clamp(1.7rem, 2.7vw, 2.4rem);
+    font-stretch: 70%;
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    color: #fff;
+}
+.cover-meta i {
+    font-style: normal;
+    font-size: 0.74rem;
+    font-weight: 650;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+}
+.cover--violet {
+    background:
+        radial-gradient(120% 95% at 22% 12%, rgba(164, 141, 255, 0.9), transparent 55%),
+        linear-gradient(160deg, #4a30d6 0%, #160f4a 92%);
+}
+.cover--cyan {
+    background:
+        repeating-linear-gradient(112deg, rgba(255, 255, 255, 0.10) 0 2px, transparent 2px 15px),
+        linear-gradient(165deg, #1fb6d8 0%, #0a3b52 92%);
+}
+.cover--pink {
+    background:
+        repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15) 0 3px, transparent 3px 8px),
+        linear-gradient(150deg, #ff5f92 0%, #6d0f3c 95%);
+}
+.cover--amber {
+    background:
+        radial-gradient(95% 70% at 68% 18%, #ffd794, transparent 52%),
+        linear-gradient(198deg, #f0a13c 0%, #7d3410 95%);
+}
+
+/* ============================================================
+   20. Feature responsive
+   ============================================================ */
+@media (max-width: 1000px) {
+    .bento-card--lyrics { grid-template-columns: minmax(0, 1fr); }
+    .well.lyr { min-height: clamp(240px, 46vw, 320px); }
+}
+
+@media (max-width: 900px) {
+    .crate-section { height: 300vh; }
+    .crate-grid { grid-template-columns: minmax(0, 1fr); gap: clamp(22px, 4vw, 34px); }
+    .stack {
+        order: -1;
+        justify-self: center;
+        width: min(64vw, 300px);
+    }
+    .crate-steps { max-width: none; }
+}
+
+@media (max-width: 768px) {
+    .crate-section { height: 280vh; }
+    .crate-copy .section-sub { display: none; }
+    .crate-copy .section-title { font-size: clamp(34px, 9vw, 46px); max-width: 14ch; }
+    .crate-steps li { padding: 9px 0; }
+    .karaoke { font-size: clamp(1.15rem, 5vw, 1.6rem); }
+    .gallery-section .rail-item img { height: clamp(240px, 48svh, 420px); }
+    .cover-meta b { font-size: clamp(1.5rem, 6vw, 2rem); }
+}
+
+/* Short viewports can't host a full sticky stage — unpin cleanly */
+@media (max-height: 620px) {
+    .crate-section { height: auto; }
+    .crate-stage {
+        position: static;
+        height: auto;
+        padding-block: clamp(56px, 8vw, 90px);
+        overflow: visible;
+    }
+}
+
+/* ============================================================
+   21. Feature reduced motion
+   ------------------------------------------------------------
+   The rail keeps its scroll-driven position (it only moves as
+   far as you scroll — no autonomous motion); the chapter
+   unpins into a static composition; the demo fills line one.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    .k-line, .cardx, .crate-steps li, .pill { transition: none !important; }
+    .style-bounce .wrd.sung { animation: none; }
+    .crate-section { height: auto; transition: none; }
+    .crate-stage {
+        position: static;
+        height: auto;
+        padding-block: clamp(64px, 8vw, 124px);
+        overflow: visible;
+    }
 }

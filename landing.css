@@ -494,19 +494,6 @@ nav:not(.mobile-dock) {
     body.light-theme nav:not(.mobile-dock) { background: rgba(245, 246, 250, 0.82); }
 }
 
-.nav-progressive-blur {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    height: 48px;
-    pointer-events: none;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 45%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 45%, transparent 100%);
-}
-
 .nav-inner {
     max-width: var(--container);
     margin-inline: auto;
@@ -759,21 +746,6 @@ body:not(.light-theme) .side-menu-label.cyan { color: var(--cyan-soft); }
 /* ============================================================
    Mobile dock
    ============================================================ */
-.dock-progressive-blur {
-    display: none;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: calc(120px + env(safe-area-inset-bottom, 0px));
-    pointer-events: none;
-    z-index: 6100;
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 45%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 45%, transparent 100%);
-}
-
 .mobile-dock {
     display: none;
     position: fixed;
@@ -2259,7 +2231,7 @@ body.light-theme #loading-screen .loader-logo { mix-blend-mode: multiply; filter
    Responsive — tablet / mobile
    ============================================================ */
 @media (max-width: 768px) {
-    html, body { overflow-x: hidden !important; max-width: 100vw !important; width: 100% !important; }
+    html, body { overflow-x: clip !important; max-width: 100vw !important; width: 100% !important; }
 
     body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 
@@ -2269,7 +2241,6 @@ body.light-theme #loading-screen .loader-logo { mix-blend-mode: multiply; filter
     .menu-trigger { display: flex; }
     .floating-nav { display: none !important; }
     .mobile-dock { display: flex; }
-    .dock-progressive-blur { display: block; }
 
     .hero { padding-top: 32px; padding-bottom: 40px; }
     .hero-stage { min-height: 200px; margin-bottom: 18px; }

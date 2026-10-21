@@ -1107,6 +1107,7 @@ function refreshRenderObservers() {
     // Bento card 3D tilt (desktop only)
     const cardsList = document.querySelectorAll('.bento-card');
     cardsList.forEach(card => {
+        if (card.classList.contains('bento-card--lyrics')) return;
         card.addEventListener('mousemove', (e) => {
             if (isMobile) return;
             const rect = card.getBoundingClientRect();
@@ -1203,80 +1204,6 @@ function initAntigravity() {
     }, { passive: true });
 }
 
-/* ── Progressive text blur on scroll ────────────────────── */
-function initScrollTextBlur() {
-    if (prefersReducedMotion) return;
-
-    const heroTitle = document.querySelector('.hero-title-container');
-    const heroBadge = document.querySelector('.hero-badge');
-    const heroLogo  = document.querySelector('.hero-logo-wrapper');
-    const headings  = document.querySelectorAll('.section-title, .section-sub, .team-heading, .credits-tribute-banner');
-
-    let ticking = false;
-
-    function onScroll() {
-        const sy = window.scrollY;
-
-        // 1. Hero text progressive blur as user scrolls down
-        if (heroTitle) {
-            const progress = Math.min(1, Math.max(0, (sy - 20) / 380));
-            const blur = Math.pow(progress, 1.15) * 16;
-            const opacity = Math.max(0.04, 1 - Math.pow(progress, 1.3) * 0.96);
-            const yOffset = -progress * 26;
-            heroTitle.style.filter = blur > 0.15 ? `blur(${blur.toFixed(2)}px)` : '';
-            heroTitle.style.opacity = opacity.toFixed(3);
-            heroTitle.style.transform = `translate3d(0, ${yOffset.toFixed(1)}px, 0)`;
-        }
-
-        if (heroBadge) {
-            const progress = Math.min(1, Math.max(0, (sy - 15) / 320));
-            const blur = Math.pow(progress, 1.2) * 12;
-            const opacity = Math.max(0.06, 1 - progress * 0.94);
-            heroBadge.style.filter = blur > 0.15 ? `blur(${blur.toFixed(2)}px)` : '';
-            heroBadge.style.opacity = opacity.toFixed(3);
-        }
-
-        if (heroLogo) {
-            const progress = Math.min(1, Math.max(0, sy / 440));
-            const blur = Math.pow(progress, 1.2) * 14;
-            const opacity = Math.max(0.05, 1 - Math.pow(progress, 1.4) * 0.9);
-            heroLogo.style.filter = blur > 0.2 ? `blur(${blur.toFixed(2)}px)` : '';
-            heroLogo.style.opacity = opacity.toFixed(3);
-        }
-
-        // 2. Section headings progressive blur as they scroll toward the sticky nav
-        headings.forEach(h => {
-            const rect = h.getBoundingClientRect();
-            // Approaching the top 180px of viewport
-            if (rect.top < 180 && rect.bottom > 0) {
-                const topDist = rect.top - 62;
-                if (topDist < 120) {
-                    const ratio = 1 - Math.max(0, Math.min(1, topDist / 120));
-                    const blur = Math.pow(ratio, 1.2) * 12;
-                    const opacity = Math.max(0.12, 1 - ratio * 0.88);
-                    h.style.filter = blur > 0.2 ? `blur(${blur.toFixed(2)}px)` : '';
-                    h.style.opacity = opacity.toFixed(3);
-                    return;
-                }
-            }
-            if (h.style.filter && h.style.filter !== '') {
-                h.style.filter = '';
-                h.style.opacity = '';
-            }
-        });
-
-        ticking = false;
-    }
-
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            requestAnimationFrame(onScroll);
-            ticking = true;
-        }
-    }, { passive: true });
-
-    onScroll();
-}
 
 /* ── Curtain reveal ─────────────────────────────────────── */
 function buildCurtainPanels() {
@@ -1337,7 +1264,6 @@ function startApp() {
     initSmoothScroll();
     buildCurtainPanels();
     initAntigravity();
-    initScrollTextBlur();
 
     // Progress bar runs for 3 s, then curtain reveals
     initProgressBarEngine(() => {
@@ -1396,6 +1322,209 @@ function animateParticlesOnce() {
     }, { passive: true });
     window.addEventListener('resize', updateNavGround, { passive: true });
     updateNavGround();
+})();
+
+/* ── Showcase features (Opentune port) ───────────────────────
+   · Pinned screenshot rail — the gallery locks to the viewport
+     while vertical scroll slides the strip horizontally
+   · Artwork colour chapter — sticky cover deck, the section
+     wash follows the active sleeve
+   · Word-synced lyrics demo — rAF sweep + style pills
+   Additive: every hook is guarded and reduced-motion falls
+   back to a static composition. */
+(function initShowcaseScroll() {
+    const hub = document.querySelector('.gallery-section .workspace-gallery-hub');
+    const stage = hub && hub.querySelector('.pin-stage');
+    const wrap = hub && hub.querySelector('.rail-wrap');
+    const rail = hub && hub.querySelector('.rail');
+    const crate = document.querySelector('.crate-section');
+    const crateStage = crate && crate.querySelector('.crate-stage');
+    const cards = crate ? Array.prototype.slice.call(crate.querySelectorAll('.cardx')) : [];
+    const steps = crate ? Array.prototype.slice.call(crate.querySelectorAll('.crate-steps li')) : [];
+    const navEl = document.querySelector('nav:not(.mobile-dock)');
+    const dockEl = document.querySelector('.mobile-dock');
+    // Cover washes — must match the .sw swatches in the markup
+    const TINTS = ['#7d68ff', '#17a2c6', '#e0447f', '#f0a13c'];
+    if (!hub && !crate) return;
+
+    let navH = 72;
+    let travel = 0;
+    let ticking = false;
+    const clamp01 = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
+
+    function setChrome() {
+        navH = navEl && navEl.offsetHeight ? navEl.offsetHeight : 72;
+        let dockH = 0;
+        if (dockEl && dockEl.offsetHeight && getComputedStyle(dockEl).display !== 'none') dockH = dockEl.offsetHeight;
+        document.documentElement.style.setProperty('--ot-nav-h', navH + 'px');
+        document.documentElement.style.setProperty('--ot-dock-h', dockH + 'px');
+    }
+
+    function layoutRail() {
+        if (!hub || !stage || !rail || !wrap) return;
+        rail.style.transform = '';
+        const full = Math.max(0, rail.scrollWidth - wrap.clientWidth);
+        if (full >= 120) {
+            hub.classList.add('pinned');
+            travel = full;
+            hub.style.height = (stage.offsetHeight + travel) + 'px';
+        } else {
+            hub.classList.remove('pinned');
+            hub.style.height = '';
+            travel = 0;
+        }
+    }
+
+    let curStep = -1;
+    function paintCrate(i) {
+        if (i === curStep || !cards.length) return;
+        curStep = i;
+        if (crate) crate.style.setProperty('--wash', TINTS[i] || TINTS[0]);
+        steps.forEach(function (li, k) { li.classList.toggle('on', k === i); });
+        cards.forEach(function (c, k) {
+            c.classList.toggle('on', k === i);
+            c.classList.toggle('past', k < i);
+        });
+    }
+
+    function update() {
+        if (hub && stage && rail && travel > 0 && hub.classList.contains('pinned')) {
+            const range = hub.offsetHeight - stage.offsetHeight;
+            const p = range > 0 ? clamp01((navH - hub.getBoundingClientRect().top) / range) : 0;
+            rail.style.transform = 'translate3d(' + (-p * travel).toFixed(1) + 'px,0,0)';
+        }
+        if (crate && crateStage && cards.length) {
+            const range = crate.offsetHeight - crateStage.offsetHeight;
+            const p = range > 8 ? clamp01((navH - crate.getBoundingClientRect().top) / range) : 0;
+            paintCrate(Math.min(cards.length - 1, Math.floor(p * cards.length)));
+        }
+    }
+
+    function onScroll() {
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(function () { ticking = false; update(); });
+        }
+    }
+
+    function layout() { setChrome(); layoutRail(); update(); }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', layout, { passive: true });
+    window.addEventListener('load', layout);
+    if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+        document.fonts.ready.then(layout).catch(function () {});
+    }
+    layout();
+})();
+
+(function initLyricsDemo() {
+    const kar = document.getElementById('karaoke');
+    const bar = document.getElementById('lyric-styles');
+    if (!kar) return;
+    const LINES = [
+        'Midnight, and the city glows,',
+        'headphones on, the noise lets go,',
+        'every beat we hold tonight,',
+        'plays the song we already know.'
+    ];
+    const still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const lines = LINES.map(function (text) {
+        const line = document.createElement('div');
+        line.className = 'k-line next';
+        let acc = 0;
+        const words = text.split(' ').map(function (w) {
+            line.appendChild(document.createTextNode(' '));
+            const ws = document.createElement('span');
+            ws.className = 'wrd';
+            const chars = Array.prototype.map.call(w, function (ch) {
+                const c = document.createElement('span');
+                c.className = 'ch';
+                c.textContent = ch;
+                ws.appendChild(c);
+                return c;
+            });
+            line.appendChild(ws);
+            const dur = 150 + w.length * 46 + (/[,.;:!?—’]$/.test(w) ? 280 : 0);
+            const word = { el: ws, chars: chars, start: acc, dur: dur, sung: false };
+            acc += dur;
+            return word;
+        });
+        kar.appendChild(line);
+        return { el: line, words: words, start: 0, dur: acc + 900, state: '' };
+    });
+    let total = 0;
+    lines.forEach(function (l) { l.start = total; total += l.dur; });
+
+    function setP(word, p) {
+        const n = word.chars.length;
+        for (let i = 0; i < n; i++) {
+            const cp = p <= 0 ? 0 : p >= 1 ? 1 : Math.min(1, Math.max(0, (p * (n + 1.4) - i) / 1.4));
+            word.chars[i].style.setProperty('--p', cp.toFixed(3));
+        }
+    }
+    function unSung(w) { if (w.sung) { w.sung = false; w.el.classList.remove('sung'); } }
+    function setState(l, st) {
+        if (l.state === st) return;
+        l.state = st;
+        l.el.classList.toggle('now', st === 'now');
+        l.el.classList.toggle('next', st === 'next');
+        l.el.classList.toggle('past', st === 'past');
+        if (st === 'next') l.words.forEach(function (w) { setP(w, 0); unSung(w); });
+        else if (st === 'past') l.words.forEach(function (w) { setP(w, 1); unSung(w); });
+    }
+    function paint(t) {
+        for (let li = 0; li < lines.length; li++) {
+            const l = lines[li];
+            const lt = t - l.start;
+            if (lt < 0) { setState(l, 'next'); continue; }
+            if (lt >= l.dur) { setState(l, 'past'); continue; }
+            setState(l, 'now');
+            for (let wi = 0; wi < l.words.length; wi++) {
+                const w = l.words[wi];
+                const wt = lt - w.start;
+                const p = wt <= 0 ? 0 : Math.min(1, wt / w.dur);
+                setP(w, p);
+                if (p > 0 && !w.sung) { w.sung = true; w.el.classList.add('sung'); }
+            }
+        }
+    }
+
+    // Style pills — only the paint mechanism changes
+    let activeBtn = bar ? bar.querySelector('.pill.on') : null;
+    function applyStyle(name) { kar.className = 'karaoke style-' + name; }
+    if (bar) {
+        bar.addEventListener('click', function (e) {
+            const btn = e.target && e.target.closest ? e.target.closest('.pill') : null;
+            if (!btn || !btn.getAttribute('data-style')) return;
+            if (activeBtn) activeBtn.classList.remove('on');
+            activeBtn = btn;
+            btn.classList.add('on');
+            applyStyle(btn.getAttribute('data-style'));
+        });
+    }
+    applyStyle((activeBtn && activeBtn.getAttribute('data-style')) || 'karaoke');
+
+    // Static fill for reduced motion — first line sung, the rest waiting
+    if (still) { paint(lines[0].dur); return; }
+
+    // Run only while the well is near the viewport
+    let visible = true;
+    if ('IntersectionObserver' in window) {
+        visible = false;
+        const io = new IntersectionObserver(function (entries) {
+            visible = entries[0].isIntersecting;
+        }, { rootMargin: '120px' });
+        io.observe(kar);
+    }
+
+    const t0 = performance.now();
+    (function frame(now) {
+        requestAnimationFrame(frame);
+        if (!visible || document.hidden) return;
+        paint((now - t0) % total);
+    })(performance.now());
 })();
 
 if (document.readyState === 'loading') {

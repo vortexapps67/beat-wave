@@ -81,9 +81,9 @@
     <script src="config.js"></script>
 
     <link rel="stylesheet" href="theme.css?v=6">
-    <link rel="stylesheet" href="landing.css?v=5">
+    <link rel="stylesheet" href="landing.css?v=6">
     <link rel="stylesheet" href="landing-redesign-patch.css?v=3">
-    <link rel="stylesheet" href="opentune.css?v=1">
+    <link rel="stylesheet" href="opentune.css?v=2">
 </head>
 <body>
     <!-- Maintenance Countdown Banner -->
@@ -354,7 +354,6 @@
     </div>
 
     <!-- Mobile bottom dock -->
-    <div class="dock-progressive-blur" aria-hidden="true"></div>
     <nav class="mobile-dock" aria-label="Mobile Bottom Navigation">
         <a href="#" class="dock-item active" aria-label="Home">
             <i class="fa-solid fa-house"></i><span>Home</span>
@@ -384,6 +383,7 @@
 
                 <div class="nav-links-desktop">
                     <a href="#features">Features</a>
+                    <a href="#artwork">Artwork</a>
                     <a href="sync.html" class="nav-sync"><i class="fas fa-tower-broadcast"></i> Live Sync</a>
                     <a href="#origin">Our Origin</a>
                     <a href="#faq">FAQ</a>
@@ -396,7 +396,6 @@
                     <button class="menu-trigger" aria-label="Open channels menu"><i class="fas fa-bars fa-lg"></i></button>
                 </div>
             </div>
-            <div class="nav-progressive-blur" aria-hidden="true"></div>
         </nav>
 
         <!-- Hero -->
@@ -517,17 +516,51 @@
         </div>
         <section class="gallery-section reveal t-light" aria-label="App screenshots">
             <div class="workspace-gallery-hub">
-                <div class="screenshot-strip">
-                    <img src="beatwave%20home-portrait.png" alt="BeatWave Home UI" width="200" height="429" decoding="async" loading="lazy">
-                    <img src="beatwave%20search-portrait.png" alt="BeatWave Search UI" width="200" height="429" decoding="async" loading="lazy">
-                    <img src="beatwave%20album-portrait.png" alt="BeatWave Album UI" width="200" height="429" decoding="async" loading="lazy">
-                    <img src="beatwave%20player-portrait.png" alt="BeatWave Player UI" width="200" height="429" decoding="async" loading="lazy">
-                    <img src="beatwave%20abt-portrait.png" alt="BeatWave About UI" width="200" height="429" decoding="async" loading="lazy">
-                    <img src="beatwave%20home-portrait.png" alt="" aria-hidden="true" width="200" height="429" loading="lazy" decoding="async">
-                    <img src="beatwave%20search-portrait.png" alt="" aria-hidden="true" width="200" height="429" loading="lazy" decoding="async">
-                    <img src="beatwave%20album-portrait.png" alt="" aria-hidden="true" width="200" height="429" loading="lazy" decoding="async">
-                    <img src="beatwave%20player-portrait.png" alt="" aria-hidden="true" width="200" height="429" loading="lazy" decoding="async">
-                    <img src="beatwave%20abt-portrait.png" alt="" aria-hidden="true" width="200" height="429" loading="lazy" decoding="async">
+                <div class="pin-stage">
+                    <div class="rail-wrap">
+                        <div class="rail">
+                            <figure class="rail-item">
+                                <img src="beatwave%20home-portrait.png" alt="BeatWave Home screen" width="200" height="429" decoding="async" loading="lazy">
+                                <figcaption><b>Home</b><span>Your library, up front</span></figcaption>
+                            </figure>
+                            <figure class="rail-item">
+                                <img src="beatwave%20search-portrait.png" alt="BeatWave Search screen" width="200" height="429" decoding="async" loading="lazy">
+                                <figcaption><b>Search</b><span>Results as you type</span></figcaption>
+                            </figure>
+                            <figure class="rail-item">
+                                <img src="beatwave%20album-portrait.png" alt="BeatWave Albums screen" width="200" height="429" decoding="async" loading="lazy">
+                                <figcaption><b>Albums</b><span>Sleeves in full</span></figcaption>
+                            </figure>
+                            <figure class="rail-item">
+                                <img src="beatwave%20player-portrait.png" alt="BeatWave Player screen" width="200" height="429" decoding="async" loading="lazy">
+                                <figcaption><b>Player</b><span>Out of the way</span></figcaption>
+                            </figure>
+                            <figure class="rail-item">
+                                <img src="beatwave%20abt-portrait.png" alt="BeatWave About screen" width="200" height="429" decoding="async" loading="lazy">
+                                <figcaption><b>About</b><span>The story, in-app</span></figcaption>
+                            </figure>
+                            <figure class="rail-item" aria-hidden="true">
+                                <img src="beatwave%20home-portrait.png" alt="" width="200" height="429" decoding="async" loading="lazy">
+                                <figcaption><b>Home</b><span>Your library, up front</span></figcaption>
+                            </figure>
+                            <figure class="rail-item" aria-hidden="true">
+                                <img src="beatwave%20search-portrait.png" alt="" width="200" height="429" decoding="async" loading="lazy">
+                                <figcaption><b>Search</b><span>Results as you type</span></figcaption>
+                            </figure>
+                            <figure class="rail-item" aria-hidden="true">
+                                <img src="beatwave%20album-portrait.png" alt="" width="200" height="429" decoding="async" loading="lazy">
+                                <figcaption><b>Albums</b><span>Sleeves in full</span></figcaption>
+                            </figure>
+                            <figure class="rail-item" aria-hidden="true">
+                                <img src="beatwave%20player-portrait.png" alt="" width="200" height="429" decoding="async" loading="lazy">
+                                <figcaption><b>Player</b><span>Out of the way</span></figcaption>
+                            </figure>
+                            <figure class="rail-item" aria-hidden="true">
+                                <img src="beatwave%20abt-portrait.png" alt="" width="200" height="429" decoding="async" loading="lazy">
+                                <figcaption><b>About</b><span>The story, in-app</span></figcaption>
+                            </figure>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -547,6 +580,23 @@
                         <p>Host collaborative live rooms, synchronize playback (play, pause, and seek) across Android and Web Player, share a collaborative queue, and chat live with friends.</p>
                     </div>
                     <a href="sync.html" class="bento-cta"><i class="fas fa-tower-broadcast"></i> Join Live Sync</a>
+                </div>
+                <div class="bento-card bento-card--lyrics">
+                    <div class="bento-card-inner lyrics-copy">
+                        <span class="bento-icon bento-icon--accent"><i class="fas fa-microphone-lines"></i></span>
+                        <h3>Lyrics that move with the voice</h3>
+                        <p>Word-synced lines sweep across in real time. Pick a style &mdash; karaoke, bounce, reveal or fluid &mdash; and the display re-choreographs itself around the vocal.</p>
+                        <div class="pills" id="lyric-styles" role="group" aria-label="Lyrics animation style">
+                            <button type="button" class="pill on" data-style="karaoke">Karaoke</button>
+                            <button type="button" class="pill" data-style="bounce">Bounce</button>
+                            <button type="button" class="pill" data-style="reveal">Reveal</button>
+                            <button type="button" class="pill" data-style="fluid">Fluid</button>
+                        </div>
+                        <p class="lyrics-note"><i class="fas fa-circle-info"></i> Demo lines written for BeatWave &mdash; live timing ships with the web player.</p>
+                    </div>
+                    <div class="well lyr">
+                        <div class="karaoke style-karaoke" id="karaoke" aria-label="Animated lyrics demo"></div>
+                    </div>
                 </div>
                 <div class="bento-card">
                     <div class="bento-card-inner">
@@ -574,6 +624,51 @@
                         <span class="bento-icon"><i class="fas fa-shield-halved"></i></span>
                         <h3>Privacy-first by design</h3>
                         <p>Local indexing, zero telemetry, and no account required. Your library and listening data stay on your device.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Artwork colour chapter -->
+        <section class="crate-section" id="artwork" aria-label="Artwork colour themes">
+            <div class="crate-stage">
+                <div class="container crate-grid">
+                    <div class="crate-copy">
+                        <span class="section-label"><i class="fas fa-palette"></i> Artwork</span>
+                        <h2 class="section-title">The cover paints the room</h2>
+                        <p class="section-sub">BeatWave lifts the palette straight off the sleeve &mdash; accents, glow and mood shift with the album in your queue.</p>
+                        <ol class="crate-steps">
+                            <li class="on"><span class="sw" style="--sw:#7d68ff"></span><span class="stxt"><b>Violet Hours</b><span>Vortex FM</span></span></li>
+                            <li><span class="sw" style="--sw:#17a2c6"></span><span class="stxt"><b>Neon Monsoon</b><span>Coastline Static</span></span></li>
+                            <li><span class="sw" style="--sw:#e0447f"></span><span class="stxt"><b>Cherry Static</b><span>Midnight Transit</span></span></li>
+                            <li><span class="sw" style="--sw:#f0a13c"></span><span class="stxt"><b>Amber Hour</b><span>Rooftop FM</span></span></li>
+                        </ol>
+                    </div>
+                    <div class="stack" aria-hidden="true">
+                        <div class="cardx on">
+                            <div class="cover cover--violet">
+                                <span class="cover-brand">BEATWAVE</span>
+                                <span class="cover-meta"><b>Violet Hours</b><i>Vortex FM</i></span>
+                            </div>
+                        </div>
+                        <div class="cardx">
+                            <div class="cover cover--cyan">
+                                <span class="cover-brand">BEATWAVE</span>
+                                <span class="cover-meta"><b>Neon Monsoon</b><i>Coastline Static</i></span>
+                            </div>
+                        </div>
+                        <div class="cardx">
+                            <div class="cover cover--pink">
+                                <span class="cover-brand">BEATWAVE</span>
+                                <span class="cover-meta"><b>Cherry Static</b><i>Midnight Transit</i></span>
+                            </div>
+                        </div>
+                        <div class="cardx">
+                            <div class="cover cover--amber">
+                                <span class="cover-brand">BEATWAVE</span>
+                                <span class="cover-meta"><b>Amber Hour</b><i>Rooftop FM</i></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -841,7 +936,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.16/dist/lenis.min.js"></script>
-    <script src="landing.js?v=14"></script>
+    <script src="landing.js?v=15"></script>
     <script src="ai-assistant.js?v=2"></script>
 </body>
 </html>
