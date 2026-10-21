@@ -1338,6 +1338,149 @@ footer.t-night > p { margin: 0; font-size: 0.8rem; color: var(--text-lo); }
 }
 
 /* ============================================================
+   22. Phone preview — single device, crossfading screens
+   ============================================================ */
+.phone-showcase {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 360px);
+    align-items: center;
+    gap: clamp(32px, 6vw, 80px);
+    max-width: 1080px;
+    margin-inline: auto;
+}
+.phone-showcase { perspective: 1200px; }
+.phone {
+    position: relative;
+    width: min(100%, clamp(230px, 26vw, 300px));
+    aspect-ratio: 9 / 19.5;
+    margin-inline: auto;
+    border-radius: 44px;
+    padding: 12px;
+    background: linear-gradient(165deg, #2a2a30 0%, #0a0a0c 55%, #1a1a20 100%);
+    box-shadow:
+        0 50px 90px -30px rgba(13, 9, 25, 0.75),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+        0 0 0 1px rgba(0, 0, 0, 0.4);
+    transform-style: preserve-3d;
+    transition: transform 0.18s ease-out, box-shadow 0.3s ease;
+    will-change: transform;
+}
+.phone:hover {
+    box-shadow:
+        0 60px 110px -30px rgba(13, 9, 25, 0.85),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+.phone-screen {
+    position: relative;
+    height: 100%;
+    border-radius: 34px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.6);
+}
+.phone-shot {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s var(--ease-out);
+    transform: scale(1.02);
+}
+.phone-shot.on {
+    opacity: 1;
+    transform: scale(1);
+}
+.phone-notch {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 38%;
+    height: 26px;
+    background: #0a0a0c;
+    border-radius: 0 0 18px 18px;
+    z-index: 3;
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+.phone-meta {
+    display: grid;
+    gap: 22px;
+}
+.phone-caption {
+    display: grid;
+    gap: 6px;
+}
+.phone-caption b {
+    font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--text-hi);
+}
+.phone-caption span {
+    font-size: 0.95rem;
+    color: var(--text-mid);
+}
+.phone-dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.phone-dot {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--text-hi);
+    opacity: 0.25;
+    cursor: pointer;
+    transition: opacity 0.3s ease, transform 0.3s ease, width 0.3s ease;
+}
+.phone-dot.on {
+    opacity: 1;
+    width: 26px;
+}
+.phone-dot:hover { opacity: 0.7; transform: scale(1.15); }
+.phone-arrows {
+    display: flex;
+    gap: 10px;
+}
+.phone-arrow {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    color: var(--text-hi);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.25s var(--ease-out), background 0.25s ease, border-color 0.25s ease;
+}
+.phone-arrow:hover {
+    transform: translateY(-2px);
+    background: var(--bg-3);
+    border-color: var(--line-hi);
+}
+.phone-arrow:active { transform: translateY(0); }
+
+@media (max-width: 900px) {
+    .phone-showcase { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+    .phone { width: min(55vw, 260px); }
+    .phone-meta { justify-items: start; }
+}
+@media (max-width: 620px) {
+    .phone { width: min(62vw, 240px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .phone, .phone-shot, .phone-dot, .phone-arrow { transition: none !important; }
+}
+
+/* ============================================================
    20. Feature responsive
    ============================================================ */
 @media (max-width: 1000px) {

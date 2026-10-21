@@ -83,7 +83,7 @@
     <link rel="stylesheet" href="theme.css?v=6">
     <link rel="stylesheet" href="landing.css?v=6">
     <link rel="stylesheet" href="landing-redesign-patch.css?v=3">
-    <link rel="stylesheet" href="opentune.css?v=3">
+    <link rel="stylesheet" href="opentune.css?v=4">
 </head>
 <body>
     <!-- Maintenance Countdown Banner -->
@@ -515,51 +515,36 @@
             <h2 class="section-title">Interface System Preview</h2>
         </div>
         <section class="gallery-section reveal t-light" aria-label="App screenshots">
-            <div class="workspace-gallery-hub">
-                <div class="pin-stage">
-                    <div class="rail-wrap">
-                        <div class="rail">
-                            <figure class="rail-item">
-                                <img src="beatwave%20home-portrait.png" alt="BeatWave Home screen" width="200" height="429" decoding="async" loading="lazy">
-                                <figcaption><b>Home</b><span>Your library, up front</span></figcaption>
-                            </figure>
-                            <figure class="rail-item">
-                                <img src="beatwave%20search-portrait.png" alt="BeatWave Search screen" width="200" height="429" decoding="async" loading="lazy">
-                                <figcaption><b>Search</b><span>Results as you type</span></figcaption>
-                            </figure>
-                            <figure class="rail-item">
-                                <img src="beatwave%20album-portrait.png" alt="BeatWave Albums screen" width="200" height="429" decoding="async" loading="lazy">
-                                <figcaption><b>Albums</b><span>Sleeves in full</span></figcaption>
-                            </figure>
-                            <figure class="rail-item">
-                                <img src="beatwave%20player-portrait.png" alt="BeatWave Player screen" width="200" height="429" decoding="async" loading="lazy">
-                                <figcaption><b>Player</b><span>Out of the way</span></figcaption>
-                            </figure>
-                            <figure class="rail-item">
-                                <img src="beatwave%20abt-portrait.png" alt="BeatWave About screen" width="200" height="429" decoding="async" loading="lazy">
-                                <figcaption><b>About</b><span>The story, in-app</span></figcaption>
-                            </figure>
-                            <figure class="rail-item" aria-hidden="true">
-                                <img src="beatwave%20home-portrait.png" alt="" width="200" height="429" decoding="async" loading="lazy">
-                                <figcaption><b>Home</b><span>Your library, up front</span></figcaption>
-                            </figure>
-                            <figure class="rail-item" aria-hidden="true">
-                                <img src="beatwave%20search-portrait.png" alt="" width="200" height="429" decoding="async" loading="lazy">
-                                <figcaption><b>Search</b><span>Results as you type</span></figcaption>
-                            </figure>
-                            <figure class="rail-item" aria-hidden="true">
-                                <img src="beatwave%20album-portrait.png" alt="" width="200" height="429" decoding="async" loading="lazy">
-                                <figcaption><b>Albums</b><span>Sleeves in full</span></figcaption>
-                            </figure>
-                            <figure class="rail-item" aria-hidden="true">
-                                <img src="beatwave%20player-portrait.png" alt="" width="200" height="429" decoding="async" loading="lazy">
-                                <figcaption><b>Player</b><span>Out of the way</span></figcaption>
-                            </figure>
-                            <figure class="rail-item" aria-hidden="true">
-                                <img src="beatwave%20abt-portrait.png" alt="" width="200" height="429" decoding="async" loading="lazy">
-                                <figcaption><b>About</b><span>The story, in-app</span></figcaption>
-                            </figure>
-                        </div>
+            <div class="phone-showcase" id="phone-showcase">
+                <div class="phone" id="phone" aria-label="BeatWave app preview">
+                    <div class="phone-notch" aria-hidden="true"></div>
+                    <div class="phone-screen">
+                        <img class="phone-shot on" src="beatwave%20home-portrait.png" alt="BeatWave Home screen" width="200" height="429" decoding="async" loading="lazy">
+                        <img class="phone-shot" src="beatwave%20search-portrait.png" alt="BeatWave Search screen" width="200" height="429" decoding="async" loading="lazy">
+                        <img class="phone-shot" src="beatwave%20album-portrait.png" alt="BeatWave Albums screen" width="200" height="429" decoding="async" loading="lazy">
+                        <img class="phone-shot" src="beatwave%20player-portrait.png" alt="BeatWave Player screen" width="200" height="429" decoding="async" loading="lazy">
+                        <img class="phone-shot" src="beatwave%20abt-portrait.png" alt="BeatWave About screen" width="200" height="429" decoding="async" loading="lazy">
+                    </div>
+                </div>
+                <div class="phone-meta">
+                    <div class="phone-caption">
+                        <b id="phone-name">Home</b>
+                        <span id="phone-desc">Your library, up front</span>
+                    </div>
+                    <div class="phone-dots" role="tablist" aria-label="Choose a screen">
+                        <button class="phone-dot on" type="button" data-i="0" aria-label="Home screen"></button>
+                        <button class="phone-dot" type="button" data-i="1" aria-label="Search screen"></button>
+                        <button class="phone-dot" type="button" data-i="2" aria-label="Albums screen"></button>
+                        <button class="phone-dot" type="button" data-i="3" aria-label="Player screen"></button>
+                        <button class="phone-dot" type="button" data-i="4" aria-label="About screen"></button>
+                    </div>
+                    <div class="phone-arrows">
+                        <button class="phone-arrow" type="button" id="phone-prev" aria-label="Previous screen">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="phone-arrow" type="button" id="phone-next" aria-label="Next screen">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -943,7 +928,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.16/dist/lenis.min.js"></script>
-    <script src="landing.js?v=16"></script>
+    <script src="landing.js?v=17"></script>
     <script src="ai-assistant.js?v=2"></script>
 </body>
 </html>

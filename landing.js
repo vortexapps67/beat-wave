@@ -1325,8 +1325,8 @@ function animateParticlesOnce() {
 })();
 
 /* ── Showcase features (Opentune port) ───────────────────────
-   · Pinned screenshot rail — the gallery locks to the viewport
-     while vertical scroll slides the strip horizontally
+   · Phone preview — single device, crossfading screens on a
+     timer, advance on click, 3D tilt on hover
    · Artwork colour chapter — sticky cover deck, the section
      wash follows the active sleeve
    · Word-synced lyrics demo — rAF sweep + style pills
@@ -1525,6 +1525,101 @@ function animateParticlesOnce() {
         if (!visible || document.hidden) return;
         paint((now - t0) % total);
     })(performance.now());
+})();
+
+/* ── Phone preview showcase ─────────────────────────────────
+   One device, five screens. Crossfades on a timer while on
+   screen, advances on click, tilts toward the cursor on hover. */
+(function initPhoneShowcase() {
+    const root = document.getElementById('phone-showcase');
+    const phone = document.getElementById('phone');
+    if (!root || !phone) return;
+
+    const SHOTS = [
+        { src: 'beatwave%20home-portrait.png', name: 'Home', desc: 'Your library, up front' },
+        { src: 'beatwave%20search-portrait.png', name: 'Search', desc: 'Results as you type' },
+        { src: 'beatwave%20album-portrait.png', name: 'Albums', desc: 'Sleeves in full' },
+        { src: 'beatwave%20player-portrait.png', name: 'Player', desc: 'Out of the way' },
+        { src: 'beatwave%20abt-portrait.png', name: 'About', desc: 'The story, in-app' }
+    ];
+
+    const shots = Array.prototype.slice.call(phone.querySelectorAll('.phone-shot'));
+    const nameEl = document.getElementById('phone-name');
+    const descEl = document.getElementById('phone-desc');
+    const dots = Array.prototype.slice.call(root.querySelectorAll('.phone-dot'));
+    const prevBtn = document.getElementById('phone-prev');
+    const nextBtn = document.getElementById('phone-next');
+
+    const reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    let idx = 0;
+    let timer = null;
+    let hovering = false;
+    let visible = false;
+
+    function show(i) {
+        idx = (i + SHOTS.length) % SHOTS.length;
+        shots.forEach(function (el, k) { el.classList.toggle('on', k === idx); });
+        dots.forEach(function (el, k) { el.classList.toggle('on', k === idx); });
+        if (nameEl) nameEl.textContent = SHOTS[idx].name;
+        if (descEl) descEl.textContent = SHOTS[idx].desc;
+    }
+
+    function advance(dir) { show(idx + (dir || 1)); resetTimer(); }
+
+    function resetTimer() {
+        if (timer) { clearInterval(timer); timer = null; }
+        if (reduced || hovering || !visible) return;
+        timer = setInterval(function () { show(idx + 1); }, 3800);
+    }
+
+    // Click controls
+    if (prevBtn) prevBtn.addEventListener('click', function () { advance(-1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { advance(1); });
+    dots.forEach(function (d) {
+        d.addEventListener('click', function () {
+            const i = parseInt(d.getAttribute('data-i'), 10);
+            if (!isNaN(i)) { show(i); resetTimer(); }
+        });
+    });
+
+    // Hover pause + 3D tilt
+    phone.addEventListener('pointerenter', function () { hovering = true; resetTimer(); });
+    phone.addEventListener('pointerleave', function () {
+        hovering = false;
+        phone.style.transform = '';
+        resetTimer();
+    });
+    phone.addEventListener('pointermove', function (e) {
+        if (reduced || e.pointerType !== 'mouse') return;
+        const r = phone.getBoundingClientRect();
+        const rx = ((e.clientY - r.top) / r.height - 0.5) * -14;
+        const ry = ((e.clientX - r.left) / r.width - 0.5) * 18;
+        phone.style.transform = 'rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+    });
+
+    // Keyboard
+    root.setAttribute('tabindex', '0');
+    root.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft') { advance(-1); e.preventDefault(); }
+        else if (e.key === 'ArrowRight') { advance(1); e.preventDefault(); }
+    });
+
+    // Auto-advance only while in view
+    if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                visible = en.isIntersecting;
+                if (visible) resetTimer();
+                else { if (timer) { clearInterval(timer); timer = null; } }
+            });
+        }, { rootMargin: '120px 0px' });
+        io.observe(root);
+    } else {
+        visible = true;
+        resetTimer();
+    }
+
+    show(0);
 })();
 
 if (document.readyState === 'loading') {
