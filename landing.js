@@ -1413,6 +1413,10 @@ function animateParticlesOnce() {
         document.fonts.ready.then(layout).catch(function () {});
     }
     layout();
+    // Poll so the artwork chapter stays in sync even when rAF/scroll events are throttled
+    if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setInterval(update, 120);
+    }
 })();
 
 (function initLyricsDemo() {
